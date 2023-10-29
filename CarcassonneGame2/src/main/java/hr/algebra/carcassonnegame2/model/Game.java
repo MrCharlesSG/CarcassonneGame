@@ -186,6 +186,7 @@ public enum Game{
             this.visitedTilesGrid = new Boolean[this.numColsGameBoard][this.numRowsGameBoard];
             setValueOfPosition(visitedTilesGrid, position, true);
             if (!newTile.canPutFollower(this.nextTile.getFollowerPosition())) {
+                this.nextTile.removeFollower();
                 throw new IllegalArgumentException("The follower is not correctly collocated");
             }
             newTile.setFollower(currentPlayer, this.nextTile.getFollowerPosition());
@@ -442,5 +443,9 @@ public enum Game{
     public int finishGame() {
         this.numberOfRemainingTiles=0;
         return update();
+    }
+
+    public String getFollowerInTileStyle(Tile tile) {
+        return playersInfo.get(tile.getPlayerFollower()).getTextColor();
     }
 }

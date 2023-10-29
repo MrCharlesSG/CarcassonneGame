@@ -10,39 +10,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.StartController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="365.0" prefWidth="545.0" style="-fx-background-color: #A35400;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.StartController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <center>
-        <GridPane prefHeight="211.0" prefWidth="487.0" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="87.33331298828125" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="472.66668701171875" minWidth="10.0" prefWidth="472.66668701171875" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <Label text="Player 1:" />
-            <TextField fx:id="tfPlayer1" GridPane.columnIndex="1" />
-            <TextField fx:id="tfPlayer2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="tfPlayer3" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="tfPlayer4" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="tfPlayer5" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Label text="Player 2:" GridPane.rowIndex="1" />
-            <Label text="Player 3:" GridPane.rowIndex="2" />
-            <Label text="Player 4:" GridPane.rowIndex="3" />
-            <Label text="Player 5:" GridPane.rowIndex="4" />
-        </GridPane>
-    </center>
     <GridPane>
       <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -55,22 +30,28 @@
       </rowConstraints>
     </GridPane>
    <bottom>
-      <AnchorPane prefHeight="50.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="63.0" prefWidth="561.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="292.0" layoutY="12.0" mnemonicParsing="false" onAction="#createNewGame" prefHeight="25.0" prefWidth="250.0" style="-fx-background-color: green;" text="New Game" textFill="WHITE" />
-               <Button contentDisplay="CENTER" layoutX="14.0" layoutY="12.0" mnemonicParsing="false" onAction="#loadGame" prefHeight="25.0" prefWidth="269.0" style="-fx-background-color: blue;" text="Load Game" textFill="WHITE" />
+            <Button layoutX="272.0" layoutY="9.0" mnemonicParsing="false" onAction="#createNewGame" prefHeight="46.0" prefWidth="154.0" style="-fx-background-color: green;" text="New Game" textFill="WHITE">
+               <font>
+                  <Font name="Maiandra GD" size="22.0" />
+               </font></Button>
+               <Button contentDisplay="CENTER" layoutX="52.0" layoutY="9.0" mnemonicParsing="false" onAction="#loadGame" prefHeight="46.0" prefWidth="182.0" style="-fx-background-color: brown;" text="Load Game" textFill="WHITE">
+               <font>
+                  <Font name="Maiandra GD" size="22.0" />
+               </font></Button>
          </children>
       </AnchorPane>
    </bottom>
    <top>
       <AnchorPane prefHeight="99.0" prefWidth="560.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="25.0" layoutY="9.0" prefHeight="70.0" prefWidth="510.0" text="CARCASSONNE">
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="9.0" layoutY="12.0" prefHeight="75.0" prefWidth="487.0" text="pixel CARCASSONNE">
                <font>
-                  <Font name="Copperplate Gothic Bold" size="48.0" />
+                  <Font name="Maiandra GD" size="48.0" />
                </font>
                <textFill>
-                  <RadialGradient centerX="0.4003690036900369" centerY="0.5" radius="0.8702290076335878">
+                  <LinearGradient cycleMethod="REFLECT" endX="0.2082019168119702" endY="1.0" startX="1.0">
                      <stops>
                         <Stop>
                            <color>
@@ -79,15 +60,41 @@
                         </Stop>
                         <Stop offset="1.0">
                            <color>
-                              <Color red="1.0" green="1.0" blue="1.0" />
+                              <Color red="0.28947368264198303" green="0.14473684132099152" />
                            </color>
                         </Stop>
                      </stops>
-                  </RadialGradient>
+                  </LinearGradient>
                </textFill>
             </Label>
               <Label fx:id="lbErrorMessage" contentDisplay="CENTER" layoutX="288.0" layoutY="69.0" style="-fx-background-color: #d70000; -fx-label-padding: 3;" textFill="WHITE" />
          </children>
       </AnchorPane>
    </top>
+   <center>
+      <AnchorPane prefHeight="120.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+         <children>
+               <TextField fx:id="tfPlayer1" layoutX="159.0" layoutY="14.0" prefHeight="41.0" prefWidth="265.0" promptText="player 1" style="-fx-border-color: #ffd400; -fx-background-color: #A35400; -fx-text-fill: #ffd400;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+               <Label layoutX="51.0" layoutY="14.0" prefHeight="41.0" prefWidth="101.0" text="Player 1:" textFill="#ffd400">
+               <font>
+                  <Font name="Maiandra GD" size="24.0" />
+               </font>
+            </Label>
+               <TextField fx:id="tfPlayer2" layoutX="159.0" layoutY="83.0" prefHeight="41.0" prefWidth="265.0" promptText="player 2" style="-fx-text-fill: #1b00db; -fx-background-color: #A35400; -fx-border-color: #1b00db;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+               <Label layoutX="52.0" layoutY="84.0" prefHeight="40.0" prefWidth="99.0" text="Player 2:" textFill="#1b00db">
+               <font>
+                  <Font name="Maiandra GD" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </center>
 </BorderPane>

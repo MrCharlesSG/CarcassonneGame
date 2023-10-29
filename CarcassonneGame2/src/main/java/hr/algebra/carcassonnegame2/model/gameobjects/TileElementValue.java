@@ -1,7 +1,7 @@
 package hr.algebra.carcassonnegame2.model.gameobjects;
 
 public enum TileElementValue {
-    PATH(0, "-fx-background-color: gray;"), INTERSECTION(1, "-fx-background-color: darkgray;"), MONASTERY(2, "-fx-background-color: red;"), FARM(3, "-fx-background-color: green;"), CITY(4, "-fx-background-color: brown"), CITY_WITH_SHIELD(5, "-fx-background-color: brown; -fx-border-color: black;");
+    PATH(0, "-fx-background-color: gray;"), INTERSECTION(1, "-fx-background-color: darkgray;"), MONASTERY(2, "-fx-background-color: red;"), FARM(3, "-fx-background-color: green;"), CITY(4, "-fx-background-color: brown;"), CITY_WITH_SHIELD(5, "-fx-background-color: brown; -fx-border-color: black;");
 
     private final int value;
 

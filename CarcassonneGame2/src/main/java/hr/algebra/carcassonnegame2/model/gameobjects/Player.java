@@ -18,4 +18,6 @@ public interface Player {
     int addPunctuation(int punctuation);
 
     TreeSet<Position> getPositionsOfFollowers();
+
+    String getTextColor();
 }

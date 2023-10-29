@@ -16,11 +16,14 @@ public class PlayerImpl implements Player{
 
     private TreeSet<Position> followersTiles;
 
-    public PlayerImpl(String name, int numberOfFollowers){
+    private String styleColor;
+
+    public PlayerImpl(String name, int numberOfFollowers, String styleColor){
         this.numberOfFollowers = new SimpleIntegerProperty(numberOfFollowers);
         this.points = new SimpleIntegerProperty(0);
         this.name=new SimpleStringProperty(name);
         this.followersTiles=new TreeSet<>();
+        this.styleColor=styleColor;
     }
 
     @Override
@@ -61,4 +64,8 @@ public class PlayerImpl implements Player{
         return followersTiles;
     }
 
+    @Override
+    public String getTextColor() {
+        return this.styleColor;
+    }
 }

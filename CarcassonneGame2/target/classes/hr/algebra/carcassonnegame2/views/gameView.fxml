@@ -25,7 +25,6 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Actions">
                <items>
-                  <MenuItem fx:id="miPutFollower" mnemonicParsing="false" onAction="#putFollowerAction" text="Put Follower" />
                   <MenuItem mnemonicParsing="false" onAction="#removeFollowerAction" text="Remove Follower" />
                   <MenuItem fx:id="miRotateTile" mnemonicParsing="false" onAction="#rotateTileAction" text="Rotate Tile" />
                   <MenuItem fx:id="miPutTile" mnemonicParsing="false" onAction="#putTileAction" text="Put Tile" />
