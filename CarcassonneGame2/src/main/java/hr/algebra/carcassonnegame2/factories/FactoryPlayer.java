@@ -8,7 +8,7 @@ public enum FactoryPlayer {
     INSTANCE;
 
     private final String headOfStyle = "-fx-fill: ";
-    private final String[] colours = new String[]{"#ffd400","#1b00db"};
+    private final String[] colours = new String[]{"#4F46E5","#0891B2"};
 
     private int number = -1;
 
@@ -18,6 +18,6 @@ public enum FactoryPlayer {
 
     private String getStyle() {
         number++;
-        return headOfStyle + colours[number] +";";
+        return colours[number] +";";
     }
 }

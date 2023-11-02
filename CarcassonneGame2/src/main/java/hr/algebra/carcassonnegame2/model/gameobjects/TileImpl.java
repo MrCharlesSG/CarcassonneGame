@@ -123,14 +123,14 @@ public final class TileImpl extends Tile {
     }
 
     private boolean isFollowerInPath() {
-        if(getValuePosition(getTopPosition()).isPath() && isFollowerInPathSection(getTopPosition())) return false;
-        if(getValuePosition(getRightPosition()).isPath() && isFollowerInPathSection(getRightPosition())) return false;
-        if (getValuePosition(getLeftPosition()).isPath() && isFollowerInPathSection(getLeftPosition())) return false;
-        return !getValuePosition(getBottomPosition()).isPath() || !isFollowerInPathSection(getBottomPosition());
+        return (!getValuePosition(getTopPosition()).isPath() || !isFollowerInPathSection(getTopPosition()))
+                && (!getValuePosition(getRightPosition()).isPath() || !isFollowerInPathSection(getRightPosition()))
+                && (!getValuePosition(getLeftPosition()).isPath() || !isFollowerInPathSection(getLeftPosition()))
+                && (!getValuePosition(getBottomPosition()).isPath() || !isFollowerInPathSection(getBottomPosition()));
     }
 
     private boolean isFollowerInPathSection(Position position){
-        boolean returnValue=isFollowerInPosition(position);
+        boolean returnValue=isFollowerInPosition(position) || isFollowerInPosition(getCenterPosition());
         if(isPositionInsideTile(position.getPositionInTop()) && getValuePosition(position.getPositionInTop()).isPath() && !returnValue){
             returnValue = isFollowerInPosition(position.getPositionInTop());
         }
@@ -148,17 +148,12 @@ public final class TileImpl extends Tile {
 
     private boolean checkPutFollowerInCity(Position position) {
         if(getValuePosition(getCenterPosition()).isCity()){
-            if(followerPosition!=null && getValuePosition(followerPosition).isCity()){
-                return false;
-            }
-            else{
-                return callGameToCheckOtherTile(TileElementValue.CITY);
-            }
+            return (followerPosition == null || !getValuePosition(followerPosition).isCity())
+                    && callGameToCheckOtherTile(TileElementValue.CITY);
         }else{
             if (citiesAreConnected) {
-                if(followerPosition!=null && getValuePosition(followerPosition).isCity())
-                    return false;
-                return callGameToCheckOtherTile(TileElementValue.CITY);
+                return (followerPosition == null || !getValuePosition(followerPosition).isCity())
+                        && callGameToCheckOtherTile(TileElementValue.CITY);
             } else {
                 if(isFollowerInCity(position)){
                     return false;
@@ -180,7 +175,8 @@ public final class TileImpl extends Tile {
         if(isPositionInsideTile(position.getPositionInTop()) && getValuePosition(position.getPositionInTop()).isCity() && isFollowerInPosition(position.getPositionInTop())) return true;
         if(isPositionInsideTile(position.getPositionInBottom()) && getValuePosition(position.getPositionInBottom()).isCity() && isFollowerInPosition(position.getPositionInBottom())) return true;
         if(isPositionInsideTile(position.getPositionInLeft()) && getValuePosition(position.getPositionInLeft()).isCity() && isFollowerInPosition(position.getPositionInLeft())) return true;
-        return isPositionInsideTile(position.getPositionInRight()) && getValuePosition(position.getPositionInRight()).isCity() && isFollowerInPosition(position.getPositionInRight());
+        if(isPositionInsideTile(position.getPositionInRight()) && getValuePosition(position.getPositionInRight()).isCity() && isFollowerInPosition(position.getPositionInRight())) return true;
+        return isFollowerInPosition(position);
     }
 
     private boolean callGameToCheckOtherTile(TileElementValue value){
@@ -265,7 +261,7 @@ public final class TileImpl extends Tile {
             if(!position.equals(getRightPosition()) || position.equals(getCenterPosition())) counter += countPathForClosingPathAux(getRightPosition().getPositionInLeft(), positionInGameBoard.getPositionInRight(), getLeftPosition());
             if(!position.equals(getTopPosition()) || position.equals(getCenterPosition())) counter += countPathForClosingPathAux(getTopPosition().getPositionInBottom(), positionInGameBoard.getPositionInTop(), getBottomPosition());
             if (!position.equals(getBottomPosition()) || position.equals(getCenterPosition())) counter += countPathForClosingPathAux(getBottomPosition().getPositionInTop(), positionInGameBoard.getPositionInBottom(), getTopPosition());
-            return counter+1;
+            return counter;
 
         }
     }
@@ -297,21 +293,10 @@ public final class TileImpl extends Tile {
 
     @Override
     public int countCitiesForClosingCities(Position position) {
-        if (getValuePosition(getCenterPosition()).isCity()) {
-            if (followerPosition != null && getValuePosition(followerPosition).isCity()) {
-                setTileWithFollowerInCity();
-            }
-            return getCountFromOtherTiles(position) + getAddingPointForThisCity(position);
-        } else {
-            if (citiesAreConnected) {
-                if (followerPosition != null && getValuePosition(followerPosition).isCity())
-                    setTileWithFollowerInCity();
-                return getCountFromOtherTiles(position);
-            } else {
-
-                return getAddingPointForThisCity(position); //Bottom tile
-            }
+        if (followerPosition != null && getValuePosition(followerPosition).isCity()) {
+            setTileWithFollowerInCity();
         }
+        return getAddingPointForThisCity(position) + (citiesAreConnected ? getCountCityFromOtherTiles():0);
     }
 
     @Override
@@ -326,18 +311,8 @@ public final class TileImpl extends Tile {
 
     @Override
     public void prepareForClosingPath(Position position) {
-        if (!getValuePosition(getCenterPosition()).isIntersection()) {
-            int counterOfPathInTile=getValuePosition(getLeftPosition()).isPath()?1:0;
-            counterOfPathInTile+=getValuePosition(getRightPosition()).isPath()?1:0;
-            counterOfPathInTile+=getValuePosition(getTopPosition()).isPath()?1:0;
-            counterOfPathInTile+=getValuePosition(getBottomPosition()).isPath()?1:0;
-            if (counterOfPathInTile < 2 && followerPosition!=null &&  getValuePosition(followerPosition).isPath()) {
-                Game.INSTANCE.setTileWithFollowerInCount(this);
-            }
-        }else{
-            if(isFollowerInPathSection(position)){
-                Game.INSTANCE.setTileWithFollowerInCount(this);
-            }
+        if(isFollowerInPathSection(position)){
+            Game.INSTANCE.setTileWithFollowerInCount(this);
         }
     }
 
@@ -345,21 +320,15 @@ public final class TileImpl extends Tile {
         Game.INSTANCE.setTileWithFollowerInCount(this);
     }
 
-    private int getCountFromOtherTiles(Position position) {
-        int count = 0;
-        if(getValuePosition(getRightPosition()).isCity()){
-            count+= getCountOfCitiesFromOneTile(this.positionInGameBoard.getPositionInRight(), getLeftPosition());
-        }
-        if(getValuePosition(getLeftPosition()).isCity()){
-            count+= getCountOfCitiesFromOneTile(this.positionInGameBoard.getPositionInLeft(), getRightPosition());
-        }
-        if(getValuePosition(getTopPosition()).isCity()){
-            count+= getCountOfCitiesFromOneTile(this.positionInGameBoard.getPositionInTop(), getBottomPosition());
-        }
-        if(getValuePosition(getBottomPosition()).isCity()){
-            count+= getCountOfCitiesFromOneTile(this.positionInGameBoard.getPositionInBottom(), getTopPosition());
-        }
-        return count;
+    private int getCountCityFromOtherTiles() {
+        int count = getCountCityFromOtherTilesAux(getLeftPosition());
+        count+= getCountCityFromOtherTilesAux(getRightPosition());
+        count+= getCountCityFromOtherTilesAux(getBottomPosition());
+        return count + getCountCityFromOtherTilesAux(getTopPosition());
+    }
+
+    private int getCountCityFromOtherTilesAux(Position position){ //Ultimo toque ha sido cambiar getCountOfCitiesFromOneTile(getNextPositionInGameBoard(position), position)
+        return getValuePosition(position).isCity() ? getCountOfCitiesFromOneTile(getNextPositionInGameBoard(position), getOtherPosition(position)) : 0;
     }
 
     private int getCountOfCitiesFromOneTile(Position positionInGameBoardForOtherTile, Position positionInsideOtherTile) {
@@ -386,6 +355,17 @@ public final class TileImpl extends Tile {
         if(isFollowerInCity(position)){
             setTileWithFollowerInCity();
         }
+    }
+
+    @Override
+    public Position getNextPositionInGameBoard(Position positionInTile) {
+        RelativePositionGrid relative = Tile.castPositionInTileToRelative(positionInTile);
+        return this.positionInGameBoard.castRelativePositionToPoint(relative);
+    }
+
+    @Override
+    public boolean hasPath() {
+        return getValuePosition(getCenterPosition()).isPath();
     }
 
     private boolean isPositionInsideTile(Position position){

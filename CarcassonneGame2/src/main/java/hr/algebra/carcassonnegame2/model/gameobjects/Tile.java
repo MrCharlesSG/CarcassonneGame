@@ -103,4 +103,8 @@ public abstract class Tile {
     public abstract int getAddingPointForThisCity(Position position);
 
     public abstract void setIfFollowerInCity(Position position);
+
+    public abstract Position getNextPositionInGameBoard(Position positionInTile);
+
+    public abstract boolean hasPath();
 }

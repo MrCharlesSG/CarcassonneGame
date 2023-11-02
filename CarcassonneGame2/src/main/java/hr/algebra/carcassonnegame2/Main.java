@@ -3,6 +3,8 @@ package hr.algebra.carcassonnegame2;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/startView.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Carcassonne Game");
+        Image icon = new Image(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon3.png").toExternalForm());
+        stage.getIcons().add(icon);
         stage.setScene(scene);
         stage.show();
     }

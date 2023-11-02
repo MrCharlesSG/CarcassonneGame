@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -45,7 +46,6 @@ public class StartController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/hr/algebra/carcassonnegame2/views/gameView.fxml"));
                 Parent root = loader.load();
-
                 Stage gameStage = new Stage();
                 gameStage.setTitle("Game");
                 gameStage.setScene(new Scene(root));
@@ -56,6 +56,19 @@ public class StartController {
         }else{
             lbErrorMessage.setText("At lest 2 players");
         }
+    }
+
+    public List<String> getNamesFromTextField(){
+        allTextField = new TextField[MAX_NUM_PLAYERS];
+        allTextField[0] = tfPlayer1;
+        allTextField[1] = tfPlayer2;
+        List<String> names = new ArrayList<>();
+        for (TextField tf: this.allTextField){
+            if(tf != null && !Objects.equals(tf.getText(), "")){
+                names.add(tf.getText());
+            }
+        }
+        return names;
     }
 
     private void initializeGame(List<String> names){
@@ -86,29 +99,13 @@ public class StartController {
                 Game.INSTANCE.initializeGame(listOfTiles, playerList, numberOfRemainingTiles, listOfRemainType);
             }
         }catch (Exception ignored) { //Cerrar App
+            closeStartView();
         }
-
     }
 
     private void closeStartView(){
         Stage stage = (Stage) tfPlayer1.getScene().getWindow();
         stage.close();
-    }
-
-    public List<String> getNamesFromTextField(){
-        allTextField = new TextField[MAX_NUM_PLAYERS];
-        allTextField[0] = tfPlayer1;
-        allTextField[1] = tfPlayer2;
-        allTextField[2] = tfPlayer3;
-        allTextField[3] = tfPlayer4;
-        allTextField[4] = tfPlayer5;
-        List<String> names = new ArrayList<>();
-        for (TextField tf: this.allTextField){
-            if(tf != null && !Objects.equals(tf.getText(), "")){
-                names.add(tf.getText());
-            }
-        }
-        return names;
     }
 
     public void loadGame(){

@@ -14,7 +14,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="365.0" prefWidth="545.0" style="-fx-background-color: #A35400;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.StartController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="365.0" prefWidth="545.0" style="-fx-background-color: #F1F5F9;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.StartController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -32,11 +32,11 @@
    <bottom>
       <AnchorPane prefHeight="63.0" prefWidth="561.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="272.0" layoutY="9.0" mnemonicParsing="false" onAction="#createNewGame" prefHeight="46.0" prefWidth="154.0" style="-fx-background-color: green;" text="New Game" textFill="WHITE">
+            <Button layoutX="272.0" layoutY="9.0" mnemonicParsing="false" onAction="#createNewGame" prefHeight="46.0" prefWidth="154.0" style="-fx-background-color: #10B981;" text="New Game" textFill="WHITE">
                <font>
                   <Font name="Maiandra GD" size="22.0" />
                </font></Button>
-               <Button contentDisplay="CENTER" layoutX="52.0" layoutY="9.0" mnemonicParsing="false" onAction="#loadGame" prefHeight="46.0" prefWidth="182.0" style="-fx-background-color: brown;" text="Load Game" textFill="WHITE">
+               <Button contentDisplay="CENTER" layoutX="52.0" layoutY="9.0" mnemonicParsing="false" onAction="#loadGame" prefHeight="46.0" prefWidth="182.0" style="-fx-background-color: #E11D48; -fx-border-radius: 20;" text="Load Game" textFill="WHITE">
                <font>
                   <Font name="Maiandra GD" size="22.0" />
                </font></Button>
@@ -74,22 +74,22 @@
    <center>
       <AnchorPane prefHeight="120.0" prefWidth="560.0" BorderPane.alignment="CENTER">
          <children>
-               <TextField fx:id="tfPlayer1" layoutX="159.0" layoutY="14.0" prefHeight="41.0" prefWidth="265.0" promptText="player 1" style="-fx-border-color: #ffd400; -fx-background-color: #A35400; -fx-text-fill: #ffd400;">
+               <TextField fx:id="tfPlayer1" layoutX="159.0" layoutY="14.0" prefHeight="41.0" prefWidth="265.0" promptText="player 1" style="-fx-border-color: #4F46E5; -fx-background-color: F8FAFC; -fx-text-fill: #4F46E5; -fx-border-radius: 20px;">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-               <Label layoutX="51.0" layoutY="14.0" prefHeight="41.0" prefWidth="101.0" text="Player 1:" textFill="#ffd400">
+               <Label layoutX="51.0" layoutY="14.0" prefHeight="41.0" prefWidth="101.0" text="Player 1:" textFill="#4f46e5">
                <font>
                   <Font name="Maiandra GD" size="24.0" />
                </font>
             </Label>
-               <TextField fx:id="tfPlayer2" layoutX="159.0" layoutY="83.0" prefHeight="41.0" prefWidth="265.0" promptText="player 2" style="-fx-text-fill: #1b00db; -fx-background-color: #A35400; -fx-border-color: #1b00db;">
+               <TextField fx:id="tfPlayer2" layoutX="159.0" layoutY="83.0" prefHeight="41.0" prefWidth="265.0" promptText="player 2" style="-fx-text-fill: #0891B2; -fx-background-color: F8FAFC; -fx-border-color: #0891B2; -fx-border-radius: 20px;">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-               <Label layoutX="52.0" layoutY="84.0" prefHeight="40.0" prefWidth="99.0" text="Player 2:" textFill="#1b00db">
+               <Label layoutX="52.0" layoutY="84.0" prefHeight="40.0" prefWidth="99.0" text="Player 2:" textFill="#0891b2">
                <font>
                   <Font name="Maiandra GD" size="24.0" />
                </font>

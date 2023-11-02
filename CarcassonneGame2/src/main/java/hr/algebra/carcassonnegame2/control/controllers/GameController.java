@@ -1,5 +1,9 @@
 package hr.algebra.carcassonnegame2.control.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hr.algebra.carcassonnegame2.factories.FactoryPlayer;
+import hr.algebra.carcassonnegame2.factories.FactoryTile;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.Game;
 import hr.algebra.carcassonnegame2.model.gameobjects.Player;
@@ -20,12 +24,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
 
+    public static int MAX_NUM_PLAYERS=5;
+    private static final String jsonFileName = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
+    private static final int numberOfFollowersPerPlayer = 7;
+    private static final double MIN_HEIGHT_COL = 10;
+    private static final double MIN_WIDTH_COL = 10;
     public TableView<Player> tvPlayers;
     public TableColumn<Player, Integer> tcFollowers;
     public GridPane gpNextTile;
@@ -38,14 +50,15 @@ public class GameController implements Initializable {
     public TableColumn<Player, String> tcPlayersName;
     public TableColumn<Player, Integer> tcPlayersPoints;
     private Position selectedPosition;
+
+    private Button selectedPositionButton;
     private Position followerPosition;
     private Button buttonWithFollower;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initPlayersInfo();
-        paintGameBoard();
-        paintNextTile();
+        updateView();
     }
 
     private void initPlayersInfo() {
@@ -67,12 +80,12 @@ public class GameController implements Initializable {
     private void paintGameBoard() {
         gpGameBoard.setGridLinesVisible(true);
         Tile[][] gameBoard = Game.INSTANCE.getGameBoard();
-        resizeGridPane(gpGameBoard, gameBoard.length, 20);
+        resizeGridPane(gpGameBoard, gameBoard.length, false);
         completeBoard(gameBoard);
     }
 
     private void paintNextTile(){
-        resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, -1);
+        resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true);
         Tile tile = Game.INSTANCE.getNextTile();
         int numberColRow = Tile.NUM_COLS_TILE;
         for (int row = 0; row < numberColRow; row++) {
@@ -83,7 +96,7 @@ public class GameController implements Initializable {
     }
 
     private  Button getTileButton(Tile tile, Position point){
-        Button btn = new Button();
+        Button btn = getButton(true);
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setMaxHeight(Double.MAX_VALUE);
         btn.setStyle(tile.getValuePosition(point).getStyle() + " -fx-background-radius: 0;" );
@@ -108,23 +121,26 @@ public class GameController implements Initializable {
                 }
             } else {
                 btn.setText("");
+                followerPosition=null;
             }
         }else{
             sendAlert("Put Follower", "You can not put more followers");
         }
     }
 
-    private void resizeGridPane(GridPane gridPane, int numberColRow, double size){
+    private void resizeGridPane(GridPane gridPane, int numberColRow, boolean isNextTile){
         gridPane.getRowConstraints().clear();
         gridPane.getColumnConstraints().clear();
         RowConstraints rowConstraints = new RowConstraints();
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        if(size>0){
-            rowConstraints.setPercentHeight(size);
-            columnConstraints.setPercentWidth(size);
-        }else{
+        if(isNextTile){
             rowConstraints.setVgrow(Priority.ALWAYS);
             columnConstraints.setHgrow(Priority.ALWAYS);
+        }else{
+            rowConstraints.setMaxHeight(MIN_HEIGHT_COL* 5);
+            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
+            rowConstraints.setMinHeight(MIN_HEIGHT_COL* 5);
+            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
         }
         for (int i = 0; i < numberColRow; i++) {
             gridPane.getColumnConstraints().add(columnConstraints);
@@ -138,24 +154,35 @@ public class GameController implements Initializable {
                 if(gameBoard[colPos][rowPos] != null){
                     Tile tile = gameBoard[colPos][rowPos];
                     GridPane gpTile = new GridPane();
-                    resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, -1);
+                    resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, true);
                     representTileInGridPane(tile, gpTile);
                     gpGameBoard.add(gpTile, colPos, rowPos);
                 }else{
-                    Button btnTile = new Button();
-                    btnTile.setPrefWidth(Double.MAX_VALUE);
-                    btnTile.setPrefHeight(Double.MAX_VALUE);
+                    Button btnTile = getButton(false);
                     int finalCol = colPos;
                     int finalRow = rowPos;
-                    btnTile.setOnAction((actionEvent -> selectTilePosition(new Position(finalCol, finalRow))));
+                    btnTile.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
+                    btnTile.setOnAction(actionEvent -> selectTilePosition(new Position(finalCol, finalRow), btnTile));
                     gpGameBoard.add(btnTile, colPos, rowPos);
                 }
             }
         }
     }
 
-    public void selectTilePosition(Position point) {
+    private Button getButton(boolean isNextTile){
+        Button btn = new Button();
+        btn.setMinHeight(MIN_HEIGHT_COL*(isNextTile ? 0.20:5));
+        btn.setMinWidth(MIN_WIDTH_COL*(isNextTile ? 0.20:5));
+        return btn;
+    }
+
+    public void selectTilePosition(Position point, Button btn) {
+        btn.setStyle("-fx-background-color: "+Game.INSTANCE.getCurrentPlayerStyle() + "; -fx-background-radius: 0;" );
+        if(selectedPositionButton!=null && !selectedPosition.equals(point)){
+            selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
+        }
         this.selectedPosition=point;
+        selectedPositionButton=btn;
     }
 
     private void representTileInGridPane(Tile tile, GridPane gridPane) {
@@ -166,7 +193,7 @@ public class GameController implements Initializable {
 
                 if(tile.isFollowerInPosition(new Position(col, row))){
                     Circle circle = new Circle(2);
-                    circle.setStyle(Game.INSTANCE.getFollowerInTileStyle(tile));
+                    circle.setStyle("-fx-fill: " + Game.INSTANCE.getFollowerInTileStyle(tile));
                     pane.getChildren().add(circle);
                     StackPane.setAlignment(circle, Pos.CENTER);
                 }
@@ -215,9 +242,7 @@ public class GameController implements Initializable {
                     if(winner!=-1){
                         endActions(winner);
                     }else{
-                        paintGameBoard();
-                        paintNextTile();
-                        tvPlayers.refresh();
+                        updateView();
                     }
                 }
             }catch (IllegalArgumentException e){
@@ -226,6 +251,12 @@ public class GameController implements Initializable {
         }else{
             sendAlert("Non Position Selected", "Select a position in grid is required");
         }
+    }
+
+    private void updateView() {
+        paintGameBoard();
+        paintNextTile();
+        tvPlayers.refresh();
     }
 
     public void getPlayerTurnAction() {

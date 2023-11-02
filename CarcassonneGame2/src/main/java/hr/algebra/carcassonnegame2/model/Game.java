@@ -17,6 +17,7 @@ public enum Game{
     static final int PENALIZATION_FOR_CHANGING_TILE =-5;
     private static final int POINTS_FOR_CITY = 2;
     private static final int POINTS_FOR_MONASTERY = 9;
+    private static final int POINTS_FOR_PATH = 1;
     private Tile[][] gameBoard;
     private List<Tile> remainingTiles;
     private Boolean[][] visitedTilesGrid;
@@ -162,29 +163,33 @@ public enum Game{
     }
     
     public boolean putTile(Position position) throws IllegalArgumentException {
-        /*
-        STEPS
-        -Ask game board if position is close to any tile
-        -Check If tile is compatible with position
-        -Ask if follower is ok
-        -Assign new tile to player
-        -Close cities, paths and monasteries, and count
-         */
-        if(this.gameBoard[position.getCol()][position.getRow()]!=null){
-            throw new IllegalArgumentException("Position all ready has a tile");
-        }
-        if(!checkPositionTileCorrect(position)){
-            throw new IllegalArgumentException("Position is not close to any other tile");
-        }
-        if(!canPutTileInPosition(position)){
-            throw new IllegalArgumentException("Tile doesn't match with the surrounding tiles");
-        }
+        checkIfPositionHasTile(position);
+        checkPositionIsCorrect(position);
+        checkIfTileMatchWithOtherTiles(position);
+        Tile newTile = putFollowerAndCreateNewTile(position);
+        setValueInPosition(gameBoard, position, newTile);
+        closeTile(newTile);
+        numberOfRemainingTiles--;
+        return true;
+    }
 
+    private void checkIfTileMatchWithOtherTiles(Position position) throws IllegalArgumentException{
+        if(!canPutTileInPosition(position)) throw new IllegalArgumentException("Tile doesn't match with the surrounding tiles");
+    }
+
+    private void checkIfPositionHasTile(Position position) throws IllegalArgumentException{
+        if(getValueOfPosition(gameBoard, position)!=null) throw new IllegalArgumentException("Position all ready has a tile");
+    }
+    private void checkPositionIsCorrect(Position position) throws IllegalArgumentException{
+        if(!checkPositionTileCorrect(position)) throw new IllegalArgumentException("Position is not close to any other tile");
+    }
+
+    private Tile putFollowerAndCreateNewTile(Position position) throws IllegalArgumentException{
         Tile newTile = new TileImpl(nextTile.getRepresentation(), position);
         nextTile.setPositionInGameBoard(position);
         if(nextTile.hasFollower()) {
             this.visitedTilesGrid = new Boolean[this.numColsGameBoard][this.numRowsGameBoard];
-            setValueOfPosition(visitedTilesGrid, position, true);
+            setValueInPosition(visitedTilesGrid, position, true);
             if (!newTile.canPutFollower(this.nextTile.getFollowerPosition())) {
                 this.nextTile.removeFollower();
                 throw new IllegalArgumentException("The follower is not correctly collocated");
@@ -193,80 +198,44 @@ public enum Game{
             playersInfo.get(currentPlayer).putFollower(position);
             this.nextTile.removeFollower();
         }
-        this.gameBoard[position.getCol()][position.getRow()] = newTile;
-        closeTile(newTile);
-        numberOfRemainingTiles--;
-        return true;
+        return newTile;
     }
 
     private void closeTile(Tile newTile) {
-        tileWithFollowerInCount=null;
-        hasPathOrCityAnEnd =false;
-        if(newTile.pathEnd() || isGameIsFinished() ){
-            visitedTilesGrid= new Boolean[numColsGameBoard][numRowsGameBoard];
-            setValueOfPosition(visitedTilesGrid, newTile.getPositionInGameBoard(), true);
-            if(newTile.getValuePosition(Tile.getCenterPosition()).isIntersection()){
-                closePathInIntersection(newTile, Tile.getLeftPosition(), Tile.getRightPosition(), newTile.getPositionInGameBoard().getPositionInLeft());
-                tileWithFollowerInCount=null;
-                hasPathOrCityAnEnd =true;
-                closePathInIntersection(newTile, Tile.getRightPosition(), Tile.getLeftPosition(), newTile.getPositionInGameBoard().getPositionInRight());
-                tileWithFollowerInCount=null;
-                hasPathOrCityAnEnd =true;
-                closePathInIntersection(newTile, Tile.getBottomPosition(), Tile.getTopPosition(), newTile.getPositionInGameBoard().getPositionInBottom());
-                tileWithFollowerInCount=null;
-                hasPathOrCityAnEnd =true;
-                closePathInIntersection(newTile, Tile.getTopPosition(), Tile.getBottomPosition(), newTile.getPositionInGameBoard().getPositionInTop());
-            }else{
-                newTile.prepareForClosingPath(null);
-                if(isGameIsFinished() && newTile.getValuePosition(newTile.getFollowerPosition()).isPath())
-                    tileWithFollowerInCount = newTile;
-                int count = newTile.countPathsForClosingPath(Tile.getCenterPosition())+1;
-                if(tileWithFollowerInCount != null && (hasPathOrCityAnEnd || isGameIsFinished())){
-                    hasBeenClosedTile(tileWithFollowerInCount, count);
-                }
-            }
-        }
-        tileWithFollowerInCount=null;
-        hasPathOrCityAnEnd =true;
-        if(newTile.hasCity()){
-            visitedTilesGrid= new Boolean[numColsGameBoard][numRowsGameBoard];
-            setValueOfPosition(visitedTilesGrid, newTile.getPositionInGameBoard(), true);
-            int count=0;
-            if(newTile.areCitiesConnected()){
-                count = newTile.countCitiesForClosingCities(newTile.getNextCityValue(Tile.getLeftPosition()));
-                closeCity(count);
-            }else{
-                int i=0;
-                Position pos = Tile.getLeftPosition();
-                do{
-                    pos = newTile.getNextCityValue(pos);
-                    count= countCloseCity(newTile, pos);
-                    closeCity(count);
-                    i++;
-                }
-                while(i<2 && pos !=  nextTile.getNextCityValue(pos));
-            }
-        }
-        if(newTile.hasMonasteryAndFollower()){
-            int counter = closeMonastery(newTile);
-            if(counter==8){
-                hasBeenClosedTile(newTile, POINTS_FOR_MONASTERY);
-            }else if(isGameIsFinished()){
-                hasBeenClosedTile(newTile, counter);
-            }
-        }
+        closeCity(newTile);
+        closePath(newTile);
+        closeMonastery(newTile);
         //See if in the surroundings there is a monastery
         checkSurroundingMonastery(newTile);
     }
 
-    private int countCloseCity(Tile newTile, Position pos) {
-        newTile.setIfFollowerInCity(pos);
-        RelativePositionGrid relative = Tile.castPositionInTileToRelative(pos);
-        Position positionForNewTile = newTile.getPositionInGameBoard().castRelativePositionToPoint(relative);
-        return countCitiesForTile(positionForNewTile, Tile.getOtherPosition(pos)) + POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
+    private void closeCity(Tile newTile) {
+        if(newTile.hasCity()){
+            prepareForClose(newTile);
+            int count=0;
+            if(newTile.areCitiesConnected()){
+                count = newTile.countCitiesForClosingCities(newTile.getNextCityValue(Tile.getLeftPosition())) + POINTS_FOR_CITY;
+                closeCityAux(count);
+            }else{
+                Position firstValue = newTile.getNextCityValue(Tile.getLeftPosition());
+                Position pos = firstValue;
+                do {
+                    count= countCloseCity(newTile, pos);
+                    closeCityAux(count);
+                    pos = newTile.getNextCityValue(pos);
+                }while (!pos.equals(firstValue));
+            }
+        }
     }
 
-    private void closeCity(int count){
+    private void prepareForClose(Tile newTile) {
+        tileWithFollowerInCount=null;
+        hasPathOrCityAnEnd =true;
+        visitedTilesGrid= new Boolean[numColsGameBoard][numRowsGameBoard];
+        setValueInPosition(visitedTilesGrid, newTile.getPositionInGameBoard(), true);
+    }
+
+    private void closeCityAux(int count){
         if(tileWithFollowerInCount !=null && (hasPathOrCityAnEnd || isGameIsFinished())){
             hasBeenClosedTile(tileWithFollowerInCount, count);
         }
@@ -274,28 +243,86 @@ public enum Game{
         hasPathOrCityAnEnd=true;
     }
 
-    private void closePathInIntersection(Tile tile, Position positionInTile, Position positionInNewTile, Position positionOfNewTile){
-        int count =0;
-        if(tile.getValuePosition(positionInTile).isPath()){
-            tile.prepareForClosingPath(positionInTile);
-            Tile newTile = getValueOfPosition(gameBoard, positionOfNewTile);
-            if(newTile != null){
-                count = newTile.countPathsForClosingPath(positionInNewTile);
-                if(tileWithFollowerInCount!=null)
-                    hasBeenClosedTile(tileWithFollowerInCount, count);
-            }
-            hasPathOrCityAnEnd=true;
+    private int countCloseCity(Tile newTile, Position pos) {
+        newTile.setIfFollowerInCity(pos);
+        return countCitiesForTile(newTile.getNextPositionInGameBoard(pos), Tile.getOtherPosition(pos)) + POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
+    }
+
+    public int countCitiesForTile(Position positionInGameBoardOfOtherTile, Position positionInsideOtherTile) {
+        Tile tile = getValueOfPosition(gameBoard, positionInGameBoardOfOtherTile);
+        if(tile!= null && getValueOfPosition(visitedTilesGrid, positionInGameBoardOfOtherTile)==null){
+            setValueInPosition(visitedTilesGrid, positionInGameBoardOfOtherTile, true);
+            return tile.countCitiesForClosingCities(positionInsideOtherTile) + POINTS_FOR_CITY;
         }
+        hasPathOrCityAnEnd=tile!=null && hasPathOrCityAnEnd;
+        return 0;
+    }
+
+    private void closePath(Tile newTile){
+        if(newTile.pathEnd()) {
+            closePathInEnd(newTile);
+        }
+        else if(newTile.hasPath()){
+            prepareForClose(newTile);
+            closeCountPaths(Tile.getCenterPosition(), newTile);
+        }
+    }
+
+    private void closePathInEnd(Tile newTile) {
+        closePathInEndAux(newTile, Tile.getLeftPosition());
+        closePathInEndAux(newTile, Tile.getRightPosition());
+        closePathInEndAux(newTile, Tile.getTopPosition());
+        closePathInEndAux(newTile, Tile.getBottomPosition());
+    }
+
+    private void closePathInEndAux(Tile tile, Position position){
+        if(tile.getValuePosition(position).isPath()){
+            prepareForClose(tile);
+            tile.prepareForClosingPath(position);
+            Tile newTile = getValueOfPosition(gameBoard, tile.getNextPositionInGameBoard(position));
+            if(newTile != null){
+                closeCountPaths(Tile.getOtherPosition(position), newTile);
+            }
+            hasPathOrCityAnEnd= newTile!=null && hasPathOrCityAnEnd;
+        }
+    }
+
+    private void closeCountPaths(Position positionInNewTile, Tile newTile) {
+        int count = newTile.countPathsForClosingPath(positionInNewTile) + POINTS_FOR_PATH;
+        if(tileWithFollowerInCount!=null && (isGameIsFinished() || hasPathOrCityAnEnd))
+            hasBeenClosedTile(tileWithFollowerInCount, count);
     }
 
     public int countPathForClosingPath(Position positionInGameBoard, Position positionInsideTile) {
         Tile tile = getValueOfPosition(gameBoard, positionInGameBoard);
         if(tile!=null && getValueOfPosition(visitedTilesGrid, positionInGameBoard)==null){
-            setValueOfPosition(visitedTilesGrid, positionInGameBoard, true);
-            return tile.countPathsForClosingPath(positionInsideTile);
+            setValueInPosition(visitedTilesGrid, positionInGameBoard, true);
+            return tile.countPathsForClosingPath(positionInsideTile) + POINTS_FOR_PATH;
         }
-        hasPathOrCityAnEnd = false;
+        hasPathOrCityAnEnd = tile!=null && hasPathOrCityAnEnd;
         return 0;
+    }
+
+    private void closeMonastery(Tile newTile) {
+        if(newTile.hasMonasteryAndFollower()){
+            int counter = closeMonasteryAux(newTile);
+            if(counter==8){
+                hasBeenClosedTile(newTile, POINTS_FOR_MONASTERY);
+            }else if(isGameIsFinished()){
+                hasBeenClosedTile(newTile, counter);
+            }
+        }
+    }
+
+    private int closeMonasteryAux(Tile tile) {
+        int counter=0, colPosition = tile.getPositionInGameBoard().getCol(), rowPosition = tile.getPositionInGameBoard().getRow();
+        for (int col = colPosition-1; col <= colPosition+1; col++) {
+            for (int row = rowPosition-1; row <= rowPosition+1; row++) {
+                if((rowPosition!=row || colPosition!=col) &&  getValueOfPosition(gameBoard, new Position(col, row))!=null)
+                        counter++;
+            }
+        }
+        return counter;
     }
 
     private void checkSurroundingMonastery(Tile tile){
@@ -305,7 +332,7 @@ public enum Game{
                 if(rowPosition!=row || colPosition!=col ){
                     Tile tileNextToTile = getValueOfPosition(gameBoard, new Position(col, row));
                     if(tileNextToTile!=null && tileNextToTile.hasMonasteryAndFollower()){
-                        int counter = closeMonastery(tileNextToTile);
+                        int counter = closeMonasteryAux(tileNextToTile);
                         if(counter==8){
                             hasBeenClosedTile(tileNextToTile, POINTS_FOR_MONASTERY);
                         }else if(isGameIsFinished()){
@@ -315,21 +342,6 @@ public enum Game{
                 }
             }
         }
-    }
-
-    private int closeMonastery(Tile tile) {
-
-        int counter=0, colPosition = tile.getPositionInGameBoard().getCol(), rowPosition = tile.getPositionInGameBoard().getRow();
-        for (int col = colPosition-1; col <= colPosition+1; col++) {
-            for (int row = rowPosition-1; row <= rowPosition+1; row++) {
-                if(rowPosition!=row || colPosition!=col ){
-                    if(getValueOfPosition(gameBoard, new Position(col, row))!=null){
-                        counter++;
-                    }
-                }
-            }
-        }
-        return counter;
     }
 
     private void hasBeenClosedTile(Tile tile, int punctuation){
@@ -406,7 +418,7 @@ public enum Game{
 
     public boolean checkPositionInTileForFollower(Position positionInGameBoard, Position positionInTile) {
         if(getValueOfPosition(visitedTilesGrid,positionInGameBoard)==null ){
-            setValueOfPosition(visitedTilesGrid, positionInGameBoard, true);
+            setValueInPosition(visitedTilesGrid, positionInGameBoard, true);
             if(getValueOfPosition(gameBoard, positionInGameBoard)!=null){
                 return getValueOfPosition(gameBoard, positionInGameBoard).canPutFollower(positionInTile);
             }
@@ -418,26 +430,12 @@ public enum Game{
         return structure[position.getCol()][position.getRow()];
     }
 
-    private <T> void setValueOfPosition(T[][] structure, Position position, T newValue) {
+    private <T> void setValueInPosition(T[][] structure, Position position, T newValue) {
         structure[position.getCol()][position.getRow()]=newValue;
     }
 
     public void setTileWithFollowerInCount(Tile tileWithFollowerInCount) {
         this.tileWithFollowerInCount = tileWithFollowerInCount;
-    }
-
-    public void setHasPathOrCityAnEnd(boolean b) {
-        hasPathOrCityAnEnd =b;
-    }
-
-    public int countCitiesForTile(Position positionInGameBoardOfOtherTile, Position positionInsideOtherTile) {
-        Tile tile = getValueOfPosition(gameBoard, positionInGameBoardOfOtherTile);
-        if(tile!= null && getValueOfPosition(visitedTilesGrid, positionInGameBoardOfOtherTile)==null){
-            setValueOfPosition(visitedTilesGrid, positionInGameBoardOfOtherTile, true);
-            return tile.countCitiesForClosingCities(positionInsideOtherTile) + POINTS_FOR_CITY;
-        }
-        hasPathOrCityAnEnd=tile!=null && hasPathOrCityAnEnd;
-        return getValueOfPosition(visitedTilesGrid, positionInGameBoardOfOtherTile)!=null && isGameIsFinished() ? POINTS_FOR_CITY:0;
     }
 
     public int finishGame() {
@@ -447,5 +445,9 @@ public enum Game{
 
     public String getFollowerInTileStyle(Tile tile) {
         return playersInfo.get(tile.getPlayerFollower()).getTextColor();
+    }
+
+    public String getCurrentPlayerStyle() {
+        return playersInfo.get(currentPlayer).getTextColor();
     }
 }

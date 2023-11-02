@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,7 +15,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
+      <MenuBar style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Game">
             <items>
@@ -40,18 +41,27 @@
         </menus>
       </MenuBar>
    </top>
+   <center>
+      <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <content>
+            <GridPane fx:id="gpGameBoard" prefHeight="371.0" prefWidth="449.0" style="-fx-border-color: F8FAFC; -fx-background-color: F8FAFC;" styleClass="scroll-pane">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+         </content>
+      </ScrollPane>
+   </center>
    <left>
-      <SplitPane dividerPositions="0.6325187969924811" orientation="VERTICAL" prefHeight="375.0" prefWidth="149.0" BorderPane.alignment="CENTER">
-        <items>
-            <TableView fx:id="tvPlayers" prefHeight="216.0" prefWidth="157.0">
-              <columns>
-                  <TableColumn fx:id="tcPlayersName" prefWidth="47.999937653541565" text="Players" />
-                  <TableColumn fx:id="tcPlayersPoints" prefWidth="40.666629791259766" text="Points" />
-                  <TableColumn fx:id="tcFollowers" prefWidth="59.33330535888672" text="Followers" />
-              </columns>
-            </TableView>
-            <GridPane fx:id="gpNextTile" layoutX="10.0" layoutY="10.0" prefHeight="124.0" prefWidth="157.0">
+      <AnchorPane prefHeight="375.0" prefWidth="122.0" style="-fx-background-color: F1F5F9;" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane fx:id="gpNextTile" layoutX="3.0" layoutY="237.0" prefHeight="124.0" prefWidth="146.0">
                <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -66,22 +76,18 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
             </GridPane>
-        </items>
-      </SplitPane>
+            <TableView fx:id="tvPlayers" prefHeight="111.0" prefWidth="151.0">
+              <columns>
+                  <TableColumn fx:id="tcPlayersName" prefWidth="47.999937653541565" text="Players" />
+                  <TableColumn fx:id="tcPlayersPoints" prefWidth="40.666629791259766" text="Points" />
+                  <TableColumn fx:id="tcFollowers" prefWidth="59.33330535888672" text="Followers" />
+              </columns>
+            </TableView>
+            <Button alignment="CENTER" contentDisplay="TOP" layoutX="5.0" layoutY="127.0" mnemonicParsing="false" onAction="#changeTileAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: brown; -fx-text-fill: white;" text="Change &#10;Tile" />
+            <Button alignment="CENTER" contentDisplay="TOP" layoutX="75.0" layoutY="176.0" mnemonicParsing="false" onAction="#putTileAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: #10B981;" text="Put&#10;Tile" textFill="WHITE" />
+            <Button alignment="CENTER" contentDisplay="TOP" layoutX="75.0" layoutY="127.0" mnemonicParsing="false" onAction="#removeFollowerAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: #E11D48; -fx-text-fill: white;" text="Remove&#10;Follower" />
+            <Button alignment="CENTER" contentDisplay="TOP" layoutX="5.0" layoutY="176.0" mnemonicParsing="false" onAction="#rotateTileAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: blue; -fx-text-fill: white;" text="Rotate&#10;Tile" />
+         </children>
+      </AnchorPane>
    </left>
-   <center>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <content>
-            <GridPane fx:id="gpGameBoard" prefHeight="371.0" prefWidth="449.0">
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-         </content>
-      </ScrollPane>
-   </center>
 </BorderPane>
