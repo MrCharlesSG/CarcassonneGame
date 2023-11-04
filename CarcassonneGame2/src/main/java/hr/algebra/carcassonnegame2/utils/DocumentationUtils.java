@@ -40,7 +40,7 @@ public class DocumentationUtils {
                         String htmlName = getFileNameConvention(file);
                         StringBuilder newCurrentFolder = new StringBuilder(currentFolder);
                         StringBuilder newContent = new StringBuilder();
-                        initContent(newContent, getTitleNameConvention(file.getName()), generateRoute(currentFolder, ICON_ROUTE));
+                        initContent(newContent, getTitleNameConvention(file.getName()), generateIconRoute(currentFolder));
                         addGoBackLink(newContent, parent, !file.isDirectory());
                         if (file.isDirectory()) {
                             addFolderToContent(content, htmlName, currentFolder);
@@ -93,7 +93,7 @@ public class DocumentationUtils {
         return fileName.substring(0, fileName.length() - 5);
     }
 
-    private static String generateRoute(StringBuilder currentFolder, String route) {
+    private static String generateIconRoute(StringBuilder currentFolder) {
         String f = File.separator;
         String filename = currentFolder.toString().replace("\\", "/");
         String[] splitFileName = filename.split("/");
@@ -102,7 +102,8 @@ public class DocumentationUtils {
         for (String st: splitFileName){
             end.append("../");
         }
-        return end + route;
+
+        return end + ICON_ROUTE;
     }
 
     private static void addFolderToContent(StringBuilder content, String fileName, StringBuilder url) {
