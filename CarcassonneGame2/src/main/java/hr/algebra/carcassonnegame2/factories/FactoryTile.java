@@ -1,15 +1,15 @@
 package hr.algebra.carcassonnegame2.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import hr.algebra.carcassonnegame2.model.Game;
 import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
 import hr.algebra.carcassonnegame2.model.gameobjects.TileElementValue;
 import hr.algebra.carcassonnegame2.model.gameobjects.TileImpl;
 
-public enum FactoryTile {
+public class FactoryTile {
 
-    INSTANCE;
-
-    public Tile createTile(JsonNode dataNode) {
+    private FactoryTile(){}
+    public static Tile createTile(JsonNode dataNode, Game game) {
         if(dataNode.isArray()){
 
             int numRowsInGrid = dataNode.size();
@@ -25,7 +25,7 @@ public enum FactoryTile {
 
                 }
             }
-            return new TileImpl(tileGrid);
+            return new TileImpl(tileGrid, game);
         }
         return null;
     }

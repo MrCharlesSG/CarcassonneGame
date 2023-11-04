@@ -4,7 +4,7 @@ import hr.algebra.carcassonnegame2.misc.Position;
 
 import java.util.TreeSet;
 
-public interface Player {
+public interface Player{
     int getPoints();
 
     String getName();

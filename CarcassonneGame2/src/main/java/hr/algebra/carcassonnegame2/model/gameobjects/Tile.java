@@ -1,12 +1,20 @@
 package hr.algebra.carcassonnegame2.model.gameobjects;
 
 import hr.algebra.carcassonnegame2.misc.Position;
+import hr.algebra.carcassonnegame2.model.Game;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
-public abstract class Tile {
+import java.io.Serial;
+import java.io.Serializable;
 
+public abstract class Tile implements Serializable {
+
+
+    @Serial
+    private static final long serialVersionUID = 3L;
     public static final int NUM_ROWS_TILE = 5;
     public static final int NUM_COLS_TILE = 5;
+    protected Game game;
 
     public abstract boolean canPutTile(Tile otherTile, RelativePositionGrid positionOfOtherTile);
 

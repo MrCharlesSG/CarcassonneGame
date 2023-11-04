@@ -6,57 +6,61 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.TreeSet;
 
-public class PlayerImpl implements Player{
+public class PlayerImpl implements Player, Serializable {
 
-    private final StringProperty name;
-    private IntegerProperty points;
-    private IntegerProperty numberOfFollowers;
+    @Serial
+    private static final long serialVersionUID = 3L;
+    private final String name;
+    private int points;
+    private int numberOfFollowers;
 
     private TreeSet<Position> followersTiles;
 
-    private String styleColor;
+    private final String styleColor;
 
     public PlayerImpl(String name, int numberOfFollowers, String styleColor){
-        this.numberOfFollowers = new SimpleIntegerProperty(numberOfFollowers);
-        this.points = new SimpleIntegerProperty(0);
-        this.name=new SimpleStringProperty(name);
+        this.numberOfFollowers = numberOfFollowers;
+        this.points = 0;
+        this.name= name;
         this.followersTiles=new TreeSet<>();
         this.styleColor=styleColor;
     }
 
     @Override
     public int getPoints() {
-        return points.get();
+        return points;
     }
 
     @Override
     public String getName() {
-        return name.get();
+        return name;
     }
 
     @Override
     public void putFollower(Position destiny) {
-        numberOfFollowers.setValue(numberOfFollowers.get()-1);
+        numberOfFollowers-=1;
         followersTiles.add(destiny);
     }
 
     @Override
     public void removeFollower(Position position) {
-        this.numberOfFollowers.setValue(numberOfFollowers.get()+1);
+        this.numberOfFollowers++;
         this.followersTiles.remove(position);
     }
 
     @Override
     public int getNumberOfFollowers() {
-        return numberOfFollowers.get();
+        return numberOfFollowers;
     }
 
     @Override
     public int addPunctuation(int punctuation) {
-        this.points.setValue(this.points.get() + punctuation);
-        return this.points.get();
+        this.points +=punctuation;
+        return this.points;
     }
 
     @Override

@@ -5,11 +5,12 @@ import hr.algebra.carcassonnegame2.model.gameobjects.Player;
 import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
 import hr.algebra.carcassonnegame2.model.gameobjects.TileImpl;
 
+import java.io.*;
 import java.util.*;
 
-public enum Game{
+public class Game implements Serializable {
 
-    INSTANCE;
+    private static final long serialVersionUID = 1L;
 
     static final int INIT_NUM_COLS_GAME_BOARD =11;
 
@@ -34,11 +35,16 @@ public enum Game{
 
     private boolean hasPathOrCityAnEnd = true;
 
-    Game(){
+    public Game(){
         this.random = new Random();
     }
 
-    
+    public Game(List<Tile> listOfTiles, List<Player> playerList, int numberOfRemainingTiles, List<Integer> listOfRemainType) {
+        this();
+        initializeGame(listOfTiles, playerList, numberOfRemainingTiles, listOfRemainType);
+    }
+
+
     public void initializeGame(List<Tile> allTiles, List<Player> players, int numberOfRemainingTiles, List<Integer> listOfRemainType){
         this.remainingTiles=allTiles;
         this.listOfRemainType=listOfRemainType;
@@ -48,7 +54,6 @@ public enum Game{
         this.gameBoard = new Tile[this.numColsGameBoard][this.numRowsGameBoard];
         this.playersInfo = players;
         this.currentPlayer = random.nextInt(this.playersInfo.size());
-        this.visitedTilesGrid = new Boolean[this.numColsGameBoard][this.numRowsGameBoard];
         putFirstTile();
         setNextTile();
     }
@@ -56,7 +61,7 @@ public enum Game{
     private void putFirstTile() {
         setNextTile();
         this.numberOfRemainingTiles--;
-        Tile newTile = new TileImpl(nextTile.getRepresentation());
+        Tile newTile = new TileImpl(nextTile.getRepresentation(), this);
         newTile.setPositionInGameBoard(new Position(INIT_NUM_COLS_GAME_BOARD /2, INIT_NUM_ROWS_GAME_BOARD /2 ));
         this.gameBoard[INIT_NUM_COLS_GAME_BOARD /2][ INIT_NUM_ROWS_GAME_BOARD /2 ] = newTile;
     }
@@ -185,7 +190,7 @@ public enum Game{
     }
 
     private Tile putFollowerAndCreateNewTile(Position position) throws IllegalArgumentException{
-        Tile newTile = new TileImpl(nextTile.getRepresentation(), position);
+        Tile newTile = new TileImpl(nextTile.getRepresentation(), position, this);
         nextTile.setPositionInGameBoard(position);
         if(nextTile.hasFollower()) {
             this.visitedTilesGrid = new Boolean[this.numColsGameBoard][this.numRowsGameBoard];
@@ -447,7 +452,7 @@ public enum Game{
         return playersInfo.get(tile.getPlayerFollower()).getTextColor();
     }
 
-    public String getCurrentPlayerStyle() {
-        return playersInfo.get(currentPlayer).getTextColor();
+    public Player getCurrentPlayer() {
+        return playersInfo.get(currentPlayer);
     }
 }

@@ -8,7 +8,8 @@ import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.Game;
 import hr.algebra.carcassonnegame2.model.gameobjects.Player;
 import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
-import hr.algebra.carcassonnegame2.model.gameobjects.TileElementValue;
+import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
+import hr.algebra.carcassonnegame2.utils.ReflectionUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,73 +21,133 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.awt.Desktop;
 
 public class GameController implements Initializable {
-
-    public static int MAX_NUM_PLAYERS=5;
     private static final String jsonFileName = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
     private static final int numberOfFollowersPerPlayer = 7;
+    private static final String saveFileName = "data.ser";
+    private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
     private static final double MIN_HEIGHT_COL = 10;
     private static final double MIN_WIDTH_COL = 10;
-    public TableView<Player> tvPlayers;
-    public TableColumn<Player, Integer> tcFollowers;
     public GridPane gpNextTile;
     public MenuItem miNewGame;
     public MenuItem miLoadGame;
     public GridPane gpGameBoard;
     public MenuItem miRotateTile;
     public MenuItem miPutTile;
-    private ObservableList<Player> players;
-    public TableColumn<Player, String> tcPlayersName;
-    public TableColumn<Player, Integer> tcPlayersPoints;
+    public Label lbPlayer1Name;
+    public Label lbPlayer1Pts;
+    public Label lbPlayer1Followers;
+    public Label lbPlayer2Name;
+    public Label lbPlayer2Followers;
+    public Label lbPlayer2Pts;
+    public Circle spherePlayer1;
+    public Circle spherePlayer2;
     private Position selectedPosition;
 
+    private Game game;
     private Button selectedPositionButton;
     private Position followerPosition;
     private Button buttonWithFollower;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        initializeAux();
+    }
+
+    private void initializeAux(){
+        initializeGame();
         initPlayersInfo();
         updateView();
     }
 
-    private void initPlayersInfo() {
-        initTableCells();
-        players = FXCollections.observableArrayList(Game.INSTANCE.getPlayersInfo());
-        showPlayers();
+    private void initializeGame(){
+        try{
+            //Create players
+            List<Player> playerList = new ArrayList<>();
+            for(String name: GameController.playersNames){
+                playerList.add(FactoryPlayer.createPlayer(name, numberOfFollowersPerPlayer));
+            }
+
+            //Create list of tiles from json
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(new File(jsonFileName));
+            int numberOfRemainingTiles = rootNode.get("total").asInt();
+            JsonNode typesNode = rootNode.get("types");
+
+            List<Tile> listOfTiles = new ArrayList<Tile>();
+            List<Integer> listOfRemainType = new ArrayList<Integer>();
+
+            if(typesNode.isArray()){
+                for (JsonNode typeNode: typesNode){
+                    listOfRemainType.add( typeNode.get("total").asInt());
+                    Tile tile = FactoryTile.createTile(typeNode.get("data"), game);
+                    if(tile != null){
+                        listOfTiles.add(tile);
+                    }
+                }
+                game = new Game(listOfTiles, playerList, numberOfRemainingTiles, listOfRemainType);
+            }
+        }catch (Exception ignored) { //Cerrar App
+            closeThisView();
+        }
     }
 
-    private void initTableCells() {
-        tcPlayersName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tcPlayersPoints.setCellValueFactory(new PropertyValueFactory<>("points"));
-        tcFollowers.setCellValueFactory(new PropertyValueFactory<>("numberOfFollowers"));
-    }
-
-    private void showPlayers() {
-        tvPlayers.setItems(players);
-    }
 
     private void paintGameBoard() {
         gpGameBoard.setGridLinesVisible(true);
-        Tile[][] gameBoard = Game.INSTANCE.getGameBoard();
+        Tile[][] gameBoard = game.getGameBoard();
         resizeGridPane(gpGameBoard, gameBoard.length, false);
         completeBoard(gameBoard);
     }
 
+    private void initPlayersInfo() {
+        List<Player> list=game.getPlayersInfo();
+        initPlayersInfoAux(list.get(0));
+        initPlayersInfoAux(list.get(1));
+        updatePlayersInfo();
+    }
+
+    private void initPlayersInfoAux(Player player){
+        if(game.getPlayersInfo().getFirst().getName().equals(player.getName())){
+            lbPlayer1Name.setText(player.getName());
+            spherePlayer1.setStyle("-fx-fill: "+ player.getTextColor());
+        }else {
+            lbPlayer2Name.setText(player.getName());
+            spherePlayer2.setStyle("-fx-fill: "+ player.getTextColor());
+        }
+    }
+
+    private void updatePlayersInfo(){
+        List<Player> list = game.getPlayersInfo();
+        for(Player player: list){
+            updatePlayerInfo(player);
+            updatePlayerInfo(player);
+        }
+    }
+
+    private void updatePlayerInfo(Player player) {
+        if(game.getPlayersInfo().getFirst().getName().equals(player.getName())){
+            lbPlayer1Pts.setText(player.getPoints() + "");
+            lbPlayer1Followers.setText(player.getNumberOfFollowers() + "");
+        }else {
+            lbPlayer2Pts.setText(player.getPoints() + "");
+            lbPlayer2Followers.setText(player.getNumberOfFollowers() + "");
+        }
+    }
+
     private void paintNextTile(){
         resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true);
-        Tile tile = Game.INSTANCE.getNextTile();
+        Tile tile = game.getNextTile();
         int numberColRow = Tile.NUM_COLS_TILE;
         for (int row = 0; row < numberColRow; row++) {
             for (int col = 0; col < numberColRow; col++) {
@@ -105,15 +166,15 @@ public class GameController implements Initializable {
     }
 
     private void selectPosition(Position point, Button btn){
-        if(Game.INSTANCE.canPlayerPutAFollower()) {
+        if(game.canPlayerPutAFollower()) {
             if (followerPosition == null) {
-                if (Game.INSTANCE.canPutFollowerInPosition(point)) {
+                if (game.canPutFollowerInPosition(point)) {
                     btn.setText("o");
                     followerPosition = point;
                     buttonWithFollower = btn;
                 }
             } else if (!point.equals(followerPosition)) {
-                if (Game.INSTANCE.canPutFollowerInPosition(point)) {
+                if (game.canPutFollowerInPosition(point)) {
                     buttonWithFollower.setText("");
                     buttonWithFollower = btn;
                     buttonWithFollower.setText("o");
@@ -177,7 +238,7 @@ public class GameController implements Initializable {
     }
 
     public void selectTilePosition(Position point, Button btn) {
-        btn.setStyle("-fx-background-color: "+Game.INSTANCE.getCurrentPlayerStyle() + "; -fx-background-radius: 0;" );
+        btn.setStyle("-fx-background-color: "+game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;" );
         if(selectedPositionButton!=null && !selectedPosition.equals(point)){
             selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
         }
@@ -193,7 +254,7 @@ public class GameController implements Initializable {
 
                 if(tile.isFollowerInPosition(new Position(col, row))){
                     Circle circle = new Circle(2);
-                    circle.setStyle("-fx-fill: " + Game.INSTANCE.getFollowerInTileStyle(tile));
+                    circle.setStyle("-fx-fill: " + game.getFollowerInTileStyle(tile));
                     pane.getChildren().add(circle);
                     StackPane.setAlignment(circle, Pos.CENTER);
                 }
@@ -204,23 +265,12 @@ public class GameController implements Initializable {
     }
 
     public void newGameAction() {
-        closeThisView();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/hr/algebra/carcassonnegame2/views/startView.fxml"));
-            Parent root = loader.load();
-
-            Stage gameStage = new Stage();
-            gameStage.setTitle("New Carcassonne Game");
-            gameStage.setScene(new Scene(root));
-            gameStage.show();
-        } catch (IOException e) {
-            sendAlert("Something Went wrong", e.getMessage());
-        }
+        initializeAux();
     }
 
     public void rotateTileAction() {
         followerPosition=null;
-        Game.INSTANCE.rotateNextTile();
+        game.rotateNextTile();
         paintNextTile();
     }
 
@@ -233,11 +283,11 @@ public class GameController implements Initializable {
         if(selectedPosition!=null){
             try {
                 if(followerPosition!=null){
-                    Game.INSTANCE.getNextTile().setFollower(-1, followerPosition);
+                    game.getNextTile().setFollower(-1, followerPosition);
                     followerPosition=null;
                 }
-                if(Game.INSTANCE.putTile(selectedPosition)){
-                    int winner = Game.INSTANCE.update();
+                if(game.putTile(selectedPosition)){
+                    int winner = game.update();
                     //Game has finish
                     if(winner!=-1){
                         endActions(winner);
@@ -256,15 +306,15 @@ public class GameController implements Initializable {
     private void updateView() {
         paintGameBoard();
         paintNextTile();
-        tvPlayers.refresh();
+        updatePlayersInfo();
     }
 
     public void getPlayerTurnAction() {
-        sendAlert("Player Turn", Game.INSTANCE.getNextPlayerInfo());
+        sendAlert("Player Turn", game.getNextPlayerInfo());
     }
 
     public void remainingTilesAction() {
-        sendAlert("Remaining Tiles", "Left: " + Game.INSTANCE.getRemainingTiles() + " tiles and " + Game.INSTANCE.getRemainingTypes() + " different types");
+        sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types");
     }
 
     public void sendAlert(String title, String message){
@@ -277,18 +327,18 @@ public class GameController implements Initializable {
 
     public void removeFollowerAction() {
         this.followerPosition=null;
-        Game.INSTANCE.getNextTile().removeFollower();
+        game.getNextTile().removeFollower();
         paintNextTile();
     }
 
     public void changeTileAction() {
-        Game.INSTANCE.changeNextTile();
+        game.changeNextTile();
         paintNextTile();
-        tvPlayers.refresh();
+        updatePlayersInfo();
     }
 
     public void finishGameAction() {
-        int winner = Game.INSTANCE.finishGame();
+        int winner = game.finishGame();
         endActions(winner);
     }
 
@@ -296,8 +346,53 @@ public class GameController implements Initializable {
         if(winner==6){
             sendAlert("Tie", "Bad TIE");
         }else{
-            sendAlert("Winner", "The winner is....\n"+"With " + Game.INSTANCE.getPlayersInfo().get(winner).getPoints() + " points...\n" + Game.INSTANCE.getPlayersInfo().get(winner).getName());
+            sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName());
         }
         closeThisView();
+    }
+
+    public void onLoadGame() {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(saveFileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            game = (Game) objectInputStream.readObject();
+            objectInputStream.close();
+            updateView();
+            sendAlert("Load", "Successfully Loaded Game Status");
+        }catch (IOException | ClassNotFoundException e){
+            sendAlert("Error", e.getMessage());
+        }
+    }
+
+    public void onSaveGame() {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(saveFileName);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(game);
+            objectOutputStream.close();
+            sendAlert("Save", "Successfully Saved Game Status");
+        }catch (IOException e){
+            sendAlert("Error", e.getMessage());
+        }
+    }
+
+    public void onGenerateDocumentation(ActionEvent actionEvent) {
+        try {
+            DocumentationUtils.generateDocumentation();
+            sendAlert("Success", "Successfully created the documentation");
+        }catch (IllegalArgumentException e){
+            sendAlert("Error", "Something went wrong");
+        }
+    }
+
+    public void onReadDocumentation(ActionEvent actionEvent) {
+
+            try {
+                File htmlFile = new File("project-documentation/index.html"); // Reemplaza con la ruta de tu archivo HTML
+                Desktop.getDesktop().browse(htmlFile.toURI());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
     }
 }

@@ -2,9 +2,15 @@ package hr.algebra.carcassonnegame2.misc;
 
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
-public class Position implements Comparable<Position> {
-    private int col;
-    private int row;
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Position implements Comparable<Position>, Serializable {
+    private final int col;
+    private final int row;
+
+    @Serial
+    private static final long serialVersionUID = 2L;
 
     public Position(int col, int row){
         this.col=col;

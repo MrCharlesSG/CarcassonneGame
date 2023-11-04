@@ -12,20 +12,25 @@ public final class TileImpl extends Tile {
     private Position positionInGameBoard;
     private boolean citiesAreConnected=false;
 
-    public TileImpl(TileElementValue[][] tileGrid) {
+    public TileImpl(TileElementValue[][] tileGrid, Game game) {
         this.tileGrid = tileGrid;
+        this.game = game;
         this.removeFollower();
         initializeCitiesAreConnected();
     }
 
-    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard) {
-        this(representation);
+    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard, Game game) {
+        this(representation, game);
         this.positionInGameBoard=positionInGameBoard;
+    }
+
+    public TileImpl(Tile tile){
+        this(tile.getRepresentation(), tile.getPositionInGameBoard(), tile.game);
     }
 
     @Override
     public Tile catchTile() {
-        return new TileImpl(tileGrid);
+        return new TileImpl(this);
     }
 
     @Override
@@ -103,14 +108,14 @@ public final class TileImpl extends Tile {
              if( !isFollowerInPathSection(position)){
                  if(position.getRow()==NUM_ROWS_TILE/2){
                      if(position.getCol()<NUM_COLS_TILE/2)
-                         return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
+                         return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
                      else
-                         return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
+                         return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
                  }else {
                      if (position.getRow() < NUM_ROWS_TILE / 2)
-                         return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
+                         return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
                      else
-                         return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM), getTopPosition());
+                         return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM), getTopPosition());
                  }
              }
              return false;
@@ -159,13 +164,13 @@ public final class TileImpl extends Tile {
                     return false;
                 }
                 if (position.getCol() == 0) {
-                    return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
+                    return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
                 } else if (position.getCol() == NUM_COLS_TILE - 1) {
-                    return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
+                    return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
                 } else if (position.getRow() == 0) {
-                    return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
+                    return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
                 }
-                return Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM),getTopPosition());
+                return game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM),getTopPosition());
             }
 
         }
@@ -182,16 +187,16 @@ public final class TileImpl extends Tile {
     private boolean callGameToCheckOtherTile(TileElementValue value){
         boolean returnValue = true;
         if(getValuePosition(getTopPosition()).areTileElementsCompatible(value)){
-            returnValue = Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
+            returnValue = game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.TOP), getBottomPosition());
         }
         if(getValuePosition(getBottomPosition()).areTileElementsCompatible(value) && returnValue){
-            returnValue = Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM), getTopPosition());
+            returnValue = game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.BOTTOM), getTopPosition());
         }
         if(getValuePosition(getRightPosition()).areTileElementsCompatible(value) && returnValue){
-            returnValue = Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
+            returnValue = game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.RIGHT), getLeftPosition());
         }
         if(getValuePosition(getLeftPosition()).areTileElementsCompatible(value) && returnValue){
-            returnValue = Game.INSTANCE.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
+            returnValue = game.checkPositionInTileForFollower(this.positionInGameBoard.castRelativePositionToPoint(RelativePositionGrid.LEFT), getRightPosition());
         }
         return returnValue;
     }
@@ -280,14 +285,14 @@ public final class TileImpl extends Tile {
     private int countPathForClosingPathAux(Position position, Position positionOtherTileGB, Position positionInOtherTile){
         if(getValuePosition(position).isPath()){
             setTileWithFollowerInPath(position);
-            return Game.INSTANCE.countPathForClosingPath(positionOtherTileGB, positionInOtherTile);
+            return game.countPathForClosingPath(positionOtherTileGB, positionInOtherTile);
         }
         return 0;
     }
     @Override
     public void setTileWithFollowerInPath(Position position){
         if(isFollowerInPathSection(position)){
-            Game.INSTANCE.setTileWithFollowerInCount(this);
+            game.setTileWithFollowerInCount(this);
         }
     }
 
@@ -312,12 +317,12 @@ public final class TileImpl extends Tile {
     @Override
     public void prepareForClosingPath(Position position) {
         if(isFollowerInPathSection(position)){
-            Game.INSTANCE.setTileWithFollowerInCount(this);
+            game.setTileWithFollowerInCount(this);
         }
     }
 
     private void setTileWithFollowerInCity() {
-        Game.INSTANCE.setTileWithFollowerInCount(this);
+        game.setTileWithFollowerInCount(this);
     }
 
     private int getCountCityFromOtherTiles() {
@@ -332,7 +337,7 @@ public final class TileImpl extends Tile {
     }
 
     private int getCountOfCitiesFromOneTile(Position positionInGameBoardForOtherTile, Position positionInsideOtherTile) {
-        return Game.INSTANCE.countCitiesForTile(positionInGameBoardForOtherTile, positionInsideOtherTile);
+        return game.countCitiesForTile(positionInGameBoardForOtherTile, positionInsideOtherTile);
     }
 
 
