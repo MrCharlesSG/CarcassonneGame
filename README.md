@@ -35,3 +35,17 @@ For puting a follower the user can (before puting tile) select the position in t
 The user is able to create a new game and to finish the current game.
 
 <img width="447" alt="CarcassoneGame3V1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/82919644-69b8-43cf-a283-c21c3fddd88a">
+
+### Project Explanation
+#### Introduction
+The project implements the singleton pattern for the factories and the game logic. The MVC as the structure and the xml for the views.
+##### Initialization
+When the controlers initialize, it initialize the class `Game` with all the tiles, the players and other crucial information.
+##### Factories
+- The player factory its simple, just recieve an string witch is the name of the player, and create the instance with some other usefull information as the `max_number_of_followers`.
+- The tile factory is quite complex. The type of the tyles are writen in a JSON, so this factorie recieves a JSON object and create the tile with that information. The typo of tile comes from the layout it has.
+##### Game Logic
+- Put Tile:
+ - The game receive from controler the position in where the tile is going to be and the position of the follower inside the new tile.
+ - Basically the game see if the position is connected with any other tile, if the tile matches with all the surroundings tiles.
+-  
