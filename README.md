@@ -8,14 +8,18 @@ Althought there are buttons for saving or loading the game, this functionalities
 ### Interface
 #### Login
 In the V1 the max users are 2, but it is just a temporaly solution becaouse one of the verison 3 will start implement networking.
+
 <img width="407" alt="CarcassoneLoginV1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/cc5c9321-7326-4ed9-8cb4-0a4bf72b7d19">
+
 #### Game
 ##### Game Information
 The user is able to see:
  - Whose turn is it
  - The number of remaining tiles in the "bag" and diferent types
 In the side bar user will see the next tile and the puntuation and remaining followers of each user
+
 <img width="446" alt="CarcassoneGame1V1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/3c9a2a4a-0565-4f3c-9b14-f7b9907bcfcb">
+
 ##### Actions
 There are two ways of making actions in this version, one is throw the buttons in the side panel and the other is trow the menu bar. User can:
   - Put Tile in the selected position
@@ -27,7 +31,7 @@ For puting a follower the user can (before puting tile) select the position in t
 
 ![CarcassoneGame2V1-2](https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/24faba13-548a-4013-a4c5-69a527503a16)
 
-
 ##### Game
 The user is able to create a new game and to finish the current game.
+
 <img width="447" alt="CarcassoneGame3V1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/82919644-69b8-43cf-a283-c21c3fddd88a">
