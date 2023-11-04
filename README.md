@@ -24,7 +24,10 @@ There are two ways of making actions in this version, one is throw the buttons i
   - Rotate the next tile
 For selecting a position in the gameboard the user just nead to click on it in the gameboard view. The selected position has the backgroun color of the player.
 For puting a follower the user can (before puting tile) select the position in the next tile view.
-![CarcassoneGame2V1](https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/aac65872-17cc-4530-8b36-115818ea226c)
+
+![CarcassoneGame2V1-2](https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/24faba13-548a-4013-a4c5-69a527503a16)
+
+
 ##### Game
 The user is able to create a new game and to finish the current game.
 <img width="447" alt="CarcassoneGame3V1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/82919644-69b8-43cf-a283-c21c3fddd88a">
