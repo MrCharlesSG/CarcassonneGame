@@ -31,6 +31,23 @@ For puting a follower the user can (before puting tile) select the position in t
 ![CarcassoneGame2V1-2](https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/24faba13-548a-4013-a4c5-69a527503a16)
 
 ##### Game
-The user is able to create a new game and to finish the current game.
+The user is able to create a new game or to finish the current game.
 
 <img width="447" alt="CarcassoneGame3V1" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/82919644-69b8-43cf-a283-c21c3fddd88a">
+
+## Version 2
+In this version I have fixed some bugs from the previous version. 
+### Load and Save
+There has been also implemented the save and load, where the user will be able to save the game status and loaded when ever he wants. This functionality is implemented with serialization what will be usefull in next version where networking will be enabled.
+
+<img width="447" alt="CarcassoneGame4V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/cd03a2e8-74ed-4816-a60a-01373ee37d27">
+<img width="446" alt="CarcassoneGame3V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/e2cd73ab-2804-432c-94b4-26eb76b7a0b5">
+<img width="447" alt="CarcassoneGame2V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/5153c1da-2ec6-446a-98ba-d7b9aedf2fd4">
+<img width="449" alt="CarcassoneGame1V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/89caf881-e987-431d-acd4-903e9cb57b28">
+
+### Documentation
+Through the app, the user can autogenerate the documentation of the project. This documentation is nothing but the package structure and all the fields, methods and contructors of every class (except Main class). The user can also visit this documentation clicking the button read, who will drive him to the browser and the index.html of this documentation.
+
+<img width="445" alt="CarcassoneGame5V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/a9c35946-cef4-4369-b70e-85d99437ba2f">
+<img width="645" alt="CarcassoneGame6V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d269e37a-9003-41a1-8abf-d4d874b02b5f">
+<img width="865" alt="CarcassoneGame7V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/f6ddae20-f1d9-4926-98c2-e165122b64a5">
