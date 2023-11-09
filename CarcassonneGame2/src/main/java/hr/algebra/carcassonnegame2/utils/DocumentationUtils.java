@@ -1,11 +1,11 @@
 package hr.algebra.carcassonnegame2.utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
-public class DocumentationUtils {
+
+public final class DocumentationUtils {
+
+    private static final String LAUNCHER_CLASS ="Main.java";
     private static final String MAIN_FILE_NAME ="index";
     private static final String MAIN_FOLDER_NAME = "project-documentation";
     private static final String DOCUMENTATION_TITLE = "Carcassonne Game Documentation";
@@ -19,7 +19,7 @@ public class DocumentationUtils {
         File project = new File(PROJECT_NAME);
         createFolder(MAIN_FOLDER_NAME);
         StringBuilder sb = new StringBuilder();
-        initContent(sb, DOCUMENTATION_TITLE, ICON_ROUTE);
+        initContent(sb, DOCUMENTATION_TITLE, "../"+ICON_ROUTE);
         generateDocumentationAux(project, new StringBuilder(MAIN_FOLDER_NAME), sb, MAIN_FILE_NAME +".html");
         closeContent(sb, new StringBuilder(MAIN_FOLDER_NAME), MAIN_FILE_NAME);
     }
@@ -36,7 +36,7 @@ public class DocumentationUtils {
             File[] projectFiles = project.listFiles();
             if(projectFiles!=null) {
                 for (File file : projectFiles) {
-                    if(!file.getName().equals("Main.java")) {
+                    if(!file.getName().equals(LAUNCHER_CLASS)) {
                         String htmlName = getFileNameConvention(file);
                         StringBuilder newCurrentFolder = new StringBuilder(currentFolder);
                         StringBuilder newContent = new StringBuilder();
@@ -47,6 +47,7 @@ public class DocumentationUtils {
                             generateDocumentationAux(file, newCurrentFolder.append(File.separator).append(file.getName()), newContent, htmlName+".html");
                         } else {
                             addFileToContent(content, htmlName, currentFolder);
+                            addLineCounter(file, newContent);
                             generateDocumentationForNotDir(file, newCurrentFolder, newContent);
                         }
                         closeContent(newContent, new StringBuilder(currentFolder + (file.isDirectory() ? File.separator + htmlName : "")), htmlName);
@@ -56,6 +57,30 @@ public class DocumentationUtils {
         }
     }
 
+    private static void addLineCounter(File file, StringBuilder newContent) {
+        newContent.append("<h4>Number of lines: <em>").append(countLinesOfFile(file)).append("</em></h4>");
+    }
+
+    private static int countLinesOfFile(File file){
+        try {
+            BufferedReader lector = new BufferedReader(new FileReader(file));
+            int counter = 0;
+
+            while (lector.readLine() != null) {
+                counter++;
+            }
+
+            lector.close();
+            return counter;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not read the file");
+        }
+    }
+
+    private static String getFileNameConvention(File file){
+        String name = file.isDirectory()? file.getName():getJavaFileName(file.getName());
+        return Character.toLowerCase(name.charAt(0)) + name.substring(1);
+    }
 
 
     private static void initContent(StringBuilder sb, String title, String iconRoute) {
@@ -78,11 +103,6 @@ public class DocumentationUtils {
         if(parent != null){
             content.append("<a href=\"").append(!isFile? ".."+File.separator:"").append(parent).append("\">").append("../").append("</a><br>");
         }
-    }
-
-    private static String getFileNameConvention(File file){
-        String name = file.isDirectory()? file.getName():getJavaFileName(file.getName());
-        return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
     private static String getTitleNameConvention(String fileName){

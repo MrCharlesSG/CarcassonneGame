@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ReflectionUtils {
+public final class ReflectionUtils {
     private ReflectionUtils() {
     }
 

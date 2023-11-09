@@ -99,7 +99,7 @@ public final class TileImpl extends Tile {
             if (positionValue.isCity()) {
                 return checkPutFollowerInCity(position);
             }
-            return true;//if isMonastery
+            return true;
         }
         return false;
     }

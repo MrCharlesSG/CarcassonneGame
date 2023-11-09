@@ -9,6 +9,7 @@ import hr.algebra.carcassonnegame2.model.Game;
 import hr.algebra.carcassonnegame2.model.gameobjects.Player;
 import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
+import hr.algebra.carcassonnegame2.views.GameViewsManager;
 import hr.algebra.carcassonnegame2.utils.ReflectionUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,8 +37,6 @@ public class GameController implements Initializable {
     private static final int numberOfFollowersPerPlayer = 7;
     private static final String saveFileName = "data.ser";
     private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
-    private static final double MIN_HEIGHT_COL = 10;
-    private static final double MIN_WIDTH_COL = 10;
     public GridPane gpNextTile;
     public MenuItem miNewGame;
     public MenuItem miLoadGame;
@@ -52,12 +51,7 @@ public class GameController implements Initializable {
     public Label lbPlayer2Pts;
     public Circle spherePlayer1;
     public Circle spherePlayer2;
-    private Position selectedPosition;
-
     private Game game;
-    private Button selectedPositionButton;
-    private Position followerPosition;
-    private Button buttonWithFollower;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -106,8 +100,8 @@ public class GameController implements Initializable {
     private void paintGameBoard() {
         gpGameBoard.setGridLinesVisible(true);
         Tile[][] gameBoard = game.getGameBoard();
-        resizeGridPane(gpGameBoard, gameBoard.length, false);
-        completeBoard(gameBoard);
+        GameViewsManager.resizeGridPane(gpGameBoard, gameBoard.length, false);
+        GameViewsManager.completeBoard(gameBoard,gpGameBoard, game);
     }
 
     private void initPlayersInfo() {
@@ -145,133 +139,14 @@ public class GameController implements Initializable {
         }
     }
 
-    private void paintNextTile(){
-        resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true);
-        Tile tile = game.getNextTile();
-        int numberColRow = Tile.NUM_COLS_TILE;
-        for (int row = 0; row < numberColRow; row++) {
-            for (int col = 0; col < numberColRow; col++) {
-                gpNextTile.add(getTileButton(tile, new Position(col, row)), col, row);
-            }
-        }
-    }
-
-    private  Button getTileButton(Tile tile, Position point){
-        Button btn = getButton(true);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setMaxHeight(Double.MAX_VALUE);
-        btn.setStyle(tile.getValuePosition(point).getStyle() + " -fx-background-radius: 0;" );
-        btn.setOnAction((actionEvent -> selectPosition(point, btn)));
-        return btn;
-    }
-
-    private void selectPosition(Position point, Button btn){
-        if(game.canPlayerPutAFollower()) {
-            if (followerPosition == null) {
-                if (game.canPutFollowerInPosition(point)) {
-                    btn.setText("o");
-                    followerPosition = point;
-                    buttonWithFollower = btn;
-                }
-            } else if (!point.equals(followerPosition)) {
-                if (game.canPutFollowerInPosition(point)) {
-                    buttonWithFollower.setText("");
-                    buttonWithFollower = btn;
-                    buttonWithFollower.setText("o");
-                    followerPosition = point;
-                }
-            } else {
-                btn.setText("");
-                followerPosition=null;
-            }
-        }else{
-            sendAlert("Put Follower", "You can not put more followers");
-        }
-    }
-
-    private void resizeGridPane(GridPane gridPane, int numberColRow, boolean isNextTile){
-        gridPane.getRowConstraints().clear();
-        gridPane.getColumnConstraints().clear();
-        RowConstraints rowConstraints = new RowConstraints();
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        if(isNextTile){
-            rowConstraints.setVgrow(Priority.ALWAYS);
-            columnConstraints.setHgrow(Priority.ALWAYS);
-        }else{
-            rowConstraints.setMaxHeight(MIN_HEIGHT_COL* 5);
-            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
-            rowConstraints.setMinHeight(MIN_HEIGHT_COL* 5);
-            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
-        }
-        for (int i = 0; i < numberColRow; i++) {
-            gridPane.getColumnConstraints().add(columnConstraints);
-            gridPane.getRowConstraints().add(rowConstraints);
-        }
-    }
-
-    private void completeBoard(Tile[][] gameBoard) {
-        for (int colPos = 0; colPos < gameBoard.length; colPos++) {
-            for (int rowPos = 0; rowPos < gameBoard[colPos].length; rowPos++) {
-                if(gameBoard[colPos][rowPos] != null){
-                    Tile tile = gameBoard[colPos][rowPos];
-                    GridPane gpTile = new GridPane();
-                    resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, true);
-                    representTileInGridPane(tile, gpTile);
-                    gpGameBoard.add(gpTile, colPos, rowPos);
-                }else{
-                    Button btnTile = getButton(false);
-                    int finalCol = colPos;
-                    int finalRow = rowPos;
-                    btnTile.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
-                    btnTile.setOnAction(actionEvent -> selectTilePosition(new Position(finalCol, finalRow), btnTile));
-                    gpGameBoard.add(btnTile, colPos, rowPos);
-                }
-            }
-        }
-    }
-
-    private Button getButton(boolean isNextTile){
-        Button btn = new Button();
-        btn.setMinHeight(MIN_HEIGHT_COL*(isNextTile ? 0.20:5));
-        btn.setMinWidth(MIN_WIDTH_COL*(isNextTile ? 0.20:5));
-        return btn;
-    }
-
-    public void selectTilePosition(Position point, Button btn) {
-        btn.setStyle("-fx-background-color: "+game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;" );
-        if(selectedPositionButton!=null && !selectedPosition.equals(point)){
-            selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
-        }
-        this.selectedPosition=point;
-        selectedPositionButton=btn;
-    }
-
-    private void representTileInGridPane(Tile tile, GridPane gridPane) {
-        gridPane.setGridLinesVisible(true);
-        for (int col = 0; col < 5; col++) {
-            for (int row = 0; row < 5; row++) {
-                StackPane pane = new StackPane();
-
-                if(tile.isFollowerInPosition(new Position(col, row))){
-                    Circle circle = new Circle(2);
-                    circle.setStyle("-fx-fill: " + game.getFollowerInTileStyle(tile));
-                    pane.getChildren().add(circle);
-                    StackPane.setAlignment(circle, Pos.CENTER);
-                }
-                pane.setStyle(tile.getValuePosition(new Position(col, row)).getStyle());
-                gridPane.add(pane, col, row);
-            }
-        }
-    }
-
     public void newGameAction() {
         initializeAux();
     }
 
     public void rotateTileAction() {
-        followerPosition=null;
+        GameViewsManager.setFollowerPosition(null);
         game.rotateNextTile();
-        paintNextTile();
+        GameViewsManager.paintNextTile(gpNextTile, game);
     }
 
     public void closeThisView() {
@@ -280,13 +155,13 @@ public class GameController implements Initializable {
     }
 
     public void putTileAction() {
-        if(selectedPosition!=null){
+        if(GameViewsManager.getSelectedPosition()!=null){
             try {
-                if(followerPosition!=null){
-                    game.getNextTile().setFollower(-1, followerPosition);
-                    followerPosition=null;
+                if(GameViewsManager.getFollowerPosition()!=null){
+                    game.getNextTile().setFollower(-1, GameViewsManager.getFollowerPosition());
+                    GameViewsManager.setFollowerPosition(null);
                 }
-                if(game.putTile(selectedPosition)){
+                if(game.putTile(GameViewsManager.getSelectedPosition())){
                     int winner = game.update();
                     //Game has finish
                     if(winner!=-1){
@@ -296,44 +171,36 @@ public class GameController implements Initializable {
                     }
                 }
             }catch (IllegalArgumentException e){
-               sendAlert("Something went wrong", e.getMessage());
+               GameViewsManager.sendAlert("Something went wrong", e.getMessage());
             }
         }else{
-            sendAlert("Non Position Selected", "Select a position in grid is required");
+            GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required");
         }
     }
 
     private void updateView() {
         paintGameBoard();
-        paintNextTile();
+        GameViewsManager.paintNextTile(gpNextTile, game);
         updatePlayersInfo();
     }
 
     public void getPlayerTurnAction() {
-        sendAlert("Player Turn", game.getNextPlayerInfo());
+        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo());
     }
 
     public void remainingTilesAction() {
-        sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types");
-    }
-
-    public void sendAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        GameViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types");
     }
 
     public void removeFollowerAction() {
-        this.followerPosition=null;
+        GameViewsManager.setFollowerPosition(null);
         game.getNextTile().removeFollower();
-        paintNextTile();
+        GameViewsManager.paintNextTile(gpNextTile, game);
     }
 
     public void changeTileAction() {
         game.changeNextTile();
-        paintNextTile();
+        GameViewsManager.paintNextTile(gpNextTile, game);
         updatePlayersInfo();
     }
 
@@ -344,9 +211,9 @@ public class GameController implements Initializable {
 
     private void endActions(int winner) {
         if(winner==6){
-            sendAlert("Tie", "Bad TIE");
+            GameViewsManager.sendAlert("Tie", "Bad TIE");
         }else{
-            sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName());
+            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName());
         }
         closeThisView();
     }
@@ -358,9 +225,9 @@ public class GameController implements Initializable {
             game = (Game) objectInputStream.readObject();
             objectInputStream.close();
             updateView();
-            sendAlert("Load", "Successfully Loaded Game Status");
+            GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status");
         }catch (IOException | ClassNotFoundException e){
-            sendAlert("Error", e.getMessage());
+            GameViewsManager.sendAlert("Error", e.getMessage());
         }
     }
 
@@ -370,18 +237,18 @@ public class GameController implements Initializable {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(game);
             objectOutputStream.close();
-            sendAlert("Save", "Successfully Saved Game Status");
+            GameViewsManager.sendAlert("Save", "Successfully Saved Game Status");
         }catch (IOException e){
-            sendAlert("Error", e.getMessage());
+            GameViewsManager.sendAlert("Error", e.getMessage());
         }
     }
 
     public void onGenerateDocumentation(ActionEvent actionEvent) {
         try {
             DocumentationUtils.generateDocumentation();
-            sendAlert("Success", "Successfully created the documentation");
+            GameViewsManager.sendAlert("Success", "Successfully created the documentation");
         }catch (IllegalArgumentException e){
-            sendAlert("Error", "Something went wrong");
+            GameViewsManager.sendAlert("Error", "Something went wrong");
         }
     }
 
