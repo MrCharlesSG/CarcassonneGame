@@ -9,10 +9,12 @@ module hr.algebra.carcassonnegame2 {
     exports hr.algebra.carcassonnegame2;
     exports hr.algebra.carcassonnegame2.model;
     opens hr.algebra.carcassonnegame2.model to javafx.fxml;
-    exports hr.algebra.carcassonnegame2.model.gameobjects;
-    opens hr.algebra.carcassonnegame2.model.gameobjects to javafx.fxml;
     exports hr.algebra.carcassonnegame2.control.controllers;
     opens hr.algebra.carcassonnegame2.control.controllers to javafx.fxml;
     exports hr.algebra.carcassonnegame2.misc;
     opens hr.algebra.carcassonnegame2.misc to javafx.fxml;
+    opens hr.algebra.carcassonnegame2.model.gameobjects.player to javafx.fxml;
+    exports hr.algebra.carcassonnegame2.model.gameobjects.player;
+    opens hr.algebra.carcassonnegame2.model.gameobjects.tile to javafx.fxml;
+    exports hr.algebra.carcassonnegame2.model.gameobjects.tile;
 }

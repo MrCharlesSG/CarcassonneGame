@@ -1,26 +1,14 @@
 package hr.algebra.carcassonnegame2.control.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import hr.algebra.carcassonnegame2.factories.FactoryPlayer;
-import hr.algebra.carcassonnegame2.factories.FactoryTile;
-import hr.algebra.carcassonnegame2.misc.Position;
+import hr.algebra.carcassonnegame2.factories.GameFactory;
+import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.Player;
-import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
+import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
 import hr.algebra.carcassonnegame2.views.GameViewsManager;
-import hr.algebra.carcassonnegame2.utils.ReflectionUtils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -33,7 +21,11 @@ import java.util.ResourceBundle;
 import java.awt.Desktop;
 
 public class GameController implements Initializable {
-    private static final String jsonFileName = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
+    private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
+    private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
+    private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
+    private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
+    private static final String jsonFileName = jsonFileNamePath;
     private static final int numberOfFollowersPerPlayer = 7;
     private static final String saveFileName = "data.ser";
     private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
@@ -52,91 +44,36 @@ public class GameController implements Initializable {
     public Circle spherePlayer1;
     public Circle spherePlayer2;
     private Game game;
+    private GameViewsManager gameViewsManager;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeAux();
     }
 
-    private void initializeAux(){
+    private void initializeAux() {
         initializeGame();
-        initPlayersInfo();
+        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards());
         updateView();
+    }
+
+    public List<ScoreboardUnit> getPlayersScoreboards(){
+        List<ScoreboardUnit> list = new ArrayList<>();
+        list.add(new ScoreboardUnit(lbPlayer1Name, lbPlayer1Pts, lbPlayer1Followers, spherePlayer1));
+        list.add(new ScoreboardUnit(lbPlayer2Name, lbPlayer2Pts, lbPlayer2Followers, spherePlayer2));
+        return list;
     }
 
     private void initializeGame(){
         try{
-            //Create players
-            List<Player> playerList = new ArrayList<>();
-            for(String name: GameController.playersNames){
-                playerList.add(FactoryPlayer.createPlayer(name, numberOfFollowersPerPlayer));
-            }
-
-            //Create list of tiles from json
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(new File(jsonFileName));
-            int numberOfRemainingTiles = rootNode.get("total").asInt();
-            JsonNode typesNode = rootNode.get("types");
-
-            List<Tile> listOfTiles = new ArrayList<Tile>();
-            List<Integer> listOfRemainType = new ArrayList<Integer>();
-
-            if(typesNode.isArray()){
-                for (JsonNode typeNode: typesNode){
-                    listOfRemainType.add( typeNode.get("total").asInt());
-                    Tile tile = FactoryTile.createTile(typeNode.get("data"), game);
-                    if(tile != null){
-                        listOfTiles.add(tile);
-                    }
-                }
-                game = new Game(listOfTiles, playerList, numberOfRemainingTiles, listOfRemainType);
-            }
-        }catch (Exception ignored) { //Cerrar App
+           game = GameFactory.createGame(playersNames, jsonFileName, numberOfFollowersPerPlayer);
+        }catch (IllegalArgumentException ignored) { //Cerrar App
             closeThisView();
         }
     }
 
-
-    private void paintGameBoard() {
-        gpGameBoard.setGridLinesVisible(true);
-        Tile[][] gameBoard = game.getGameBoard();
-        GameViewsManager.resizeGridPane(gpGameBoard, gameBoard.length, false);
-        GameViewsManager.completeBoard(gameBoard,gpGameBoard, game);
-    }
-
-    private void initPlayersInfo() {
-        List<Player> list=game.getPlayersInfo();
-        initPlayersInfoAux(list.get(0));
-        initPlayersInfoAux(list.get(1));
-        updatePlayersInfo();
-    }
-
-    private void initPlayersInfoAux(Player player){
-        if(game.getPlayersInfo().getFirst().getName().equals(player.getName())){
-            lbPlayer1Name.setText(player.getName());
-            spherePlayer1.setStyle("-fx-fill: "+ player.getTextColor());
-        }else {
-            lbPlayer2Name.setText(player.getName());
-            spherePlayer2.setStyle("-fx-fill: "+ player.getTextColor());
-        }
-    }
-
-    private void updatePlayersInfo(){
-        List<Player> list = game.getPlayersInfo();
-        for(Player player: list){
-            updatePlayerInfo(player);
-            updatePlayerInfo(player);
-        }
-    }
-
-    private void updatePlayerInfo(Player player) {
-        if(game.getPlayersInfo().getFirst().getName().equals(player.getName())){
-            lbPlayer1Pts.setText(player.getPoints() + "");
-            lbPlayer1Followers.setText(player.getNumberOfFollowers() + "");
-        }else {
-            lbPlayer2Pts.setText(player.getPoints() + "");
-            lbPlayer2Followers.setText(player.getNumberOfFollowers() + "");
-        }
+    private void updatePlayersInfo() {
+        gameViewsManager.updateScoreboard();
     }
 
     public void newGameAction() {
@@ -144,9 +81,9 @@ public class GameController implements Initializable {
     }
 
     public void rotateTileAction() {
-        GameViewsManager.setFollowerPosition(null);
+        gameViewsManager.resetFollowerPosition();
         game.rotateNextTile();
-        GameViewsManager.paintNextTile(gpNextTile, game);
+        gameViewsManager.paintNextTile(gpNextTile);
     }
 
     public void closeThisView() {
@@ -155,15 +92,14 @@ public class GameController implements Initializable {
     }
 
     public void putTileAction() {
-        if(GameViewsManager.getSelectedPosition()!=null){
+        if(gameViewsManager.getSelectedPosition()!=null){
             try {
-                if(GameViewsManager.getFollowerPosition()!=null){
-                    game.getNextTile().setFollower(-1, GameViewsManager.getFollowerPosition());
-                    GameViewsManager.setFollowerPosition(null);
+                if(gameViewsManager.getFollowerPosition()!=null){
+                    game.getNextTile().setFollower(-1, gameViewsManager.getFollowerPosition());
+                    gameViewsManager.resetFollowerPosition();
                 }
-                if(game.putTile(GameViewsManager.getSelectedPosition())){
+                if(game.putTile(gameViewsManager.getSelectedPosition())){
                     int winner = game.update();
-                    //Game has finish
                     if(winner!=-1){
                         endActions(winner);
                     }else{
@@ -171,36 +107,36 @@ public class GameController implements Initializable {
                     }
                 }
             }catch (IllegalArgumentException e){
-               GameViewsManager.sendAlert("Something went wrong", e.getMessage());
+                GameViewsManager.sendAlert("Something went wrong", e.getMessage(), Alert.AlertType.ERROR);
             }
         }else{
-            GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required");
+            GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
         }
     }
 
     private void updateView() {
-        paintGameBoard();
-        GameViewsManager.paintNextTile(gpNextTile, game);
+        gameViewsManager.paintGameBoard(gpGameBoard);
+        gameViewsManager.paintNextTile(gpNextTile);
         updatePlayersInfo();
     }
 
     public void getPlayerTurnAction() {
-        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo());
+        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
     }
 
     public void remainingTilesAction() {
-        GameViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types");
+        GameViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types", Alert.AlertType.INFORMATION);
     }
 
     public void removeFollowerAction() {
-        GameViewsManager.setFollowerPosition(null);
+        gameViewsManager.resetFollowerPosition();
         game.getNextTile().removeFollower();
-        GameViewsManager.paintNextTile(gpNextTile, game);
+        gameViewsManager.paintNextTile(gpNextTile);
     }
 
     public void changeTileAction() {
         game.changeNextTile();
-        GameViewsManager.paintNextTile(gpNextTile, game);
+        gameViewsManager.paintNextTile(gpNextTile);
         updatePlayersInfo();
     }
 
@@ -211,9 +147,9 @@ public class GameController implements Initializable {
 
     private void endActions(int winner) {
         if(winner==6){
-            GameViewsManager.sendAlert("Tie", "Bad TIE");
+            GameViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
         }else{
-            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName());
+            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName(), Alert.AlertType.INFORMATION);
         }
         closeThisView();
     }
@@ -225,9 +161,9 @@ public class GameController implements Initializable {
             game = (Game) objectInputStream.readObject();
             objectInputStream.close();
             updateView();
-            GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status");
+            GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
         }catch (IOException | ClassNotFoundException e){
-            GameViewsManager.sendAlert("Error", e.getMessage());
+            GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -237,23 +173,22 @@ public class GameController implements Initializable {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(game);
             objectOutputStream.close();
-            GameViewsManager.sendAlert("Save", "Successfully Saved Game Status");
+            GameViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
         }catch (IOException e){
-            GameViewsManager.sendAlert("Error", e.getMessage());
+            GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public void onGenerateDocumentation(ActionEvent actionEvent) {
         try {
             DocumentationUtils.generateDocumentation();
-            GameViewsManager.sendAlert("Success", "Successfully created the documentation");
+            GameViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
         }catch (IllegalArgumentException e){
-            GameViewsManager.sendAlert("Error", "Something went wrong");
+            GameViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
         }
     }
 
     public void onReadDocumentation(ActionEvent actionEvent) {
-
             try {
                 File htmlFile = new File("project-documentation/index.html"); // Reemplaza con la ruta de tu archivo HTML
                 Desktop.getDesktop().browse(htmlFile.toURI());

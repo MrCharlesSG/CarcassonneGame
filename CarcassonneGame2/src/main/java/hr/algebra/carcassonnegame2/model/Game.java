@@ -1,15 +1,20 @@
 package hr.algebra.carcassonnegame2.model;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.gameobjects.Player;
-import hr.algebra.carcassonnegame2.model.gameobjects.Tile;
-import hr.algebra.carcassonnegame2.model.gameobjects.TileImpl;
+import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
+import hr.algebra.carcassonnegame2.model.gameobjects.tile.Tile;
+import hr.algebra.carcassonnegame2.model.gameobjects.tile.TileImpl;
+import hr.algebra.carcassonnegame2.utils.TileUtils;
 
 import java.io.*;
 import java.util.*;
 
+import static hr.algebra.carcassonnegame2.utils.GridUtils.getValueOfPosition;
+import static hr.algebra.carcassonnegame2.utils.GridUtils.setValueInPosition;
+
 public class Game implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     static final int INIT_NUM_COLS_GAME_BOARD =11;
@@ -39,20 +44,18 @@ public class Game implements Serializable {
         this.random = new Random();
     }
 
-    public Game(List<Tile> listOfTiles, List<Player> playerList, int numberOfRemainingTiles, List<Integer> listOfRemainType) {
+    public Game(List<Player> players, int numberOfRemainingTiles) {
         this();
-        initializeGame(listOfTiles, playerList, numberOfRemainingTiles, listOfRemainType);
+        this.numberOfRemainingTiles = numberOfRemainingTiles;
+        this.playersInfo = players;
     }
 
-
-    public void initializeGame(List<Tile> allTiles, List<Player> players, int numberOfRemainingTiles, List<Integer> listOfRemainType){
+    public void initializeGame(List<Tile> allTiles, List<Integer> listOfRemainType){
         this.remainingTiles=allTiles;
         this.listOfRemainType=listOfRemainType;
-        this.numberOfRemainingTiles = numberOfRemainingTiles;
         this.numColsGameBoard= INIT_NUM_COLS_GAME_BOARD;
         this.numRowsGameBoard= INIT_NUM_ROWS_GAME_BOARD;
         this.gameBoard = new Tile[this.numColsGameBoard][this.numRowsGameBoard];
-        this.playersInfo = players;
         this.currentPlayer = random.nextInt(this.playersInfo.size());
         putFirstTile();
         setNextTile();
@@ -168,8 +171,8 @@ public class Game implements Serializable {
     }
     
     public boolean putTile(Position position) throws IllegalArgumentException {
-        checkIfPositionHasTile(position);
         checkPositionIsCorrect(position);
+        checkIfPositionHasTile(position);
         checkIfTileMatchWithOtherTiles(position);
         Tile newTile = putFollowerAndCreateNewTile(position);
         setValueInPosition(gameBoard, position, newTile);
@@ -250,7 +253,7 @@ public class Game implements Serializable {
 
     private int countCloseCity(Tile newTile, Position pos) {
         newTile.setIfFollowerInCity(pos);
-        return countCitiesForTile(newTile.getNextPositionInGameBoard(pos), Tile.getOtherPosition(pos)) + POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
+        return countCitiesForTile(newTile.getNextPositionInGameBoard(pos), TileUtils.getOtherPosition(pos)) + POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
     }
 
     public int countCitiesForTile(Position positionInGameBoardOfOtherTile, Position positionInsideOtherTile) {
@@ -286,7 +289,7 @@ public class Game implements Serializable {
             tile.prepareForClosingPath(position);
             Tile newTile = getValueOfPosition(gameBoard, tile.getNextPositionInGameBoard(position));
             if(newTile != null){
-                closeCountPaths(Tile.getOtherPosition(position), newTile);
+                closeCountPaths(TileUtils.getOtherPosition(position), newTile);
             }
             hasPathOrCityAnEnd= newTile!=null && hasPathOrCityAnEnd;
         }
@@ -431,19 +434,13 @@ public class Game implements Serializable {
         return true;
     }
 
-    private <T> T getValueOfPosition(T[][] structure, Position position) {
-        return structure[position.getCol()][position.getRow()];
-    }
-
-    private <T> void setValueInPosition(T[][] structure, Position position, T newValue) {
-        structure[position.getCol()][position.getRow()]=newValue;
-    }
-
     public void setTileWithFollowerInCount(Tile tileWithFollowerInCount) {
         this.tileWithFollowerInCount = tileWithFollowerInCount;
     }
 
     public int finishGame() {
+
+
         this.numberOfRemainingTiles=0;
         return update();
     }

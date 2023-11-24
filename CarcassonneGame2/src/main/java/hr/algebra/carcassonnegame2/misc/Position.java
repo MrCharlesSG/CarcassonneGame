@@ -5,7 +5,7 @@ import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class Position implements Comparable<Position>, Serializable {
+public final class Position implements Comparable<Position>, Serializable {
     private final int col;
     private final int row;
 
