@@ -15,13 +15,15 @@ public final class DocumentationUtils {
             "    <link rel=\"icon\" href=\"%s\" type=\"image/x-icon\">\n" +
             "    <title>%s</title>\n" +
             "</head>";
+    private static final String PACKAGE_FILE_CONVENTION = "Package";
+
     public static void generateDocumentation() throws IllegalArgumentException{
         File project = new File(PROJECT_NAME);
         createFolder(MAIN_FOLDER_NAME);
         StringBuilder sb = new StringBuilder();
         initContent(sb, DOCUMENTATION_TITLE, "../"+ICON_ROUTE);
         generateDocumentationAux(project, new StringBuilder(MAIN_FOLDER_NAME), sb, MAIN_FILE_NAME +".html");
-        closeContent(sb, new StringBuilder(MAIN_FOLDER_NAME), MAIN_FILE_NAME);
+        closeContent(sb, new StringBuilder(MAIN_FOLDER_NAME), MAIN_FILE_NAME, false);
     }
 
     private static void createFolder(String folderName) {
@@ -44,13 +46,13 @@ public final class DocumentationUtils {
                         addGoBackLink(newContent, parent, !file.isDirectory());
                         if (file.isDirectory()) {
                             addFolderToContent(content, htmlName, currentFolder);
-                            generateDocumentationAux(file, newCurrentFolder.append(File.separator).append(file.getName()), newContent, htmlName+".html");
+                            generateDocumentationAux(file, newCurrentFolder.append(File.separator).append(file.getName()), newContent, htmlName+PACKAGE_FILE_CONVENTION+".html");
                         } else {
                             addFileToContent(content, htmlName, currentFolder);
                             addLineCounter(file, newContent);
                             generateDocumentationForNotDir(file, newCurrentFolder, newContent);
                         }
-                        closeContent(newContent, new StringBuilder(currentFolder + (file.isDirectory() ? File.separator + htmlName : "")), htmlName);
+                        closeContent(newContent, new StringBuilder(currentFolder + (file.isDirectory() ? File.separator + htmlName : "")), htmlName, file.isDirectory());
                     }
                 }
             }
@@ -89,9 +91,9 @@ public final class DocumentationUtils {
         sb.append("<html>").append(HEADERS.formatted(iconRoute, pageName)).append("<h1>").append(title).append("</h1>");
     }
 
-    private static void closeContent(StringBuilder sb, StringBuilder url, String fileName) {
+    private static void closeContent(StringBuilder sb, StringBuilder url, String fileName, boolean isPackage) {
         sb.append("</html>");
-        String aux = url + File.separator + fileName + ".html";
+        String aux = url + File.separator + fileName + (isPackage? PACKAGE_FILE_CONVENTION:"") + ".html";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(aux))) {
             writer.write(sb.toString());
         } catch (IOException e) {
@@ -127,7 +129,7 @@ public final class DocumentationUtils {
     }
 
     private static void addFolderToContent(StringBuilder content, String fileName, StringBuilder url) {
-        content.append("<a href=\"").append(fileName).append(File.separator).append(fileName).append(".html\">").append("\uD83D\uDDC0:   ").append(getTitleNameConvention(fileName)).append("</a><br>");
+        content.append("<a href=\"").append(fileName).append(File.separator).append(fileName).append(PACKAGE_FILE_CONVENTION).append(".html\">").append("\uD83D\uDDC0:   ").append(getTitleNameConvention(fileName)).append("</a><br>");
     }
 
     private static void addFileToContent(StringBuilder content, String fileName, StringBuilder currentFolder) {
