@@ -1,8 +1,7 @@
 package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

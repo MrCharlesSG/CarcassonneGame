@@ -17,4 +17,6 @@ module hr.algebra.carcassonnegame2 {
     exports hr.algebra.carcassonnegame2.model.player;
     opens hr.algebra.carcassonnegame2.model.tile to javafx.fxml;
     exports hr.algebra.carcassonnegame2.model.tile;
+    opens hr.algebra.carcassonnegame2.model.game to javafx.fxml;
+    exports hr.algebra.carcassonnegame2.model.game;
 }

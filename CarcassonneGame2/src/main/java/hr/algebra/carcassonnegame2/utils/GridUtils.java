@@ -22,4 +22,15 @@ public class GridUtils {
         }
         return newGrid;
     }
+    public static <T> T[][] resizeGrid(T[][] grid, T[][] newGrid){
+        assert(grid.length< newGrid.length
+                && grid.length>0 && grid[0].length< newGrid[0].length);
+        int numCols = grid.length, numRows = grid[0].length;
+        int newNumColumns = newGrid.length, newNumRows = newGrid[0].length,
+                yOffset = (newNumRows - numRows) / 2,xOffset = (newNumColumns - numCols) / 2;
+        for (int i = 0; i < numCols; i++) {
+            System.arraycopy(grid[i], 0, newGrid[i + xOffset], yOffset, numRows);
+        }
+        return newGrid;
+    }
 }

@@ -1,6 +1,6 @@
 package hr.algebra.carcassonnegame2.views;
 
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;

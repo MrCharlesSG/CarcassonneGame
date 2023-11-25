@@ -1,8 +1,7 @@
 package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
 
 import java.util.List;

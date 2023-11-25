@@ -1,7 +1,7 @@
 package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
 import java.io.Serial;
@@ -10,12 +10,16 @@ import java.io.Serializable;
 public abstract class Tile implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 2L;
     public static final int NUM_ROWS_TILE = 5;
     public static final int NUM_COLS_TILE = 5;
-    protected GameWorld game;
+    protected static GameWorld game;
     protected TileElementValue[][] tileGrid;
 
+    public static void initializeTiles(GameWorld game){
+        Tile.game=game;
+        TileManagement.initializeTileManager(game);
+    }
 
     public abstract boolean canPutTile(Tile otherTile, RelativePositionGrid positionOfOtherTile);
 

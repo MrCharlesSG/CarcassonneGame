@@ -1,7 +1,7 @@
 package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
@@ -14,22 +14,20 @@ public final class TileImpl extends Tile {
     private final TileManagement tilePathManager;
     private final TileManagement tileCityManager;
 
-    public TileImpl(TileElementValue[][] tileGrid, GameWorld game) {
+    public TileImpl(TileElementValue[][] tileGrid) {
         this.tileGrid = tileGrid;
-        this.game = game;
         this.removeFollower();
-        TileManagement.initializeTileManager(game);
         tilePathManager = TileManagement.getInstance(TileElementValue.PATH, this);
         tileCityManager = TileManagement.getInstance(TileElementValue.CITY, this);
     }
 
-    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard, GameWorld game) {
-        this(representation, game);
+    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard) {
+        this(representation);
         this.positionInGameBoard=positionInGameBoard;
     }
 
     public TileImpl(Tile tile){
-        this(tile.getRepresentation(), tile.getPositionInGameBoard(), tile.game);
+        this(tile.getRepresentation(), tile.getPositionInGameBoard());
     }
 
     @Override
@@ -45,6 +43,7 @@ public final class TileImpl extends Tile {
 
     @Override
     public boolean canPutTile(Tile otherTile, RelativePositionGrid positionFromOtherTile) {
+        if(otherTile==null) return false;
         if(positionFromOtherTile == RelativePositionGrid.RIGHT){
             return getValuePosition(getLeftPosition()).areTileElementsCompatible(otherTile.getValuePosition(getRightPosition()));
         }

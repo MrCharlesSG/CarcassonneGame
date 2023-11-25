@@ -2,7 +2,7 @@ package hr.algebra.carcassonnegame2.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.Game;
+import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import hr.algebra.carcassonnegame2.model.tile.TileElementValue;
 import hr.algebra.carcassonnegame2.model.tile.TileImpl;
@@ -11,7 +11,7 @@ import hr.algebra.carcassonnegame2.utils.GridUtils;
 public class TileFactory {
 
     private TileFactory(){}
-    public static Tile createTile(JsonNode dataNode, Game game) {
+    public static Tile createTile(JsonNode dataNode) {
         if(dataNode.isArray()){
 
             int numRowsInGrid = dataNode.size();
@@ -26,7 +26,7 @@ public class TileFactory {
                     GridUtils.setValueInPosition(tileGrid, new Position(col, row), el);
                 }
             }
-            return new TileImpl(tileGrid, game);
+            return new TileImpl(tileGrid);
         }
         return null;
     }

@@ -6,7 +6,7 @@ import hr.algebra.carcassonnegame2.utils.TileUtils;
 
 import static hr.algebra.carcassonnegame2.utils.TileUtils.getOtherPosition;
 
-public class TileCityManagement extends TileManagement {
+class TileCityManagement extends TileManagement {
     public TileCityManagement(Tile tile) {
         super(tile);
         tile.setCitiesConnected(initializeCitiesAreConnected());

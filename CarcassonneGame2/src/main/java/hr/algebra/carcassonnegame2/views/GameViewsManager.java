@@ -2,16 +2,11 @@ package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.util.List;
-import java.util.Objects;
 
 public class GameViewsManager {
     private final ScoreboardView scoreBoardView;

@@ -1,16 +1,16 @@
 package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-public abstract class TileManagement implements Serializable {
+abstract class TileManagement implements Serializable {
     @Serial
-    private static final long serialVersionUID = 10L;
+    private static final long serialVersionUID = 4L;
 
     protected Tile tile;
     protected static GameWorld game;

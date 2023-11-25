@@ -1,26 +1,26 @@
-package hr.algebra.carcassonnegame2.model;
+package hr.algebra.carcassonnegame2.model.game;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 
+import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.List;
 
 public interface GameWorld extends Serializable {
-    void initializeGame(List<Tile> allTiles, List<Integer> listOfRemainType);
-
-    void setNextTile();
-
+    int INIT_NUM_COLS_GAME_BOARD =11;
+    int INIT_NUM_ROWS_GAME_BOARD =11;
+    int PENALIZATION_FOR_CHANGING_TILE =-5;
+    int POINTS_FOR_CITY = 2;
+    int POINTS_FOR_MONASTERY = 9;
+    int POINTS_FOR_PATH = 1;
     void changeNextTile();
-
-    boolean isGameIsFinished();
+    void initializeGame(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType);
 
     List<Player> getPlayersInfo();
 
     Tile[][] getGameBoard();
-
-    Tile getNextTile();
 
     List<Integer> update();
 
@@ -30,11 +30,7 @@ public interface GameWorld extends Serializable {
 
     int countPathForClosingPath(Position positionInGameBoard, Position positionInsideTile);
 
-    boolean checkPositionTileCorrect(Position position);
-
     void rotateNextTile();
-
-    void setNextPlayer();
 
     boolean canPutFollowerInPosition(Position position);
 
@@ -55,4 +51,6 @@ public interface GameWorld extends Serializable {
     String getFollowerInTileStyle(Tile tile);
 
     Player getCurrentPlayer();
+
+    Tile getNextTile();
 }

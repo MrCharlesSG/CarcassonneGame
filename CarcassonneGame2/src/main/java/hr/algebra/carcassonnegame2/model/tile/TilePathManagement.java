@@ -3,7 +3,7 @@ package hr.algebra.carcassonnegame2.model.tile;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
-public final class TilePathManagement extends TileManagement {
+final class TilePathManagement extends TileManagement {
     public TilePathManagement(Tile tile) {
         super(tile);
     }

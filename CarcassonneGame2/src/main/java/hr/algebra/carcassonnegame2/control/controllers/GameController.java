@@ -2,8 +2,8 @@ package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.factories.GameFactory;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.game.Game;
+import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
 import hr.algebra.carcassonnegame2.views.GameViewsManager;
 import javafx.event.ActionEvent;
