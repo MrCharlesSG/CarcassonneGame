@@ -1,4 +1,4 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
@@ -6,11 +6,9 @@ import hr.algebra.carcassonnegame2.utils.TileUtils;
 
 import static hr.algebra.carcassonnegame2.utils.TileUtils.getOtherPosition;
 
-public class TileCityManager extends TileTypeManager {
-    private final Position followerPosition;
-    public TileCityManager(Tile tile) {
+public class TileCityManagement extends TileManagement {
+    public TileCityManagement(Tile tile) {
         super(tile);
-        followerPosition = tile.getFollowerPosition();
         tile.setCitiesConnected(initializeCitiesAreConnected());
     }
 
@@ -26,11 +24,11 @@ public class TileCityManager extends TileTypeManager {
     @Override
     public boolean checkPutFollowerInCity(Position position) {
         if(getValuePosition(CENTER).isCity()){
-            return (followerPosition == null || !getValuePosition(followerPosition).isCity())
+            return (tile.getFollowerPosition() == null || !getValuePosition(tile.getFollowerPosition()).isCity())
                     && callGameToCheckOtherTile(TileElementValue.CITY);
         }else{
             if (tile.areCitiesConnected()) {
-                return (followerPosition == null || !getValuePosition(followerPosition).isCity())
+                return (tile.getFollowerPosition() == null || !getValuePosition(tile.getFollowerPosition()).isCity())
                         && callGameToCheckOtherTile(TileElementValue.CITY);
             } else {
                 if(isFollowerInCity(position)){
@@ -61,7 +59,7 @@ public class TileCityManager extends TileTypeManager {
 
     @Override
     public int countCitiesForClosingCities(Position position) {
-        if (followerPosition != null && getValuePosition(followerPosition).isCity()) {
+        if (tile.getFollowerPosition() != null && getValuePosition(tile.getFollowerPosition()).isCity()) {
             setTileWithFollowerInCity();
         }
         return getAddingPointForThisCity(position) + (tile.areCitiesConnected() ? getCountCityFromOtherTiles():0);

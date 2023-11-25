@@ -1,8 +1,8 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.player;
+package hr.algebra.carcassonnegame2.model.player;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 
-import java.util.TreeSet;
+import java.util.List;
 
 public interface Player{
     int getPoints();
@@ -17,7 +17,7 @@ public interface Player{
 
     int addPunctuation(int punctuation);
 
-    TreeSet<Position> getPositionsOfFollowers();
+    List<Position> getPositionsOfFollowers();
 
     String getTextColor();
 }

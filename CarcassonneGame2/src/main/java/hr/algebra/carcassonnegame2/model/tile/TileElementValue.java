@@ -1,4 +1,4 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import java.io.Serial;
 import java.io.Serializable;

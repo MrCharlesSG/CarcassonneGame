@@ -1,27 +1,27 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
-public final class TilePathManager extends TileTypeManager {
-    public TilePathManager(Tile tile) {
+public final class TilePathManagement extends TileManagement {
+    public TilePathManagement(Tile tile) {
         super(tile);
     }
 
     @Override
     public boolean checkPutFollowerInPath(Position position) {
-        if(getValuePosition(Tile.getCenterPosition()).isIntersection()){
+        if(getValuePosition(CENTER).isIntersection()){
             if( !isFollowerInPathSection(position)){
                 if(position.getRow()==NUM_ROWS_TILE/2){
                     if(position.getCol()<NUM_COLS_TILE/2)
-                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.LEFT), Tile.getRightPosition());
+                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.LEFT), RIGHT);
                     else
-                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.RIGHT), Tile.getLeftPosition());
+                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.RIGHT), LEFT);
                 }else {
                     if (position.getRow() < NUM_ROWS_TILE / 2)
-                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.TOP), Tile.getBottomPosition());
+                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.TOP), BOTTOM);
                     else
-                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.BOTTOM), Tile.getTopPosition());
+                        return game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.BOTTOM), TOP);
                 }
             }
         }else{
@@ -35,11 +35,11 @@ public final class TilePathManager extends TileTypeManager {
     @Override
     public int countPathsForClosingPath(Position position) {
         if(tile.pathEnd()) {
-            tile.setTileWithFollowerInPath(position);
-            return 1;
+            setTileWithFollowerInPath(position);
+            return 0;
         }else{
             int counter = 0;
-            tile.setTileWithFollowerInPath(position);
+            setTileWithFollowerInPath(position);
             if(!position.equals(LEFT) || position.equals(CENTER)) counter += countPathForClosingPathAux(LEFT.getPositionInRight(), tile.getPositionInGameBoard().getPositionInLeft(), RIGHT);
             if(!position.equals(RIGHT) || position.equals(CENTER)) counter += countPathForClosingPathAux(RIGHT.getPositionInLeft(), tile.getPositionInGameBoard().getPositionInRight(), LEFT);
             if(!position.equals(TOP) || position.equals(CENTER)) counter += countPathForClosingPathAux(TOP.getPositionInBottom(), tile.getPositionInGameBoard().getPositionInTop(), BOTTOM);
@@ -94,7 +94,7 @@ public final class TilePathManager extends TileTypeManager {
 
     private int countPathForClosingPathAux(Position position, Position positionOtherTileGB, Position positionInOtherTile){
         if(getValuePosition(position).isPath()){
-            tile.setTileWithFollowerInPath(position);
+            setTileWithFollowerInPath(position);
             return game.countPathForClosingPath(positionOtherTileGB, positionInOtherTile);
         }
         return 0;

@@ -1,7 +1,7 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.Game;
+import hr.algebra.carcassonnegame2.model.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
 import java.io.Serial;
@@ -13,7 +13,7 @@ public abstract class Tile implements Serializable {
     private static final long serialVersionUID = 3L;
     public static final int NUM_ROWS_TILE = 5;
     public static final int NUM_COLS_TILE = 5;
-    protected Game game;
+    protected GameWorld game;
     protected TileElementValue[][] tileGrid;
 
 
@@ -74,8 +74,6 @@ public abstract class Tile implements Serializable {
     public abstract int countPathsForClosingPath(Position position);
 
     public abstract boolean pathEnd();
-
-    public abstract void setTileWithFollowerInPath(Position position);
 
     public abstract int countCitiesForClosingCities(Position position);
 

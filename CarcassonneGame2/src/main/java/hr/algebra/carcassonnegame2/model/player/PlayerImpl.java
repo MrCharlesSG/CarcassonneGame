@@ -1,10 +1,11 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.player;
+package hr.algebra.carcassonnegame2.model.player;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerImpl implements Player, Serializable {
 
@@ -14,7 +15,7 @@ public class PlayerImpl implements Player, Serializable {
     private int points;
     private int numberOfFollowers;
 
-    private TreeSet<Position> followersTiles;
+    private final List<Position> followersTiles;
 
     private final String styleColor;
 
@@ -22,7 +23,7 @@ public class PlayerImpl implements Player, Serializable {
         this.numberOfFollowers = numberOfFollowers;
         this.points = 0;
         this.name= name;
-        this.followersTiles=new TreeSet<>();
+        this.followersTiles=new ArrayList<>();
         this.styleColor=styleColor;
     }
 
@@ -60,7 +61,7 @@ public class PlayerImpl implements Player, Serializable {
     }
 
     @Override
-    public TreeSet<Position> getPositionsOfFollowers() {
+    public List<Position> getPositionsOfFollowers() {
         return followersTiles;
     }
 

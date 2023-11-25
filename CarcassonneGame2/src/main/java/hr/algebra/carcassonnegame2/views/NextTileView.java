@@ -2,7 +2,8 @@ package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.tile.Tile;
+import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.tile.Tile;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -11,7 +12,7 @@ public class NextTileView extends GameView{
 
     private Position followerPosition;
     private Button buttonWithFollower;
-    public NextTileView(Game game) {
+    public NextTileView(GameWorld game) {
         super(game);
     }
 
@@ -21,21 +22,21 @@ public class NextTileView extends GameView{
         int numberColRow = Tile.NUM_COLS_TILE;
         for (int row = 0; row < numberColRow; row++) {
             for (int col = 0; col < numberColRow; col++) {
-                gpNextTile.add(getTileButton(tile, new Position(col, row), game), col, row);
+                gpNextTile.add(getTileButton(tile, new Position(col, row)), col, row);
             }
         }
     }
 
-    private Button getTileButton(Tile tile, Position point, Game game){
+    private Button getTileButton(Tile tile, Position point){
         Button btn = getButton(true);
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setMaxHeight(Double.MAX_VALUE);
         btn.setStyle(tile.getValuePosition(point).getStyle() + " -fx-background-radius: 0;" );
-        btn.setOnAction((actionEvent -> selectPosition(point, btn, game)));
+        btn.setOnAction((actionEvent -> selectPosition(point, btn)));
         return btn;
     }
 
-    private void selectPosition(Position point, Button btn, Game game){
+    private void selectPosition(Position point, Button btn){
         if(game.canPlayerPutAFollower()) {
             if (followerPosition == null) {
                 if (game.canPutFollowerInPosition(point)) {

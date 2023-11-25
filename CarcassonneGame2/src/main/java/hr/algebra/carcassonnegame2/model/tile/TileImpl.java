@@ -1,7 +1,7 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.Game;
+import hr.algebra.carcassonnegame2.model.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
@@ -11,19 +11,19 @@ public final class TileImpl extends Tile {
     private int followerPlayer;
     private Position positionInGameBoard;
     private boolean citiesAreConnected=false;
-    private final TileTypeManager tilePathManager;
-    private final TileTypeManager tileCityManager;
+    private final TileManagement tilePathManager;
+    private final TileManagement tileCityManager;
 
-    public TileImpl(TileElementValue[][] tileGrid, Game game) {
+    public TileImpl(TileElementValue[][] tileGrid, GameWorld game) {
         this.tileGrid = tileGrid;
         this.game = game;
         this.removeFollower();
-        TileTypeManager.initializeTileManager(game);
-        tilePathManager = TileTypeManager.getInstance(TileElementValue.PATH, this);
-        tileCityManager = TileTypeManager.getInstance(TileElementValue.CITY, this);
+        TileManagement.initializeTileManager(game);
+        tilePathManager = TileManagement.getInstance(TileElementValue.PATH, this);
+        tileCityManager = TileManagement.getInstance(TileElementValue.CITY, this);
     }
 
-    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard, Game game) {
+    public TileImpl(TileElementValue[][] representation, Position positionInGameBoard, GameWorld game) {
         this(representation, game);
         this.positionInGameBoard=positionInGameBoard;
     }
@@ -152,11 +152,6 @@ public final class TileImpl extends Tile {
     @Override
     public boolean pathEnd() {
         return tilePathManager.hasPathAnEnd();
-    }
-
-    @Override
-    public void setTileWithFollowerInPath(Position position){
-        tilePathManager.setTileWithFollowerInPath(position);
     }
 
     @Override

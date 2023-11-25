@@ -1,6 +1,6 @@
 package hr.algebra.carcassonnegame2.misc;
 
-import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
+import hr.algebra.carcassonnegame2.model.player.Player;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 

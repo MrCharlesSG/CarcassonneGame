@@ -2,10 +2,10 @@ package hr.algebra.carcassonnegame2.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hr.algebra.carcassonnegame2.control.controllers.GameController;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
-import hr.algebra.carcassonnegame2.model.gameobjects.tile.Tile;
+import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.player.Player;
+import hr.algebra.carcassonnegame2.model.tile.Tile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GameFactory {
 
-    public static Game createGame(String[] playersNames, String jsonFileName, int numberOfFollowersPerPlayer) throws IllegalArgumentException{
+    public static GameWorld createGame(String[] playersNames, String jsonFileName, int numberOfFollowersPerPlayer) throws IllegalArgumentException{
         try{
 
             //Create players

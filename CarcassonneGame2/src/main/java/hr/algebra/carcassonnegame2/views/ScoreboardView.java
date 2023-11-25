@@ -2,14 +2,15 @@ package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
+import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.player.Player;
 
 import java.util.List;
 
 public class ScoreboardView extends GameView{
     private final List<ScoreboardUnit> playersScoreboards;
 
-    public ScoreboardView(Game game, List<ScoreboardUnit> playersScoreboards) {
+    public ScoreboardView(GameWorld game, List<ScoreboardUnit> playersScoreboards) {
         super(game);
         this.playersScoreboards=playersScoreboards;
         initPlayersInfo();

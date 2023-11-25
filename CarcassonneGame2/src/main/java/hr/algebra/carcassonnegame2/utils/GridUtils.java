@@ -1,10 +1,6 @@
 package hr.algebra.carcassonnegame2.utils;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.gameobjects.tile.Tile;
-import hr.algebra.carcassonnegame2.model.gameobjects.tile.TileElementValue;
-
-import java.lang.reflect.Array;
 
 public class GridUtils {
 

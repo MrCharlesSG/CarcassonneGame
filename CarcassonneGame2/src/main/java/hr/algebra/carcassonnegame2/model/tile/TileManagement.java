@@ -1,19 +1,19 @@
-package hr.algebra.carcassonnegame2.model.gameobjects.tile;
+package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.Game;
+import hr.algebra.carcassonnegame2.model.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-public abstract class TileTypeManager implements Serializable {
+public abstract class TileManagement implements Serializable {
     @Serial
     private static final long serialVersionUID = 10L;
 
     protected Tile tile;
-    protected static Game game;
+    protected static GameWorld game;
     protected static int NUM_ROWS_TILE;
     protected static int NUM_COLS_TILE;
     protected static Position CENTER;
@@ -22,10 +22,10 @@ public abstract class TileTypeManager implements Serializable {
     protected static Position TOP;
     protected static Position BOTTOM;
     
-    protected TileTypeManager(Tile tile){this.tile=tile;}
+    protected TileManagement(Tile tile){this.tile=tile;}
 
-    public static void initializeTileManager(Game game){
-        TileTypeManager.game=game;
+    public static void initializeTileManager(GameWorld game){
+        TileManagement.game=game;
         NUM_COLS_TILE= Tile.NUM_COLS_TILE;
         NUM_ROWS_TILE=Tile.NUM_ROWS_TILE;
         CENTER = Tile.getCenterPosition();
@@ -35,14 +35,14 @@ public abstract class TileTypeManager implements Serializable {
         BOTTOM = Tile.getBottomPosition();
     }
 
-    public static TileTypeManager getInstance(TileElementValue type, Tile tile){
+    public static TileManagement getInstance(TileElementValue type, Tile tile){
         if(game!=null){
             switch (type){
                 case PATH -> {
-                    return new TilePathManager(tile);
+                    return new TilePathManagement(tile);
                 }
                 case CITY -> {
-                    return new TileCityManager(tile);
+                    return new TileCityManagement(tile);
                 }
             }
         }
@@ -53,10 +53,10 @@ public abstract class TileTypeManager implements Serializable {
 
     protected boolean callGameToCheckOtherTile(TileElementValue value){
         boolean returnValue = true;
-        if(getValuePosition( TOP).areTileElementsCompatible(value)){
+        if(getValuePosition(TOP).areTileElementsCompatible(value)){
             returnValue = game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.TOP), BOTTOM);
         }
-        if(getValuePosition( BOTTOM).areTileElementsCompatible(value) && returnValue){
+        if(getValuePosition(BOTTOM).areTileElementsCompatible(value) && returnValue){
             returnValue = game.checkPositionInTileForFollower(getPositionInGameBoardForRelative(RelativePositionGrid.BOTTOM), TOP);
         }
         if(getValuePosition(RIGHT).areTileElementsCompatible(value) && returnValue){

@@ -3,7 +3,7 @@ package hr.algebra.carcassonnegame2.control.controllers;
 import hr.algebra.carcassonnegame2.factories.GameFactory;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
+import hr.algebra.carcassonnegame2.model.GameWorld;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
 import hr.algebra.carcassonnegame2.views.GameViewsManager;
 import javafx.event.ActionEvent;
@@ -25,7 +25,7 @@ public class GameController implements Initializable {
     private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
     private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
     private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
-    private static final String jsonFileName = jsonFileNamePath;
+    private static final String jsonFileName = jsonFileNameCity;
     private static final int numberOfFollowersPerPlayer = 7;
     private static final String saveFileName = "data.ser";
     private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
@@ -43,7 +43,7 @@ public class GameController implements Initializable {
     public Label lbPlayer2Pts;
     public Circle spherePlayer1;
     public Circle spherePlayer2;
-    private Game game;
+    private GameWorld game;
     private GameViewsManager gameViewsManager;
 
     @Override
@@ -99,8 +99,8 @@ public class GameController implements Initializable {
                     gameViewsManager.resetFollowerPosition();
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
-                    int winner = game.update();
-                    if(winner!=-1){
+                    List<Integer> winner = game.update();
+                    if(winner!=null){
                         endActions(winner);
                     }else{
                         updateView();
@@ -141,15 +141,15 @@ public class GameController implements Initializable {
     }
 
     public void finishGameAction() {
-        int winner = game.finishGame();
+        List<Integer> winner = game.finishGame();
         endActions(winner);
     }
 
-    private void endActions(int winner) {
-        if(winner==6){
+    private void endActions(List<Integer> winner) {
+        if(winner.size()!=1){
             GameViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
         }else{
-            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner).getPoints() + " points...\n" + game.getPlayersInfo().get(winner).getName(), Alert.AlertType.INFORMATION);
+            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner.get(0)).getPoints() + " points...\n" + game.getPlayersInfo().get(winner.get(0)).getName(), Alert.AlertType.INFORMATION);
         }
         closeThisView();
     }
@@ -159,6 +159,7 @@ public class GameController implements Initializable {
             FileInputStream fileInputStream = new FileInputStream(saveFileName);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             game = (Game) objectInputStream.readObject();
+            gameViewsManager.updateGame(game);
             objectInputStream.close();
             updateView();
             GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);

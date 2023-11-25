@@ -2,7 +2,8 @@ package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.Game;
-import hr.algebra.carcassonnegame2.model.gameobjects.tile.Tile;
+import hr.algebra.carcassonnegame2.model.GameWorld;
+import hr.algebra.carcassonnegame2.model.tile.Tile;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -12,7 +13,7 @@ import javafx.scene.shape.Circle;
 public class GameBoardView extends GameView {
     private Button selectedPositionButton;
     private Position selectedPosition;
-    public GameBoardView(Game game) {
+    public GameBoardView(GameWorld game) {
         super(game);
     }
 
@@ -20,31 +21,31 @@ public class GameBoardView extends GameView {
         gpGameBoard.setGridLinesVisible(true);
         Tile[][] gameBoard = game.getGameBoard();
         resizeGridPane(gpGameBoard, gameBoard.length, false);
-        completeBoard(gameBoard,gpGameBoard, game);
+        completeBoard(gameBoard,gpGameBoard);
     }
 
-    public void completeBoard(Tile[][] gameBoard, GridPane gpGameBoard, Game game) {
+    public void completeBoard(Tile[][] gameBoard, GridPane gpGameBoard) {
         for (int colPos = 0; colPos < gameBoard.length; colPos++) {
             for (int rowPos = 0; rowPos < gameBoard[colPos].length; rowPos++) {
                 if(gameBoard[colPos][rowPos] != null){
                     Tile tile = gameBoard[colPos][rowPos];
                     GridPane gpTile = new GridPane();
                     resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, true);
-                    representTileInGridPane(tile, gpTile, game);
+                    representTileInGridPane(tile, gpTile);
                     gpGameBoard.add(gpTile, colPos, rowPos);
                 }else{
                     Button btnTile = getButton(false);
                     int finalCol = colPos;
                     int finalRow = rowPos;
                     btnTile.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
-                    btnTile.setOnAction(actionEvent -> selectTilePosition(new Position(finalCol, finalRow), btnTile,game));
+                    btnTile.setOnAction(actionEvent -> selectTilePosition(new Position(finalCol, finalRow), btnTile));
                     gpGameBoard.add(btnTile, colPos, rowPos);
                 }
             }
         }
     }
 
-    private void selectTilePosition(Position point, Button btn , Game game) {
+    private void selectTilePosition(Position point, Button btn) {
         btn.setStyle("-fx-background-color: "+game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;" );
         if(selectedPositionButton!=null && !selectedPosition.equals(point)){
             selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
@@ -53,7 +54,7 @@ public class GameBoardView extends GameView {
         selectedPositionButton=btn;
     }
 
-    private void representTileInGridPane(Tile tile, GridPane gridPane, Game game) {
+    private void representTileInGridPane(Tile tile, GridPane gridPane) {
         gridPane.setGridLinesVisible(true);
         for (int col = 0; col < 5; col++) {
             for (int row = 0; row < 5; row++) {

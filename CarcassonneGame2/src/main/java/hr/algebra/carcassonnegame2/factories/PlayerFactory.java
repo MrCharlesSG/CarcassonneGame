@@ -1,7 +1,7 @@
 package hr.algebra.carcassonnegame2.factories;
 
-import hr.algebra.carcassonnegame2.model.gameobjects.player.Player;
-import hr.algebra.carcassonnegame2.model.gameobjects.player.PlayerImpl;
+import hr.algebra.carcassonnegame2.model.player.Player;
+import hr.algebra.carcassonnegame2.model.player.PlayerImpl;
 
 public class PlayerFactory {
 

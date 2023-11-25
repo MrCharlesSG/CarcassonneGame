@@ -1,6 +1,6 @@
 package hr.algebra.carcassonnegame2.views;
 
-import hr.algebra.carcassonnegame2.model.Game;
+import hr.algebra.carcassonnegame2.model.GameWorld;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -11,8 +11,12 @@ public class GameView {
 
     protected final double MIN_HEIGHT_COL = 10;
     protected final double MIN_WIDTH_COL = 10;
-    protected Game game;
-    public GameView(Game game){
+    protected GameWorld game;
+    public GameView(GameWorld game){
+        this.game=game;
+    }
+
+    public void updateGame(GameWorld game){
         this.game=game;
     }
 
