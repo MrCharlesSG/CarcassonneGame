@@ -13,7 +13,7 @@ import java.util.Random;
 
 import static hr.algebra.carcassonnegame2.utils.GridUtils.*;
 
-class GameStatus implements Serializable {
+final class GameStatus implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Tile[][] gameBoard;

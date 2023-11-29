@@ -4,6 +4,7 @@ import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 
+import java.io.Externalizable;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -14,6 +15,7 @@ public abstract class Tile implements Serializable {
     public static final int NUM_ROWS_TILE = 5;
     public static final int NUM_COLS_TILE = 5;
     protected static GameWorld game;
+
     protected TileElementValue[][] tileGrid;
 
     public static void initializeTiles(GameWorld game){

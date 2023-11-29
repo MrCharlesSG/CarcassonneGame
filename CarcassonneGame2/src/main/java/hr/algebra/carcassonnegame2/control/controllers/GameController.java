@@ -2,10 +2,13 @@ package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.factories.GameFactory;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
+import hr.algebra.carcassonnegame2.model.chat.RemoteChatServiceImpl;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
+import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
-import hr.algebra.carcassonnegame2.views.GameViewsManager;
+import hr.algebra.carcassonnegame2.network.NetworkingUtils;
+import hr.algebra.carcassonnegame2.views.ViewsManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -25,7 +28,7 @@ public class GameController implements Initializable {
     private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
     private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
     private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
-    private static final String jsonFileName = jsonFileNameCity;
+    private static final String jsonFileName = jsonFileNameAll;
     private static final int numberOfFollowersPerPlayer = 7;
     private static final String saveFileName = "data.ser";
     private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
@@ -43,8 +46,33 @@ public class GameController implements Initializable {
     public Label lbPlayer2Pts;
     public Circle spherePlayer1;
     public Circle spherePlayer2;
-    private GameWorld game;
-    private GameViewsManager gameViewsManager;
+    public TextArea taChat;
+    public TextField tfMessage;
+    public Button btnSendMessage;
+    private static GameWorld game;
+    private static RemoteChatServiceImpl chat;
+    private static ViewsManager gameViewsManager;
+    private static PlayerType player;
+
+    public static void restoreGame(Game game) {
+        System.out.println("Game board received from the client!" + game.getNextPlayerInfo());
+        GameController.game=game;
+        enableDisableView();
+        gameViewsManager.updateGame(GameController.game);
+    }
+
+    public static void enableDisableView(){
+        if(isPlayerTurns()){
+            gameViewsManager.enableViews();
+        }
+        else{
+            gameViewsManager.disableView();
+        }
+    }
+
+    public static void setPlayer(PlayerType player){
+        GameController.player = player;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,8 +81,23 @@ public class GameController implements Initializable {
 
     private void initializeAux() {
         initializeGame();
-        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards());
+        initializeManager();
+        if(player.isServer()){
+            if(NetworkingUtils.isClientConnected()){
+                //NetworkingUtils.askClientForCountry();
+                sendGame();
+            }
+        }else{
+            if(NetworkingUtils.isServerConnected()){
+                sendGame();
+            }
+        }
+    }
+
+    private void initializeManager() {
+        gameViewsManager = new ViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard);
         updateView();
+        chat = new RemoteChatServiceImpl();
     }
 
     public List<ScoreboardUnit> getPlayersScoreboards(){
@@ -72,18 +115,16 @@ public class GameController implements Initializable {
         }
     }
 
-    private void updatePlayersInfo() {
-        gameViewsManager.updateScoreboard();
-    }
-
     public void newGameAction() {
         initializeAux();
     }
 
     public void rotateTileAction() {
-        gameViewsManager.resetFollowerPosition();
-        game.rotateNextTile();
-        gameViewsManager.paintNextTile(gpNextTile);
+        if(isPlayerTurns()){
+            gameViewsManager.resetFollowerPosition();
+            game.rotateNextTile();
+            gameViewsManager.updateNextTile();
+        }
     }
 
     public void closeThisView() {
@@ -92,7 +133,7 @@ public class GameController implements Initializable {
     }
 
     public void putTileAction() {
-        if(gameViewsManager.getSelectedPosition()!=null){
+        if(gameViewsManager.getSelectedPosition()!=null ){
             try {
                 if(gameViewsManager.getFollowerPosition()!=null){
                     game.getNextTile().setFollower(-1, gameViewsManager.getFollowerPosition());
@@ -100,6 +141,7 @@ public class GameController implements Initializable {
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
                     List<Integer> winner = game.update();
+                    sendGame();
                     if(winner!=null){
                         endActions(winner);
                     }else{
@@ -107,37 +149,38 @@ public class GameController implements Initializable {
                     }
                 }
             }catch (IllegalArgumentException e){
-                GameViewsManager.sendAlert("Something went wrong", e.getMessage(), Alert.AlertType.ERROR);
+                ViewsManager.sendAlert("Something went wrong", e.getMessage(), Alert.AlertType.ERROR);
             }
         }else{
-            GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
+            ViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
         }
     }
 
     private void updateView() {
-        gameViewsManager.paintGameBoard(gpGameBoard);
-        gameViewsManager.paintNextTile(gpNextTile);
-        updatePlayersInfo();
+        enableDisableView();
+        gameViewsManager.updateView();
     }
 
     public void getPlayerTurnAction() {
-        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
+        ViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
     }
 
     public void remainingTilesAction() {
-        GameViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types", Alert.AlertType.INFORMATION);
+        ViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types", Alert.AlertType.INFORMATION);
     }
 
     public void removeFollowerAction() {
         gameViewsManager.resetFollowerPosition();
         game.getNextTile().removeFollower();
-        gameViewsManager.paintNextTile(gpNextTile);
+        gameViewsManager.updateNextTile();
     }
 
     public void changeTileAction() {
-        game.changeNextTile();
-        gameViewsManager.paintNextTile(gpNextTile);
-        updatePlayersInfo();
+        if(isPlayerTurns()) {
+            game.changeNextTile();
+            sendGame();
+            enableDisableView();
+        }
     }
 
     public void finishGameAction() {
@@ -147,9 +190,9 @@ public class GameController implements Initializable {
 
     private void endActions(List<Integer> winner) {
         if(winner.size()!=1){
-            GameViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
+            ViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
         }else{
-            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner.get(0)).getPoints() + " points...\n" + game.getPlayersInfo().get(winner.get(0)).getName(), Alert.AlertType.INFORMATION);
+            ViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner.get(0)).getPoints() + " points...\n" + game.getPlayersInfo().get(winner.get(0)).getName(), Alert.AlertType.INFORMATION);
         }
         closeThisView();
     }
@@ -162,9 +205,9 @@ public class GameController implements Initializable {
             gameViewsManager.updateGame(game);
             objectInputStream.close();
             updateView();
-            GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
+            ViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
         }catch (IOException | ClassNotFoundException e){
-            GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+            ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -174,18 +217,18 @@ public class GameController implements Initializable {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(game);
             objectOutputStream.close();
-            GameViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
+            ViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
         }catch (IOException e){
-            GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+            ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public void onGenerateDocumentation(ActionEvent actionEvent) {
         try {
             DocumentationUtils.generateDocumentation();
-            GameViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
+            ViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
         }catch (IllegalArgumentException e){
-            GameViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
+            ViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
         }
     }
 
@@ -196,6 +239,17 @@ public class GameController implements Initializable {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+    }
 
+    private static boolean isPlayerTurns(){
+        return player == PlayerType.valueOf(game.getCurrentPlayer().getName());
+    }
+
+    private void sendGame(){
+        if(!player.isServer()){
+            NetworkingUtils.sendGameToServer(game);
+        }else {
+            NetworkingUtils.sendGameToClient(game);
+        }
     }
 }

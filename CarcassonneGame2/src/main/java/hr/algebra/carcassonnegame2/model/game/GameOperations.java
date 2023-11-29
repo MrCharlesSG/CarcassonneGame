@@ -9,7 +9,7 @@ import hr.algebra.carcassonnegame2.utils.TileUtils;
 import static hr.algebra.carcassonnegame2.utils.GridUtils.getValueOfPosition;
 import static hr.algebra.carcassonnegame2.utils.GridUtils.setValueInPosition;
 
-class GameOperations {
+final class GameOperations {
 
     private Tile tileWithFollowerInCount =null;
     private boolean hasPathOrCityAnEnd = true;

@@ -7,15 +7,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
-public class NextTileView extends GameView{
+final class NextTileView extends GameView{
 
     private Position followerPosition;
     private Button buttonWithFollower;
-    public NextTileView(GameWorld game) {
+    private final GridPane gpNextTile;
+    public NextTileView(GameWorld game, GridPane gpNextTile) {
         super(game);
+        this.gpNextTile=gpNextTile;
     }
 
-    public void paintNextTile(GridPane gpNextTile) {
+    @Override
+    public void updateView() {
+        paintNextTile();
+    }
+    private void paintNextTile() {
         resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true);
         Tile tile = game.getNextTile();
         int numberColRow = Tile.NUM_COLS_TILE;
@@ -36,26 +42,28 @@ public class NextTileView extends GameView{
     }
 
     private void selectPosition(Position point, Button btn){
-        if(game.canPlayerPutAFollower()) {
-            if (followerPosition == null) {
-                if (game.canPutFollowerInPosition(point)) {
-                    btn.setText("o");
-                    followerPosition = point;
-                    buttonWithFollower = btn;
-                }
-            } else if (!point.equals(followerPosition)) {
-                if (game.canPutFollowerInPosition(point)) {
-                    buttonWithFollower.setText("");
-                    buttonWithFollower = btn;
-                    buttonWithFollower.setText("o");
-                    followerPosition = point;
+        if(viewEnable) {
+            if (game.canPlayerPutAFollower()) {
+                if (followerPosition == null) {
+                    if (game.canPutFollowerInPosition(point)) {
+                        btn.setText("o");
+                        followerPosition = point;
+                        buttonWithFollower = btn;
+                    }
+                } else if (!point.equals(followerPosition)) {
+                    if (game.canPutFollowerInPosition(point)) {
+                        buttonWithFollower.setText("");
+                        buttonWithFollower = btn;
+                        buttonWithFollower.setText("o");
+                        followerPosition = point;
+                    }
+                } else {
+                    btn.setText("");
+                    followerPosition = null;
                 }
             } else {
-                btn.setText("");
-                followerPosition=null;
+                ViewsManager.sendAlert("Put Follower", "You can not put more followers", Alert.AlertType.WARNING);
             }
-        }else{
-            GameViewsManager.sendAlert("Put Follower", "You can not put more followers", Alert.AlertType.WARNING);
         }
     }
 

@@ -6,13 +6,18 @@ import hr.algebra.carcassonnegame2.model.player.Player;
 
 import java.util.List;
 
-public class ScoreboardView extends GameView{
+final class ScoreboardView extends GameView{
     private final List<ScoreboardUnit> playersScoreboards;
 
     public ScoreboardView(GameWorld game, List<ScoreboardUnit> playersScoreboards) {
         super(game);
         this.playersScoreboards=playersScoreboards;
         initPlayersInfo();
+    }
+
+    @Override
+    public void updateView() {
+        updateScoreboard();
     }
 
     private void initPlayersInfo() {
@@ -22,7 +27,7 @@ public class ScoreboardView extends GameView{
         }
     }
 
-    public void updateScoreboard() {
+    private void updateScoreboard() {
         List<Player> list = game.getPlayersInfo();
         int i=0;
         for(Player player: list){

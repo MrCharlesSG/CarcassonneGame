@@ -3,6 +3,7 @@ module hr.algebra.carcassonnegame2 {
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
     requires java.desktop;
+    requires java.rmi;
 
 
     opens hr.algebra.carcassonnegame2 to javafx.fxml;

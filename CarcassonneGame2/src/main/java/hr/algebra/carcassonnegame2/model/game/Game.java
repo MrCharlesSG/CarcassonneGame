@@ -4,13 +4,12 @@ import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 
 import static hr.algebra.carcassonnegame2.utils.GridUtils.*;
 
-public class Game implements GameWorld, Serializable {
+public class Game implements GameWorld, Externalizable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -164,5 +163,17 @@ public class Game implements GameWorld, Serializable {
     @Override
     public Tile getNextTile() {
         return gameStatus.getNextTile();
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(gameStatus);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        gameStatus = (GameStatus) in.readObject();
+        gameOperations = new GameOperations(gameStatus, this);
+        Tile.initializeTiles(this);
     }
 }

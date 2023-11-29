@@ -9,14 +9,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
-public class GameBoardView extends GameView {
+final class GameBoardView extends GameView {
     private Button selectedPositionButton;
     private Position selectedPosition;
-    public GameBoardView(GameWorld game) {
+    private final GridPane gpGameBoard;
+    public GameBoardView(GameWorld game, GridPane gpGameBoard) {
         super(game);
+        this.gpGameBoard=gpGameBoard;
     }
 
-    public void paintGameBoard(GridPane gpGameBoard) {
+    @Override
+    public void updateView() {
+        paintGameBoard();
+    }
+
+    private void paintGameBoard() {
         gpGameBoard.setGridLinesVisible(true);
         Tile[][] gameBoard = game.getGameBoard();
         resizeGridPane(gpGameBoard, gameBoard.length, false);
@@ -45,12 +52,14 @@ public class GameBoardView extends GameView {
     }
 
     private void selectTilePosition(Position point, Button btn) {
-        btn.setStyle("-fx-background-color: "+game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;" );
-        if(selectedPositionButton!=null && !selectedPosition.equals(point)){
-            selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
+        if(viewEnable) {
+            btn.setStyle("-fx-background-color: " + game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;");
+            if (selectedPositionButton != null && !selectedPosition.equals(point)) {
+                selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;");
+            }
+            selectedPosition = point;
+            selectedPositionButton = btn;
         }
-        selectedPosition=point;
-        selectedPositionButton=btn;
     }
 
     private void representTileInGridPane(Tile tile, GridPane gridPane) {

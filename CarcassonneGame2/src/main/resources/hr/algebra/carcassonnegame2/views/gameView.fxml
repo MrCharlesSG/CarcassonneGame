@@ -6,6 +6,8 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -13,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
    <top>
       <MenuBar style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
         <menus>
@@ -64,7 +66,7 @@
       </ScrollPane>
    </center>
    <left>
-      <AnchorPane prefHeight="375.0" prefWidth="122.0" style="-fx-background-color: F1F5F9;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="375.0" prefWidth="122.0" style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
          <children>
             <GridPane fx:id="gpNextTile" layoutX="3.0" layoutY="237.0" prefHeight="124.0" prefWidth="146.0">
                <columnConstraints>
@@ -100,4 +102,13 @@
          </children>
       </AnchorPane>
    </left>
+   <right>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
+         <children>
+            <TextArea fx:id="taChat" layoutX="6.0" layoutY="1.0" prefHeight="292.0" prefWidth="188.0" />
+            <TextField fx:id="tfMessage" layoutX="6.0" layoutY="302.0" prefHeight="25.0" prefWidth="188.0" />
+            <Button fx:id="btnSendMessage" layoutX="7.0" layoutY="335.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="188.0" style="-fx-background-color: #10B981 #10B981;" text="SEND" textFill="WHITE" />
+         </children>
+      </AnchorPane>
+   </right>
 </BorderPane>

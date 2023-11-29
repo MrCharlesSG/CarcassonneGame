@@ -28,9 +28,9 @@ public final class DocumentationUtils {
 
     private static void createFolder(String folderName) {
         File folder = new File(folderName);
-        if(!folder.exists()){
-            folder.mkdir();
-        }
+        if(folder.exists())
+            folder.delete();
+        folder.mkdir();
     }
     private static void generateDocumentationAux(File project, StringBuilder currentFolder, StringBuilder content, String parent) throws IllegalArgumentException{
         if(project.isDirectory()){

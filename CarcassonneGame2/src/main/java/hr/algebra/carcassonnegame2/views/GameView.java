@@ -7,11 +7,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 
-public class GameView {
+abstract class GameView {
 
     protected final double MIN_HEIGHT_COL = 10;
     protected final double MIN_WIDTH_COL = 10;
     protected GameWorld game;
+    protected boolean viewEnable=true;
     public GameView(GameWorld game){
         this.game=game;
     }
@@ -45,5 +46,17 @@ public class GameView {
         btn.setMinHeight(MIN_HEIGHT_COL*(isNextTile ? 0.20:5));
         btn.setMinWidth(MIN_WIDTH_COL*(isNextTile ? 0.20:5));
         return btn;
+    }
+
+    public abstract void updateView();
+
+    public void disableView(){
+        viewEnable=false;
+        updateView();
+    }
+
+    public void enableView(){
+        viewEnable=true;
+        updateView();
     }
 }
