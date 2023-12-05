@@ -15,6 +15,8 @@
       + [Chat](#chat)
       + [Refactoring](#refactoring)
          - [Controller](#controller)
+         - [Game](#game-2)
+         - [Utils](#utils)
 
 <!-- TOC end -->
 
@@ -155,6 +157,7 @@ For disabling the view, the `GameView` has a `static boolean enable` variable, s
 
 Now, the initialization of the `Game` is done by the `GameFactory`. This `GameFactory` has the name of the JSON file that has all the Tiles information. I have created various JSONs just for testing purposes, but I still maintain the original.
 
+<!-- TOC --><a name="game-2"></a>
 #### Game
 
 As the `Game` class in the previous versions was a monster (arround 500 lines) I have manage to create classes arround the 200 lines and also leaving `Game` with less than 200 lines.
@@ -173,6 +176,7 @@ For example in the case of seen if the user can put a user in the path of the ti
 
 The abstract class `Tile` was already done in previous versions.
 
+<!-- TOC --><a name="utils"></a>
 #### Utils
 
 For supporting all this refactoring, have been created three new Utils classes that conatins every "smart" thing I have done for each type of classes that can be reused. 
@@ -184,8 +188,3 @@ The utils that have been created for adding the previous `DocumentationUtils` an
 
 
 This is everything I have done in this new version.
-
-
-
-
-
