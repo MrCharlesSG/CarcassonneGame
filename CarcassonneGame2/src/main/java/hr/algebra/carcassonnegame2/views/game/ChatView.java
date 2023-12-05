@@ -1,4 +1,4 @@
-package hr.algebra.carcassonnegame2.views;
+package hr.algebra.carcassonnegame2.views.game;
 
 import hr.algebra.carcassonnegame2.model.chat.Message;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
@@ -18,19 +18,6 @@ final class ChatView {
         taChat=textArea;
     }
 
-    public void updateChat(){
-        try {
-            taChat.clear();
-            List<Message> messages = chat.getAllChatMessages();
-            for (Message message: messages) {
-                taChat.appendText(message.getMessage() + "\n");
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public void sendMessage(Message message) {
         try {
             chat.sendChatMessage(message);
@@ -38,5 +25,21 @@ final class ChatView {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void updateChat(){
+        try {
+            taChat.clear();
+            List<Message> messages = chat.getAllChatMessages();
+            for (Message message: messages) {
+                taChat.appendText(getChatMessage(message) + "\n");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String getChatMessage(Message message) {
+        return message.getMessage();
     }
 }

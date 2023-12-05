@@ -1,4 +1,4 @@
-package hr.algebra.carcassonnegame2.views;
+package hr.algebra.carcassonnegame2.views.game;
 
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.player.Player;

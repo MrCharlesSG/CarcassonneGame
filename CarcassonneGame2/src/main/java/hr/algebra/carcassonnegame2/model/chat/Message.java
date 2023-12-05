@@ -1,5 +1,6 @@
 package hr.algebra.carcassonnegame2.model.chat;
 
+import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
 
 import java.io.Serial;

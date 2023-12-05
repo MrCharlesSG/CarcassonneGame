@@ -9,11 +9,10 @@ import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
-import hr.algebra.carcassonnegame2.views.ViewsManager;
+import hr.algebra.carcassonnegame2.views.game.ViewsManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -33,8 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import static hr.algebra.carcassonnegame2.network.NetworkManager.sendGame;
 
 public class GameController implements Initializable {
     private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
@@ -68,11 +65,6 @@ public class GameController implements Initializable {
     private static ViewsManager gameViewsManager;
     private static PlayerType player;
 
-    public static void setChat(RemoteChatService skeleton) {
-        chat=skeleton;
-        System.out.println("Chat iniciado");
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeAux();
@@ -81,22 +73,24 @@ public class GameController implements Initializable {
     private void initializeAux() {
         initializeGame();
         if(!player.isServer()){
-            sendGame(player, game );
+            NetworkManager.sendGame(player, game );
         }
         NetworkManager.startClientRmi();
         initializeManager();
         setupListeners();
+        setupTimeline();
+    }
 
+    private void setupTimeline() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshChatTextArea()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
-
     }
 
     private void setupListeners() {
         tfMessage.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                sendMessageAction(null);
+                sendMessageAction();
             }
         });
     }
@@ -126,7 +120,8 @@ public class GameController implements Initializable {
     }
 
     public void newGameAction() {
-        initializeAux();
+        //initializeAux();
+        ViewsManager.sendAlert("Not Implemented Yet", "This function haven't been implemented yet", Alert.AlertType.WARNING);
     }
 
     public void rotateTileAction() {
@@ -151,7 +146,7 @@ public class GameController implements Initializable {
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
                     List<Integer> winner = game.update();
-                    sendGame(player, game);
+                    NetworkManager.sendGame(player, game);
                     if(winner!=null){
                         endActions(winner);
                     }else{
@@ -188,7 +183,7 @@ public class GameController implements Initializable {
     public void changeTileAction() {
         if(isPlayerTurns()) {
             game.changeNextTile();
-            sendGame(player, game);
+            NetworkManager.sendGame(player, game);
             enableDisableView();
         }
     }
@@ -208,32 +203,41 @@ public class GameController implements Initializable {
     }
 
     public void onLoadGame() {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(saveFileName);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            game = (Game) objectInputStream.readObject();
-            gameViewsManager.updateGame(game);
-            objectInputStream.close();
-            updateView();
-            ViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
-        }catch (IOException | ClassNotFoundException e){
-            ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+        if(player.isServer()){
+            try {
+                FileInputStream fileInputStream = new FileInputStream(saveFileName);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                game = (Game) objectInputStream.readObject();
+                gameViewsManager.updateGame(game);
+                objectInputStream.close();
+                updateView();
+                NetworkManager.sendGame(player, game);
+                ViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
+            }catch (IOException | ClassNotFoundException e){
+                ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }else{
+            ViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
         }
     }
 
     public void onSaveGame() {
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(saveFileName);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(game);
-            objectOutputStream.close();
-            ViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
-        }catch (IOException e){
-            ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+        if(player.isServer()){
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(saveFileName);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                objectOutputStream.writeObject(game);
+                objectOutputStream.close();
+                ViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
+            }catch (IOException e){
+                ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }else{
+            ViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
         }
     }
 
-    public void onGenerateDocumentation(ActionEvent actionEvent) {
+    public void onGenerateDocumentation() {
         try {
             DocumentationUtils.generateDocumentation();
             ViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
@@ -242,12 +246,12 @@ public class GameController implements Initializable {
         }
     }
 
-    public void onReadDocumentation(ActionEvent actionEvent) {
+    public void onReadDocumentation() {
             try {
                 File htmlFile = new File("project-documentation/index.html"); // Reemplaza con la ruta de tu archivo HTML
                 Desktop.getDesktop().browse(htmlFile.toURI());
             } catch (IOException ex) {
-                ex.printStackTrace();
+                ViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
             }
     }
 
@@ -255,7 +259,7 @@ public class GameController implements Initializable {
         return player == PlayerType.valueOf(game.getCurrentPlayer().getName());
     }
 
-    public void sendMessageAction(ActionEvent actionEvent) {
+    public void sendMessageAction() {
         gameViewsManager.sendMessage(new Message(tfMessage.getText(), player));
         tfMessage.clear();
     }
@@ -278,5 +282,9 @@ public class GameController implements Initializable {
 
     public static void setPlayer(PlayerType player){
         GameController.player = player;
+    }
+
+    public static void setChat(RemoteChatService chat) {
+        GameController.chat=chat;
     }
 }

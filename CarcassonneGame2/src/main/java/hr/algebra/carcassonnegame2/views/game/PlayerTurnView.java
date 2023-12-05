@@ -1,6 +1,5 @@
-package hr.algebra.carcassonnegame2.views;
+package hr.algebra.carcassonnegame2.views.game;
 
-import hr.algebra.carcassonnegame2.model.player.Player;
 import javafx.scene.control.Label;
 
 final class PlayerTurnView extends GameView{
