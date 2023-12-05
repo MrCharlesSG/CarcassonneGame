@@ -92,6 +92,7 @@ For the player who is not his turn it is disable all the game functionalities. A
 ### Chat
 
 In this chat every of the user will be able to send a message by pressing enter or by clicking the button. The messages contains the time they were created, the user who send it and the text it self.
+The Chat has been implemented with the Java Remote Method Invocation (RMI), show I have create the `RemoteChatService` interface and its implementation as the common object. Here it is were is explained https://www.geeksforgeeks.org/remote-method-invocation-in-java/
 
 <img width="772" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/62c627ce-721f-490e-be7a-e55480795f67">
 <img width="768" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/67b87b55-0da7-49b3-8346-db278158f6f3">
@@ -100,7 +101,9 @@ In this chat every of the user will be able to send a message by pressing enter 
 
 During thsi version I have refactored the `Controller`, the `Game` and the `Tile`
 
-####
+#### Controller
+
+For the `Controller` I've just take of it everything rellated to the views. For that I've created a `ViewsManager` class who its clients does not know what is happening inside it. The clients just ask him to uptate its view and the intance of `Game` it have. The clients instanciate this class by giving him the ScoreBoard (will be explained later), the `GridPane` of the `nextTile` and of the `Game`, the `TextArea` and `TextField` for the `Chat`
 
 
 
