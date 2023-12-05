@@ -7,9 +7,7 @@ import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
-import hr.algebra.carcassonnegame2.network.NetworkConfiguration;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
-import hr.algebra.carcassonnegame2.network.NetworkingUtils;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
 import hr.algebra.carcassonnegame2.views.ViewsManager;
 import javafx.animation.Animation;
@@ -23,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -31,10 +30,6 @@ import javafx.util.Duration;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -90,11 +85,20 @@ public class GameController implements Initializable {
         }
         NetworkManager.startClientRmi();
         initializeManager();
+        setupListeners();
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshChatTextArea()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
 
+    }
+
+    private void setupListeners() {
+        tfMessage.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                sendMessageAction(null);
+            }
+        });
     }
 
     private void refreshChatTextArea() {
