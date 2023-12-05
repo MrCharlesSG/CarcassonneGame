@@ -1,11 +1,11 @@
 - [CarcassonneGame](#carcassonnegame)
-  - [Version 1](#version-1)
+  - [Version 1 (Game Logic)](#version-1-(game-logic))
     - [Login](#login)
     - [Game](#game)
       - [Game Information](#game-information)
       - [Actions](#actions)
         - [Game](#game-1)
-  - [Version 2](#version-2)
+  - [Version 2 (Serialization & Reflection)](#version-2-(serialization-&-reflection))
     - [Load and Save](#load-and-save)
     - [Documentation](#documentation)
 
