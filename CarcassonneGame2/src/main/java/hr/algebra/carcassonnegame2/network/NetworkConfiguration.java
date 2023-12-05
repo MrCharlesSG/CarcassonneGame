@@ -1,6 +1,6 @@
 package hr.algebra.carcassonnegame2.network;
 
-public class NetworkConfiguration {
+public final class NetworkConfiguration {
     public static final Integer SERVER_PORT = 1989;
     public static final Integer CLIENT_PORT = 1999;
     public static final String HOST_NAME = "localhost";

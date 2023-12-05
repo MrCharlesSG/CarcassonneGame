@@ -1,22 +1,14 @@
 package hr.algebra.carcassonnegame2;
 
-import hr.algebra.carcassonnegame2.control.controllers.GameController;
-import hr.algebra.carcassonnegame2.network.NetworkConfiguration;
-import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Main extends Application {
     private static boolean firstClientConnected = false;
@@ -33,9 +25,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        String playerName = args[0];
-        playerLoggedIn = PlayerType.valueOf(playerName);
-        NetworkManager.start(playerLoggedIn);
+        playerLoggedIn = NetworkManager.start();
         launch();
     }
 }

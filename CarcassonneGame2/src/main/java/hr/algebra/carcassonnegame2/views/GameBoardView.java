@@ -13,8 +13,8 @@ final class GameBoardView extends GameView {
     private Button selectedPositionButton;
     private Position selectedPosition;
     private final GridPane gpGameBoard;
-    public GameBoardView(GameWorld game, GridPane gpGameBoard) {
-        super(game);
+    public GameBoardView(GridPane gpGameBoard) {
+        super();
         this.gpGameBoard=gpGameBoard;
     }
 

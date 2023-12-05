@@ -89,25 +89,26 @@
             <Button alignment="CENTER" contentDisplay="TOP" layoutX="75.0" layoutY="176.0" mnemonicParsing="false" onAction="#putTileAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: #10B981;" text="Put&#10;Tile" textFill="WHITE" />
             <Button alignment="CENTER" contentDisplay="TOP" layoutX="75.0" layoutY="127.0" mnemonicParsing="false" onAction="#removeFollowerAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: #E11D48; -fx-text-fill: white;" text="Remove&#10;Follower" />
             <Button alignment="CENTER" contentDisplay="TOP" layoutX="5.0" layoutY="176.0" mnemonicParsing="false" onAction="#rotateTileAction" prefHeight="39.0" prefWidth="62.0" style="-fx-text-alignment: CENTER; -fx-background-color: blue; -fx-text-fill: white;" text="Rotate&#10;Tile" />
-            <Label fx:id="lbPlayer1Name" layoutX="22.0" layoutY="48.0" text="CLIENT" />
-            <Label fx:id="lbPlayer1Pts" layoutX="72.0" layoutY="48.0" text="0" />
-            <Label fx:id="lbPlayer1Followers" layoutX="117.0" layoutY="48.0" text="0" />
-            <Label layoutX="58.0" layoutY="26.0" text="Points" />
-            <Label layoutX="95.0" layoutY="26.0" text="Followers" />
-            <Label fx:id="lbPlayer2Name" layoutX="21.0" layoutY="77.0" text="SERVER" />
-            <Label fx:id="lbPlayer2Pts" layoutX="71.0" layoutY="77.0" text="0" />
-            <Label fx:id="lbPlayer2Followers" layoutX="117.0" layoutY="77.0" text="0" />
-            <Circle fx:id="spherePlayer1" fill="DODGERBLUE" layoutX="11.0" layoutY="57.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
-            <Circle fx:id="spherePlayer2" fill="DODGERBLUE" layoutX="11.0" layoutY="86.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+            <Label fx:id="lbPlayer1Name" layoutX="22.0" layoutY="65.0" text="CLIENT" />
+            <Label fx:id="lbPlayer1Pts" layoutX="73.0" layoutY="65.0" text="0" />
+            <Label fx:id="lbPlayer1Followers" layoutX="117.0" layoutY="65.0" text="0" />
+            <Label layoutX="58.0" layoutY="43.0" text="Points" />
+            <Label layoutX="95.0" layoutY="43.0" text="Followers" />
+            <Label fx:id="lbPlayer2Name" layoutX="21.0" layoutY="92.0" text="SERVER" />
+            <Label fx:id="lbPlayer2Pts" layoutX="72.0" layoutY="92.0" text="0" />
+            <Label fx:id="lbPlayer2Followers" layoutX="117.0" layoutY="92.0" text="0" />
+            <Circle fx:id="spherePlayer1" fill="DODGERBLUE" layoutX="11.0" layoutY="74.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="spherePlayer2" fill="DODGERBLUE" layoutX="11.0" layoutY="101.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+            <Label fx:id="lbPlayerTurn" alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="14.0" prefHeight="21.0" prefWidth="143.0" style="-fx-background-color: #10B981;" text="Your Turn" textFill="WHITE" />
          </children>
       </AnchorPane>
    </left>
    <right>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="taChat" layoutX="6.0" layoutY="1.0" prefHeight="292.0" prefWidth="188.0" />
+            <TextArea fx:id="taChat" editable="false" layoutX="6.0" layoutY="1.0" prefHeight="292.0" prefWidth="188.0" />
             <TextField fx:id="tfMessage" layoutX="6.0" layoutY="302.0" prefHeight="25.0" prefWidth="188.0" />
-            <Button fx:id="btnSendMessage" layoutX="7.0" layoutY="335.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="188.0" style="-fx-background-color: #10B981 #10B981;" text="SEND" textFill="WHITE" />
+            <Button fx:id="btnSendMessage" layoutX="7.0" layoutY="335.0" mnemonicParsing="false" onAction="#sendMessageAction" prefHeight="25.0" prefWidth="188.0" style="-fx-background-color: #10B981 #10B981;" text="SEND" textFill="WHITE" />
          </children>
       </AnchorPane>
    </right>

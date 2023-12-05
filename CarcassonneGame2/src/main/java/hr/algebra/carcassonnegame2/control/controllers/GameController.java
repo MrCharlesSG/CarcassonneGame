@@ -2,26 +2,44 @@ package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.factories.GameFactory;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.chat.RemoteChatServiceImpl;
+import hr.algebra.carcassonnegame2.model.chat.Message;
+import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
-import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
+import hr.algebra.carcassonnegame2.network.NetworkConfiguration;
+import hr.algebra.carcassonnegame2.network.NetworkManager;
 import hr.algebra.carcassonnegame2.network.NetworkingUtils;
+import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
 import hr.algebra.carcassonnegame2.views.ViewsManager;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.*;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.awt.Desktop;
+
+import static hr.algebra.carcassonnegame2.network.NetworkManager.sendGame;
 
 public class GameController implements Initializable {
     private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
@@ -49,29 +67,15 @@ public class GameController implements Initializable {
     public TextArea taChat;
     public TextField tfMessage;
     public Button btnSendMessage;
+    public Label lbPlayerTurn;
     private static GameWorld game;
-    private static RemoteChatServiceImpl chat;
+    private static RemoteChatService chat;
     private static ViewsManager gameViewsManager;
     private static PlayerType player;
 
-    public static void restoreGame(Game game) {
-        System.out.println("Game board received from the client!" + game.getNextPlayerInfo());
-        GameController.game=game;
-        enableDisableView();
-        gameViewsManager.updateGame(GameController.game);
-    }
-
-    public static void enableDisableView(){
-        if(isPlayerTurns()){
-            gameViewsManager.enableViews();
-        }
-        else{
-            gameViewsManager.disableView();
-        }
-    }
-
-    public static void setPlayer(PlayerType player){
-        GameController.player = player;
+    public static void setChat(RemoteChatService skeleton) {
+        chat=skeleton;
+        System.out.println("Chat iniciado");
     }
 
     @Override
@@ -81,23 +85,25 @@ public class GameController implements Initializable {
 
     private void initializeAux() {
         initializeGame();
-        initializeManager();
-        if(player.isServer()){
-            if(NetworkingUtils.isClientConnected()){
-                //NetworkingUtils.askClientForCountry();
-                sendGame();
-            }
-        }else{
-            if(NetworkingUtils.isServerConnected()){
-                sendGame();
-            }
+        if(!player.isServer()){
+            sendGame(player, game );
         }
+        NetworkManager.startClientRmi();
+        initializeManager();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshChatTextArea()));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.playFromStart();
+
+    }
+
+    private void refreshChatTextArea() {
+        gameViewsManager.updateChat();
     }
 
     private void initializeManager() {
-        gameViewsManager = new ViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard);
+        gameViewsManager = new ViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbPlayerTurn);
         updateView();
-        chat = new RemoteChatServiceImpl();
     }
 
     public List<ScoreboardUnit> getPlayersScoreboards(){
@@ -141,7 +147,7 @@ public class GameController implements Initializable {
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
                     List<Integer> winner = game.update();
-                    sendGame();
+                    sendGame(player, game);
                     if(winner!=null){
                         endActions(winner);
                     }else{
@@ -178,7 +184,7 @@ public class GameController implements Initializable {
     public void changeTileAction() {
         if(isPlayerTurns()) {
             game.changeNextTile();
-            sendGame();
+            sendGame(player, game);
             enableDisableView();
         }
     }
@@ -245,11 +251,28 @@ public class GameController implements Initializable {
         return player == PlayerType.valueOf(game.getCurrentPlayer().getName());
     }
 
-    private void sendGame(){
-        if(!player.isServer()){
-            NetworkingUtils.sendGameToServer(game);
-        }else {
-            NetworkingUtils.sendGameToClient(game);
+    public void sendMessageAction(ActionEvent actionEvent) {
+        gameViewsManager.sendMessage(new Message(tfMessage.getText(), player));
+        tfMessage.clear();
+    }
+
+    public static void restoreGame(GameWorld game) {
+        System.out.println("Game board received from the client!" + game.getNextPlayerInfo());
+        GameController.game=game;
+        enableDisableView();
+        gameViewsManager.updateGame(GameController.game);
+    }
+
+    public static void enableDisableView(){
+        if(isPlayerTurns()){
+            gameViewsManager.enableViews();
         }
+        else{
+            gameViewsManager.disableView();
+        }
+    }
+
+    public static void setPlayer(PlayerType player){
+        GameController.player = player;
     }
 }

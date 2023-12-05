@@ -11,14 +11,12 @@ abstract class GameView {
 
     protected final double MIN_HEIGHT_COL = 10;
     protected final double MIN_WIDTH_COL = 10;
-    protected GameWorld game;
-    protected boolean viewEnable=true;
-    public GameView(GameWorld game){
-        this.game=game;
-    }
+    protected static GameWorld game;
+    protected static boolean viewEnable=true;
+    public GameView(){}
 
-    public void updateGame(GameWorld game){
-        this.game=game;
+    public static void updateGame(GameWorld game){
+        GameView.game=game;
     }
 
     protected void resizeGridPane(GridPane gridPane, int numberColRow, boolean isNextTile){
@@ -50,13 +48,11 @@ abstract class GameView {
 
     public abstract void updateView();
 
-    public void disableView(){
+    public static void disableView(){
         viewEnable=false;
-        updateView();
     }
 
-    public void enableView(){
+    public static void enableView(){
         viewEnable=true;
-        updateView();
     }
 }

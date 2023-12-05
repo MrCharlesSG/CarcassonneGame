@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class NetworkingUtils {
+public final class NetworkingUtils {
 
     private NetworkingUtils(){}
     public static void sendGameToServer(GameWorld game) {

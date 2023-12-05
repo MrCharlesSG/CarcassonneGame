@@ -1,7 +1,6 @@
 package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
 
 import java.util.List;
@@ -9,8 +8,8 @@ import java.util.List;
 final class ScoreboardView extends GameView{
     private final List<ScoreboardUnit> playersScoreboards;
 
-    public ScoreboardView(GameWorld game, List<ScoreboardUnit> playersScoreboards) {
-        super(game);
+    public ScoreboardView(List<ScoreboardUnit> playersScoreboards) {
+        super();
         this.playersScoreboards=playersScoreboards;
         initPlayersInfo();
     }

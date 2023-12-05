@@ -1,7 +1,6 @@
 package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -12,8 +11,8 @@ final class NextTileView extends GameView{
     private Position followerPosition;
     private Button buttonWithFollower;
     private final GridPane gpNextTile;
-    public NextTileView(GameWorld game, GridPane gpNextTile) {
-        super(game);
+    public NextTileView(GridPane gpNextTile) {
+        super();
         this.gpNextTile=gpNextTile;
     }
 

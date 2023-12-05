@@ -2,17 +2,15 @@ package hr.algebra.carcassonnegame2.views;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
-import hr.algebra.carcassonnegame2.model.chat.RemoteChatServiceImpl;
+import hr.algebra.carcassonnegame2.model.chat.Message;
+import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.*;
 
 public final class ViewsManager {
     private final ScoreboardView scoreBoardView;
@@ -21,18 +19,20 @@ public final class ViewsManager {
 
     private final List<GameView> gameViews;
     private final ChatView chatView;
+    private final PlayerTurnView playerTurnsView;
     private boolean viewsEnable =true;
-    public ViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatServiceImpl chat, GridPane gpNextTile, GridPane gpGameBoard){
-        scoreBoardView = new ScoreboardView(game, playersScoreboards);
-        nextTileView = new NextTileView(game, gpNextTile);
-        gameBoardView = new GameBoardView(game, gpGameBoard);
-        chatView = new ChatView(chat);
-        gameViews = List.of(scoreBoardView, nextTileView, gameBoardView);
+    public ViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
+        GameView.updateGame(game);
+        scoreBoardView = new ScoreboardView(playersScoreboards);
+        nextTileView = new NextTileView(gpNextTile);
+        gameBoardView = new GameBoardView(gpGameBoard);
+        chatView = new ChatView(chat, taChat);
+        playerTurnsView = new PlayerTurnView(lbPlayerTurns);
+        gameViews = List.of(scoreBoardView, nextTileView, gameBoardView, playerTurnsView);
     }
 
     public void updateGame(GameWorld game){
-        for (GameView gameView: gameViews)
-            gameView.updateGame(game);
+        GameView.updateGame(game);
         updateView();
     }
 
@@ -65,8 +65,8 @@ public final class ViewsManager {
         scoreBoardView.updateView();
     }
 
-    public void updateChat(TextArea textArea){
-        chatView.updateChat(textArea);
+    public void updateChat(){
+        chatView.updateChat();
     }
 
     public void updateView() {
@@ -75,18 +75,16 @@ public final class ViewsManager {
     }
 
     public void disableView() {
-        if(viewsEnable){
-            viewsEnable=false;
-            for (GameView gameView: gameViews)
-                gameView.disableView();
-        }
+        GameView.disableView();
+        updateView();
     }
 
     public void enableViews() {
-        if(!viewsEnable){
-            viewsEnable=true;
-            for (GameView gameView: gameViews)
-                gameView.enableView();
-        }
+        GameView.enableView();
+        updateView();
+    }
+
+    public void sendMessage(Message message) {
+        chatView.sendMessage(message);
     }
 }

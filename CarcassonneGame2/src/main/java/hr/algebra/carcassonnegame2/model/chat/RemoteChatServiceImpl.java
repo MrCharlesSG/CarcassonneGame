@@ -4,29 +4,20 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoteChatServiceImpl implements RemoteChatService {
+public class RemoteChatServiceImpl implements RemoteChatService{
+    List<Message> chatMesagesList;
 
-    private final List<Message> messages;
-
-    public RemoteChatServiceImpl(){
-        messages= new ArrayList<>();
-    }
-
-    public String getAllMessagesText() {
-        StringBuilder builder = new StringBuilder();
-        for (Message message: messages) {
-            builder.append(message.getMessageText()).append("\n");
-        }
-        return builder.toString();
+    public RemoteChatServiceImpl() {
+        chatMesagesList = new ArrayList<>();
     }
 
     @Override
     public void sendChatMessage(Message chatMessage) throws RemoteException {
-        messages.add(chatMessage);
+        chatMesagesList.add(chatMessage);
     }
 
     @Override
     public List<Message> getAllChatMessages() throws RemoteException {
-        return messages;
+        return chatMesagesList;
     }
 }
