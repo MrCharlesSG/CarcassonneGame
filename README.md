@@ -5,7 +5,7 @@
       - [Game Information](#game-information)
       - [Actions](#actions)
         - [Game](#game-1)
-  - [Version 2 (Serialization & Reflection)](#version-2-serialization-&-reflection)
+  - [Version 2 (Serialization & Reflection)](#version-2-serialization--reflection)
     - [Load and Save](#load-and-save)
     - [Documentation](#documentation)
 
