@@ -171,7 +171,7 @@ public class GameController implements Initializable {
     }
 
     public void remainingTilesAction() {
-        ViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types", Alert.AlertType.INFORMATION);
+        ViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types.", Alert.AlertType.INFORMATION);
     }
 
     public void removeFollowerAction() {
