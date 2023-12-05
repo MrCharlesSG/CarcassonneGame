@@ -55,7 +55,7 @@ The user is able to create a new game or to finish the current game.
 
 ## Version 2 (Serialization & Reflection)
 
-In this version I have fixed some bugs from the previous version. 
+In this version I have fixed some bugs from the previous version. Its been implemented the load and save of the game (serialization) and the auto-generated documentation (reflection)
 
 ### Load and Save
 
@@ -73,5 +73,34 @@ Through the app, the user can autogenerate the documentation of the project. Thi
 <img width="445" alt="CarcassoneGame5V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/a9c35946-cef4-4369-b70e-85d99437ba2f">
 <img width="645" alt="CarcassoneGame6V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d269e37a-9003-41a1-8abf-d4d874b02b5f">
 <img width="865" alt="CarcassoneGame7V2" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/f6ddae20-f1d9-4926-98c2-e165122b64a5">
+
+## Version 3 (Networking)
+
+In this version it's been implemented the networking. Now, users (Client and Server), can play the same game simultaneously thanks to shockets. Also, users will be able to chat between.
+
+### Simultaneos Game
+
+I've created two threads so one do as a Server and the other as a Client. The first thread is going to be always the Server, and is going to be the Client the one how will create the game. 
+After every `putTileAction` the game is sended to the other thread.
+For the player who is not his turn it is disable all the game functionalities. As a client, the funtionality of loading and saving game is disabled. When the Server loads the game is inmediately send to the Client how will loaded.
+
+<img width="947" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/b6750253-8a56-46c9-9891-37eeeeab1c4e">
+<img width="899" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/983a3f52-f8bc-427a-8c3e-64eeaead47b2">
+<img width="895" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/983e4e20-5913-4036-a21f-02ab52ec5df2">
+<img width="898" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/986249c9-e05b-4529-8101-3575a30eb413">
+
+### Chat
+
+In this chat every of the user will be able to send a message by pressing enter or by clicking the button. The messages contains the time they were created, the user who send it and the text it self.
+
+<img width="772" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/62c627ce-721f-490e-be7a-e55480795f67">
+<img width="768" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/67b87b55-0da7-49b3-8346-db278158f6f3">
+
+### Refactoring
+
+During thsi version I have refactored the `Controller`, the `Game` and the `Tile`
+
+####
+
 
 
