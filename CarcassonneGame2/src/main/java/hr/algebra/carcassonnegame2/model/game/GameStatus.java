@@ -27,14 +27,12 @@ final class GameStatus implements Serializable {
     private int currentPlayer;
     private final Random random;
     private boolean hasRemovedNextTileFromRemaining;
-    private final Game game;
 
 
-    public GameStatus(List<Player> players, int numberOfRemainingTiles, Game game) {
+    public GameStatus(List<Player> players, int numberOfRemainingTiles) {
         random = new Random();
         this.numberOfRemainingTiles = numberOfRemainingTiles;
         this.playersInfo = players;
-        this.game=game;
     }
 
     public void initializeGameStatus(List<Tile> allTiles, List<Integer> listOfRemainType) {
@@ -217,7 +215,6 @@ final class GameStatus implements Serializable {
     }
 
     public Tile getPositionInGameBoard(Position position) {
-        Tile  tl  = getValueOfPosition(gameBoard, position);
-        return tl;
+        return getValueOfPosition(gameBoard, position);
     }
 }

@@ -10,25 +10,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
+import java.util.HashMap;
 import java.util.List;
 
 public final class ViewsManager {
-    private final ScoreboardView scoreBoardView;
-    private final NextTileView nextTileView;
-    private final GameBoardView gameBoardView;
 
-    private final List<GameView> gameViews;
+    private final HashMap<String, GameView> gameViews;
     private final ChatView chatView;
-    private final PlayerTurnView playerTurnsView;
-    private boolean viewsEnable =true;
     public ViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
         GameView.updateGame(game);
-        scoreBoardView = new ScoreboardView(playersScoreboards);
-        nextTileView = new NextTileView(gpNextTile);
-        gameBoardView = new GameBoardView(gpGameBoard);
         chatView = new ChatView(chat, taChat);
-        playerTurnsView = new PlayerTurnView(lbPlayerTurns);
-        gameViews = List.of(scoreBoardView, nextTileView, gameBoardView, playerTurnsView);
+        gameViews = new HashMap<>() {{
+            put("ScoreBoard", new ScoreboardView(playersScoreboards));
+            put("NextTile", new NextTileView(gpNextTile));
+            put("GameBoard", new GameBoardView(gpGameBoard));
+            put("PlayerTurns", new PlayerTurnView(lbPlayerTurns));
+        }};
     }
 
     public void updateGame(GameWorld game){
@@ -37,7 +34,7 @@ public final class ViewsManager {
     }
 
     public void updateNextTile(){
-        nextTileView.updateView();
+        gameViews.get("NextTile").updateView();
     }
 
     public static void sendAlert(String title, String message, Alert.AlertType alertType){
@@ -48,21 +45,13 @@ public final class ViewsManager {
         alert.showAndWait();
     }
     public Position getFollowerPosition(){
-        return nextTileView.getFollowerPosition();
+        return ((NextTileView) gameViews.get("NextTile")).getFollowerPosition();
     }
     public Position getSelectedPosition(){
-        return gameBoardView.getSelecetedPosition();
+        return ((GameBoardView) gameViews.get("GameBoard")).getSelecetedPosition();
     }
     public void resetFollowerPosition() {
-        nextTileView.resetFollowerPosition();
-    }
-
-    public void paintGameBoard() {
-        gameBoardView.updateView();
-    }
-
-    public void updateScoreboard() {
-        scoreBoardView.updateView();
+        ((NextTileView) gameViews.get("NextTile")).resetFollowerPosition();
     }
 
     public void updateChat(){
@@ -70,8 +59,8 @@ public final class ViewsManager {
     }
 
     public void updateView() {
-        for (GameView gameView: gameViews)
-            gameView.updateView();
+        for (String keys: gameViews.keySet())
+            gameViews.get(keys).updateView();
     }
 
     public void disableView() {

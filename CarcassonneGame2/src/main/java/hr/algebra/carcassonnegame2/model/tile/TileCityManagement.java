@@ -13,16 +13,10 @@ class TileCityManagement extends TileManagement {
     }
 
     @Override
-    public boolean checkPutFollowerInPath(Position position) { return false;}
-
-    @Override
-    public int countPathsForClosingPath(Position position) {return 0;}
-
-    @Override
-    public void setTileWithFollowerInPath(Position position) {}
-
-    @Override
-    public boolean checkPutFollowerInCity(Position position) {
+    public boolean checkPutFollower(Position position) throws IllegalArgumentException {
+        if(!getValuePosition(position).isCity()){
+            throw new IllegalArgumentException("Wrong Manager");
+        }
         if(getValuePosition(CENTER).isCity()){
             return (tile.getFollowerPosition() == null || !getValuePosition(tile.getFollowerPosition()).isCity())
                     && callGameToCheckOtherTile(TileElementValue.CITY);
@@ -48,17 +42,25 @@ class TileCityManagement extends TileManagement {
     }
 
     @Override
-    public void prepareForClosingPath(Position position) {}
+    public int countPathsForClosingPath(Position position) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Wrong Manager");
+    }
 
     @Override
-    public void setIfFollowerInCity(Position position) {
+    public void setTileWithFollowerInPath(Position position) throws IllegalArgumentException {throw new IllegalArgumentException("Wrong Manager");}
+
+    @Override
+    public void prepareForClosingPath(Position position) throws IllegalArgumentException {throw new IllegalArgumentException("Wrong Manager");}
+
+    @Override
+    public void setIfFollowerInCity(Position position) throws IllegalArgumentException {
         if(isFollowerInCity(position)){
             setTileWithFollowerInCity();
         }
     }
 
     @Override
-    public int countCitiesForClosingCities(Position position) {
+    public int countCitiesForClosingCities(Position position) throws IllegalArgumentException {
         if (tile.getFollowerPosition() != null && getValuePosition(tile.getFollowerPosition()).isCity()) {
             setTileWithFollowerInCity();
         }
@@ -66,7 +68,7 @@ class TileCityManagement extends TileManagement {
     }
 
     @Override
-    public int getAddingPointForThisCity(Position position) {
+    public int getAddingPointForThisCity(Position position) throws IllegalArgumentException {
         if(tile.areCitiesConnected()){
             if(getValuePosition(LEFT).hasShield() ||
                     getValuePosition(RIGHT).hasShield() ||
@@ -81,7 +83,7 @@ class TileCityManagement extends TileManagement {
     }
 
     @Override
-    public Position getNextCityValue(Position position) {
+    public Position getNextCityValue(Position position) throws IllegalArgumentException {
         Position pos = position;
         do {
             pos= TileUtils.castRelativeToPositionInTile(TileUtils.castPositionInTileToRelative(pos).getNext());
@@ -91,7 +93,7 @@ class TileCityManagement extends TileManagement {
     }
 
     @Override
-    public boolean hasPathAnEnd() {return false;}
+    public boolean hasPathAnEnd() throws IllegalArgumentException {throw new IllegalArgumentException("Wrong Manager");}
 
     private int getCountCityFromOtherTiles() {
         int count = getCountCityFromOtherTilesAux(LEFT);

@@ -49,7 +49,7 @@ abstract class TileManagement implements Serializable {
         throw new IllegalArgumentException("Can not manage that type");
     }
 
-    public abstract boolean checkPutFollowerInPath(Position position);
+    public abstract boolean checkPutFollower(Position position) throws IllegalArgumentException;
 
     protected boolean callGameToCheckOtherTile(TileElementValue value){
         boolean returnValue = true;
@@ -81,21 +81,19 @@ abstract class TileManagement implements Serializable {
         return col>=0 && col<NUM_COLS_TILE && row>=0 && row<NUM_ROWS_TILE;
     }
 
-    public abstract int countPathsForClosingPath(Position position);
+    public abstract int countPathsForClosingPath(Position position) throws IllegalArgumentException;
 
-    public abstract void setTileWithFollowerInPath(Position position);
+    public abstract void setTileWithFollowerInPath(Position position) throws IllegalArgumentException;
 
-    public abstract boolean checkPutFollowerInCity(Position position);
+    public abstract void prepareForClosingPath(Position position) throws IllegalArgumentException;
 
-    public abstract void prepareForClosingPath(Position position);
+    public abstract void setIfFollowerInCity(Position position) throws IllegalArgumentException;
 
-    public abstract void setIfFollowerInCity(Position position);
+    public abstract int countCitiesForClosingCities(Position position) throws IllegalArgumentException;
 
-    public abstract int countCitiesForClosingCities(Position position);
+    public abstract int getAddingPointForThisCity(Position position) throws IllegalArgumentException;
 
-    public abstract int getAddingPointForThisCity(Position position);
+    public abstract Position getNextCityValue(Position position) throws IllegalArgumentException;
 
-    public abstract Position getNextCityValue(Position position);
-
-    public abstract boolean hasPathAnEnd();
+    public abstract boolean hasPathAnEnd() throws IllegalArgumentException;
 }

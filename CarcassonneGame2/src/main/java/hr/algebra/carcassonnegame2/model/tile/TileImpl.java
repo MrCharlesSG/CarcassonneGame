@@ -1,7 +1,6 @@
 package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
-import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
@@ -87,9 +86,9 @@ public final class TileImpl extends Tile {
         if (!isFollowerInPosition(position)) {
             TileElementValue positionValue = getValuePosition(position);
             if (positionValue.isPath())
-                return tilePathManager.checkPutFollowerInPath(position);
+                return tilePathManager.checkPutFollower(position);
             if (positionValue.isCity())
-                return tileCityManager.checkPutFollowerInCity(position);
+                return tileCityManager.checkPutFollower(position);
             return true;
         }
         return false;

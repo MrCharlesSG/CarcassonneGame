@@ -34,11 +34,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
-    private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
-    private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
-    private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
-    private static final String jsonFileName = jsonFileNameAll;
     private static final int numberOfFollowersPerPlayer = 7;
     private static final String saveFileName = "data.ser";
     private static final String[] playersNames = new String[]{"CLIENT", "SERVER"};
@@ -113,7 +108,7 @@ public class GameController implements Initializable {
 
     private void initializeGame(){
         try{
-           game = GameFactory.createGame(playersNames, jsonFileName, numberOfFollowersPerPlayer);
+           game = GameFactory.createGame(playersNames, numberOfFollowersPerPlayer);
         }catch (IllegalArgumentException ignored) { //Cerrar App
             closeThisView();
         }

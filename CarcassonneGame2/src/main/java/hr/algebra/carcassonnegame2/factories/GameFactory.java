@@ -13,7 +13,13 @@ import java.util.List;
 
 public class GameFactory {
 
-    public static GameWorld createGame(String[] playersNames, String jsonFileName, int numberOfFollowersPerPlayer) throws IllegalArgumentException{
+    private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
+    private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
+    private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
+    private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
+    private static final String jsonFileName = jsonFileNameAll;
+
+    public static GameWorld createGame(String[] playersNames, int numberOfFollowersPerPlayer) throws IllegalArgumentException{
         try{
 
             //Create players

@@ -9,7 +9,9 @@ final class TilePathManagement extends TileManagement {
     }
 
     @Override
-    public boolean checkPutFollowerInPath(Position position) {
+    public boolean checkPutFollower(Position position) throws IllegalArgumentException {
+        if(!getValuePosition(position).isPath())
+            throw new IllegalArgumentException("Wrong Manager");
         if(getValuePosition(CENTER).isIntersection()){
             if( !isFollowerInPathSection(position)){
                 if(position.getRow()==NUM_ROWS_TILE/2){
@@ -33,7 +35,7 @@ final class TilePathManagement extends TileManagement {
     }
 
     @Override
-    public int countPathsForClosingPath(Position position) {
+    public int countPathsForClosingPath(Position position) throws IllegalArgumentException {
         if(tile.pathEnd()) {
             setTileWithFollowerInPath(position);
             return 0;
@@ -49,40 +51,37 @@ final class TilePathManagement extends TileManagement {
     }
 
     @Override
-    public void setTileWithFollowerInPath(Position position) {
+    public void setTileWithFollowerInPath(Position position) throws IllegalArgumentException {
         if(isFollowerInPathSection(position)){
             game.setTileWithFollowerInCount(tile);
         }
     }
 
     @Override
-    public boolean checkPutFollowerInCity(Position position) {return false;}
-
-    @Override
-    public void prepareForClosingPath(Position position) {
+    public void prepareForClosingPath(Position position) throws IllegalArgumentException {
         if(isFollowerInPathSection(position)){
             game.setTileWithFollowerInCount(tile);
         }
     }
 
     @Override
-    public void setIfFollowerInCity(Position position) {}
+    public void setIfFollowerInCity(Position position) throws IllegalArgumentException {throw new IllegalArgumentException("Wrong Manager");}
 
     @Override
-    public int countCitiesForClosingCities(Position position) {return 0;}
+    public int countCitiesForClosingCities(Position position) throws IllegalArgumentException {throw new IllegalArgumentException("Wrong Manager");}
 
     @Override
-    public int getAddingPointForThisCity(Position position) {
-        return 0;
+    public int getAddingPointForThisCity(Position position) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Wrong Manager");
     }
 
     @Override
-    public Position getNextCityValue(Position position) {
-        return null;
+    public Position getNextCityValue(Position position) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Wrong Manager");
     }
 
     @Override
-    public boolean hasPathAnEnd() {
+    public boolean hasPathAnEnd() throws IllegalArgumentException {
         int counter = 0;
         counter+= getValuePosition(RIGHT).isPath()?1:0;
         counter+= getValuePosition(LEFT).isPath()?1:0;

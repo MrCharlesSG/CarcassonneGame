@@ -19,7 +19,7 @@ public class Game implements GameWorld, Externalizable {
     public Game(){}
     @Override
     public void initializeGame(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType) {
-        gameStatus= new GameStatus(players, numberOfRemainingTiles, this);
+        gameStatus= new GameStatus(players, numberOfRemainingTiles);
         gameOperations = new GameOperations(gameStatus, this);
         gameStatus.initializeGameStatus(allTiles, listOfRemainType);
     }
