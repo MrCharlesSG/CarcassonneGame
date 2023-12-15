@@ -217,4 +217,8 @@ final class GameStatus implements Serializable {
     public Tile getPositionInGameBoard(Position position) {
         return getValueOfPosition(gameBoard, position);
     }
+
+    public void addPlayer(Player player) {
+        playersInfo.add(player);
+    }
 }

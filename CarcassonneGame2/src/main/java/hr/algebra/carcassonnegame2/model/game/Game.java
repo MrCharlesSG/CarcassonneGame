@@ -28,8 +28,6 @@ public class Game implements GameWorld, Externalizable {
     public void changeNextTile() {
         gameStatus.changeNextTile();
     }
-
-    private boolean isGameFinished() { return gameStatus.isGameFinished(); }
     
     @Override
     public List<Player> getPlayersInfo() {
@@ -46,9 +44,9 @@ public class Game implements GameWorld, Externalizable {
     @Override
     public List<Integer> update() {
         //resizeBoard();
-        if(isGameFinished()){
+        if(gameStatus.isGameFinished()){
             makeFinalCount();
-            return getWinner();
+            return gameStatus.getWinner();
         }
         gameStatus.update();
         return null;
@@ -61,10 +59,6 @@ public class Game implements GameWorld, Externalizable {
                 closeTile(getValueOfPosition(gameStatus.getGameBoard(), tilesWithFollower.get(i)));
             }
         }
-    }
-
-    private List<Integer> getWinner() {
-        return gameStatus.getWinner();
     }
     
     @Override
@@ -163,6 +157,19 @@ public class Game implements GameWorld, Externalizable {
     @Override
     public Tile getNextTile() {
         return gameStatus.getNextTile();
+    }
+
+    @Override
+    public List<Integer> isFinished() {
+        if(gameStatus.isGameFinished()){
+            return gameStatus.getWinner();
+        }
+        return null;
+    }
+
+    @Override
+    public void addPlayer(Player player) {
+        gameStatus.addPlayer(player);
     }
 
     @Override

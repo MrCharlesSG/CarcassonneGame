@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
+import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 
 import java.io.File;
@@ -24,8 +25,8 @@ public class GameFactory {
 
             //Create players
             List<Player> playerList = new ArrayList<>();
-            for(String name: playersNames){
-                playerList.add(PlayerFactory.createPlayer(name, numberOfFollowersPerPlayer));
+            for (int i = 0; i < playersNames.length && playersNames[i] != null; i++) {
+                playerList.add(PlayerFactory.createPlayer(playersNames[i], numberOfFollowersPerPlayer, PlayerType.getElementByValue(i)));
             }
 
             //Create list of tiles from json

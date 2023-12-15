@@ -7,14 +7,14 @@ import hr.algebra.carcassonnegame2.model.player.PlayerType;
 public class PlayerFactory {
 
     private static final String headOfStyle = "-fx-fill: ";
-    private static final String[] colours = new String[]{"#4F46E5","#0891B2"};
+    private static final String[] colours = new String[]{"#3b82f6","#f472b6"};
 
-    public static Player createPlayer(String name, int numberFollowersPerPlayer) {
-        return new PlayerImpl(name, numberFollowersPerPlayer, getStyle(name));
+    public static Player createPlayer(String name, int numberFollowersPerPlayer, PlayerType playerType) {
+        return new PlayerImpl(name, numberFollowersPerPlayer, getStyle(playerType), playerType);
     }
 
-    private static String getStyle(String name){
-        if(PlayerType.valueOf(name).isServer()){
+    private static String getStyle(PlayerType playerType){
+        if(playerType.isServer()){
             return colours[0];
         }
         return colours[1];

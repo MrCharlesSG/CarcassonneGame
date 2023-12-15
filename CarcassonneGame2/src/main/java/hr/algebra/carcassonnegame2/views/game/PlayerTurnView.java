@@ -1,5 +1,6 @@
 package hr.algebra.carcassonnegame2.views.game;
 
+import hr.algebra.carcassonnegame2.control.controllers.GameController;
 import javafx.scene.control.Label;
 
 final class PlayerTurnView extends GameView{
@@ -9,7 +10,10 @@ final class PlayerTurnView extends GameView{
     private static final String falseColor = "#E11D48";
     private static final String falseText = "Not Your Turn";
     private static final String trueText = "Your Turn";
+    private static final String offlineText = "Offline Game";
     private static final String style="-fx-background-color: ";
+    private static final String offlineColor = "#c084fc";
+
     public PlayerTurnView(Label lbPlayerTurn) {
         super();
         this.lbPlayerTurn=lbPlayerTurn;
@@ -17,12 +21,16 @@ final class PlayerTurnView extends GameView{
 
     @Override
     public void updateView() {
-        if(GameView.viewEnable){
+        if(!GameController.isOnline()){
+            setOfflineTurn();
+        }
+        else if(GameView.viewEnable){
             setPlayerTurnTrue();
         }else{
             setPlayerTurnFalse();
         }
     }
+
 
     private void setPlayerTurnTrue() {
         lbPlayerTurn.setStyle(style+trueColor);
@@ -32,5 +40,10 @@ final class PlayerTurnView extends GameView{
     private void setPlayerTurnFalse() {
         lbPlayerTurn.setStyle(style+falseColor);
         lbPlayerTurn.setText(falseText);
+    }
+
+    private void setOfflineTurn() {
+        lbPlayerTurn.setText(offlineText);
+        lbPlayerTurn.setStyle(style+offlineColor);
     }
 }

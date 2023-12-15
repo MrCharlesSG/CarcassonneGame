@@ -4,7 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 public enum TileElementValue implements Serializable {
-    PATH(0, "-fx-background-color: gray;"), INTERSECTION(1, "-fx-background-color: darkgray;"), MONASTERY(2, "-fx-background-color: red;"), FARM(3, "-fx-background-color: green;"), CITY(4, "-fx-background-color: brown;"), CITY_WITH_SHIELD(5, "-fx-background-color: brown; -fx-border-color: black;");
+    PATH(0, "-fx-background-color: #d6d3d1;"), INTERSECTION(1, "-fx-background-color: #a8a29e;"), MONASTERY(2, "-fx-background-color: #b91c1c;"), FARM(3, "-fx-background-color: #15803d;"), CITY(4, "-fx-background-color: #92400e;"), CITY_WITH_SHIELD(5, "-fx-background-color: #92400e; -fx-border-color: black;");
 
     private final int value;
 

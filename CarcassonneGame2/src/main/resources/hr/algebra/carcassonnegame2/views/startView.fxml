@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="400.0" style="-fx-background-color: E2E8F0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.StartViewController">
+   <top>
+      <Label fx:id="lbTitle" alignment="CENTER" prefHeight="60.0" prefWidth="353.0" text="CARCASSONNE" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="40.0" />
+         </font></Label>
+   </top>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="lbFirstQuestion" alignment="CENTER" layoutX="7.0" layoutY="14.0" prefHeight="103.0" prefWidth="384.0" text="What mode you want to play">
+               <font>
+                  <Font size="24.0" />
+               </font></Label>
+            <Label fx:id="lbMode" layoutX="258.0" layoutY="-9.0" prefHeight="17.0" prefWidth="81.0" text="Online" />
+            <Label fx:id="lbOneName" layoutX="43.0" layoutY="14.0" prefHeight="38.0" prefWidth="235.0" text="Your Name">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="taOneName" layoutX="43.0" layoutY="53.0" prefHeight="43.0" prefWidth="312.0" scaleShape="false" style="-fx-background-color: f1f5f9;">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </TextField>
+            <Label fx:id="lbError" layoutX="116.0" layoutY="103.0" text="[Name field is required]" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </center>
+   <bottom>
+      <AnchorPane prefHeight="63.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnGreenButton" layoutX="204.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGreenButtonClicked" prefHeight="33.0" prefWidth="191.0" style="-fx-background-color: #10B981;" text="Online" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+            <Button fx:id="btnRedButton" layoutX="8.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRedButtonAction" prefHeight="33.0" prefWidth="191.0" style="-fx-background-color: #E11D48;" text="Offline" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>
