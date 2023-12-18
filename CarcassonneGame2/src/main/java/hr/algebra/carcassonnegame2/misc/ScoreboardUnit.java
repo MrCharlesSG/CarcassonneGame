@@ -18,14 +18,14 @@ public final class ScoreboardUnit {
         this.sphere=sphere;
     }
 
-    public void updateScoreBoard(int points, int followers){
-        this.lbFollowers.setText(Integer.toString(followers));
-        this.lbPoints.setText(Integer.toString(points));
-        //lbName.setStyle( "-fx-background-color: " + (isTurn? player.getTextColor(): "transparent" ));
-    }
-
     public void initializePlayerInfo(Player player) {
         this.player=player;
+        updateScoreBoard();
+    }
+
+    public void updateScoreBoard() {
+        this.lbFollowers.setText(Integer.toString(player.getNumberOfFollowers()));
+        this.lbPoints.setText(Integer.toString(player.getPoints()));
         lbName.setText(player.getName());
         sphere.setStyle("-fx-fill: "+player.getTextColor());
     }

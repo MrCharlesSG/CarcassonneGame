@@ -24,21 +24,16 @@ import java.rmi.server.UnicastRemoteObject;
 public final class NetworkManager {
 
     private static RemoteChatService chatService;
-    private static Player player;
 
     public static RemoteChatService getChatService(){
         return chatService;
     }
 
-    public static void start(String playerName) throws Exception {
+    public static void start() throws Exception {
         if(!NetworkingUtils.isServerConnected()) {
-            player = PlayerFactory.createPlayer(playerName, StartViewController.NUM_FOLLOWERS_PER_PLAYER, PlayerType.SERVER);
-            GameController.setPlayer(player);
             new Thread(NetworkManager::startServer).start();
         }
         else if (!NetworkingUtils.isClientConnected()){
-            player = PlayerFactory.createPlayer(playerName, StartViewController.NUM_FOLLOWERS_PER_PLAYER, PlayerType.CLIENT);
-            GameController.setPlayer(player);
             new Thread(NetworkManager::startClient).start();
         }else{
             throw new Exception("No posibility to play online");
@@ -46,10 +41,10 @@ public final class NetworkManager {
     }
 
     public static void sendGame(PlayerType player, GameWorld game){
-        if(!player.isServer()){
-            NetworkingUtils.sendGameToServer(game);
-        }else {
+        if(player.isServer()){
             NetworkingUtils.sendGameToClient(game);
+        }else {
+            NetworkingUtils.sendGameToServer(game);
         }
     }
 
@@ -78,10 +73,9 @@ public final class NetworkManager {
 
     private static void processSerializableClient(Socket clientSocket) {
         try (ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());){
+             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())){
             GameWorld game = (GameWorld) ois.readObject();
             if(StartViewController.isNotHover()){
-                game.addPlayer(player);
                 Platform.runLater(() -> StartViewController.startGameView(game));
             }else {
                 Platform.runLater(() -> GameController.restoreGame(game));

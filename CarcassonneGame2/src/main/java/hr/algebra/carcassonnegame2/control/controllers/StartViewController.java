@@ -2,8 +2,9 @@ package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.Main;
 import hr.algebra.carcassonnegame2.factories.GameFactory;
-import hr.algebra.carcassonnegame2.model.game.Game;
+import hr.algebra.carcassonnegame2.factories.PlayerFactory;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
+import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
 import hr.algebra.carcassonnegame2.utils.ViewUtils;
 import javafx.event.ActionEvent;
@@ -21,6 +22,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class StartViewController implements Initializable {
@@ -30,6 +33,7 @@ public class StartViewController implements Initializable {
     public Label lbFirstQuestion;
     public Label lbOneName;
     public TextField taOneName;
+    public static TextField taOneNameStatic;
     public Button btnGreenButton;
     public Button btnRedButton;
     public Label lbError;
@@ -44,9 +48,9 @@ public class StartViewController implements Initializable {
     private static final String GREEN_BUTTON_QUESTION = "Online";
     private static final String GREEN_BUTTON_OTHER = "Accept";
     private static final String WAITING_TEXT = "Waiting for other player....";
-
-    private static String[] playersName = new String[]{"Juan", "Monica"};
     private static final int NUM_PLAYERS = 2;
+
+    private static List<Player> players;
     private static int currentNumberOfPlayers;
 
     public static void setStage(Stage stage) {
@@ -62,6 +66,12 @@ public class StartViewController implements Initializable {
         stage.close();
         try {
             Stage gameStage = new Stage();
+            GameController.setPlayer(players.get(0));
+            if(game == null){
+                players.add(PlayerFactory.createDefaultPlayer());
+            }else{
+                game.removeLastPlayer();
+            }
             initializeGame(game);
             Main.setStage(gameStage);
             gameStage.setTitle("Carcassonne ");
@@ -82,7 +92,8 @@ public class StartViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //playersName = new String[NUM_PLAYERS];
+        players = new ArrayList<>();
+        taOneNameStatic = taOneName;
         setupListeners();
         setQuestionView();
     }
@@ -106,15 +117,20 @@ public class StartViewController implements Initializable {
     }
 
     private void startOnlineMode() {
-        setWaitingMode();
         startOnline();
     }
 
     private void startOnline() {
         try {
-            NetworkManager.start(taOneName.getText());
-        } catch (Exception e) {
-            ViewUtils.sendAlert("Connection Error", e.getMessage(), Alert.AlertType.ERROR);
+            addPlayerName();
+            setWaitingMode();
+            NetworkManager.start();
+        } catch (IllegalArgumentException e){
+            setOnlineView();
+            lbError.setVisible(true);
+        }
+        catch (Exception e) {
+            ViewUtils.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
             setQuestionView();
         }
     }
@@ -178,21 +194,11 @@ public class StartViewController implements Initializable {
     }
 
     private void startOfflineMode() {
-        if (currentNumberOfPlayers != NUM_PLAYERS - 1) {
-            if (!taOneName.getText().isBlank()) {
-                playersName[currentNumberOfPlayers] = taOneName.getText();
-                currentNumberOfPlayers++;
-                setOfflineView();
-            } else {
-                lbError.setVisible(true);
-            }
+        addPlayerName();
+        if (currentNumberOfPlayers != NUM_PLAYERS) {
+            setOfflineView();
         } else {
-            if (!taOneName.getText().isBlank()) {
-                playersName[currentNumberOfPlayers] = taOneName.getText();
-                initializeOfflineMode();
-            } else {
-                lbError.setVisible(true);
-            }
+            initializeOfflineMode();
         }
     }
 
@@ -217,10 +223,23 @@ public class StartViewController implements Initializable {
 
     private static void initializeGame(GameWorld game) {
         try {
-            game = game ==null ? GameFactory.createGame(playersName, NUM_FOLLOWERS_PER_PLAYER): game;
+            game = game ==null ? GameFactory.createGame(): game;
+            for (Player player: players) {
+                game.addPlayer(player);
+            }
             GameController.setGame(game, situation != Situation.OFFLINE);
         } catch (IllegalArgumentException ignored) {
             closeThisView();
+        }
+    }
+
+    private static void addPlayerName() {
+        String playerName = taOneNameStatic.getText();
+        if (!playerName.isBlank()) {
+            players.add(PlayerFactory.createPlayer(playerName, NUM_FOLLOWERS_PER_PLAYER));
+            currentNumberOfPlayers++;
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 

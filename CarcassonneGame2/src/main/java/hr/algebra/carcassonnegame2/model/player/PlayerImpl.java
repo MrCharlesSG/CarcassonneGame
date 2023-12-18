@@ -84,6 +84,11 @@ public class PlayerImpl implements Player, Serializable {
     }
 
     @Override
+    public boolean isDefault() {
+        return type.isDefault();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return ((Player) obj).isServer() && this.isServer() || !((Player) obj).isServer() && !this.isServer() ;
     }

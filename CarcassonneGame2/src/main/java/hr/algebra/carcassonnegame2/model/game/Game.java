@@ -173,6 +173,11 @@ public class Game implements GameWorld, Externalizable {
     }
 
     @Override
+    public void removeLastPlayer() {
+        gameStatus.removeLastPlayer();
+    }
+
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(gameStatus);
     }

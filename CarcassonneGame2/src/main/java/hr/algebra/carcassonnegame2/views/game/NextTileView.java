@@ -11,6 +11,8 @@ final class NextTileView extends GameView{
     private Position followerPosition;
     private Button buttonWithFollower;
     private final GridPane gpNextTile;
+    private final static String KEY_NAME="NextTile";
+
     public NextTileView(GridPane gpNextTile) {
         super();
         this.gpNextTile=gpNextTile;
@@ -72,5 +74,9 @@ final class NextTileView extends GameView{
 
     public void resetFollowerPosition() {
         followerPosition = null;
+    }
+
+    public static String getKeyName() {
+        return KEY_NAME;
     }
 }

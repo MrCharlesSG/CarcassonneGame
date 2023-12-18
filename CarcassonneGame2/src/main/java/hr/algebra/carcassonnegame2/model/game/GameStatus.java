@@ -1,5 +1,6 @@
 package hr.algebra.carcassonnegame2.model.game;
 
+import hr.algebra.carcassonnegame2.control.controllers.StartViewController;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
@@ -41,7 +42,7 @@ final class GameStatus implements Serializable {
         this.numColsGameBoard= GameWorld.INIT_NUM_COLS_GAME_BOARD;
         this.numRowsGameBoard= GameWorld.INIT_NUM_ROWS_GAME_BOARD;
         this.gameBoard = new Tile[this.numColsGameBoard][this.numRowsGameBoard];
-        this.currentPlayer = random.nextInt(this.playersInfo.size());
+        this.currentPlayer = random.nextInt(!this.playersInfo.isEmpty() ? this.playersInfo.size() : 2);
         putFirstTile();
         setNextTile();
     }
@@ -220,5 +221,9 @@ final class GameStatus implements Serializable {
 
     public void addPlayer(Player player) {
         playersInfo.add(player);
+    }
+
+    public void removeLastPlayer() {
+        playersInfo.removeIf(Player::isDefault);
     }
 }

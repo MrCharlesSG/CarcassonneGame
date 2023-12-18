@@ -13,6 +13,8 @@ final class PlayerTurnView extends GameView{
     private static final String offlineText = "Offline Game";
     private static final String style="-fx-background-color: ";
     private static final String offlineColor = "#c084fc";
+    private final static String KEY_NAME="PlayerTurn";
+
 
     public PlayerTurnView(Label lbPlayerTurn) {
         super();
@@ -46,4 +48,9 @@ final class PlayerTurnView extends GameView{
         lbPlayerTurn.setText(offlineText);
         lbPlayerTurn.setStyle(style+offlineColor);
     }
+
+    public static String getKeyName() {
+        return KEY_NAME;
+    }
+
 }

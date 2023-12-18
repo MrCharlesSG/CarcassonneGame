@@ -24,4 +24,6 @@ public interface Player{
     boolean isServer();
 
     PlayerType getType();
+
+    boolean isDefault();
 }

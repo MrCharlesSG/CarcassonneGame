@@ -1,7 +1,7 @@
 package hr.algebra.carcassonnegame2.model.player;
 
 public enum PlayerType {
-    CLIENT(1), SERVER(0);
+    SERVER(0), CLIENT(1), DEFAULT(2);
 
     private final int value;
 
@@ -19,6 +19,14 @@ public enum PlayerType {
                 return element;
             }
         }
-        return null;
+        return DEFAULT;
+    }
+
+    public boolean isClient() {
+        return this == CLIENT;
+    }
+
+    public boolean isDefault() {
+        return this ==DEFAULT;
     }
 }

@@ -265,8 +265,10 @@ public class GameController implements Initializable {
     }
 
     public void sendMessageAction() {
-        gameViewsManager.sendMessage(new Message(tfMessage.getText(), player));
-        tfMessage.clear();
+        if(!tfMessage.getText().isBlank()) {
+            gameViewsManager.sendMessage(new Message(tfMessage.getText(), player));
+            tfMessage.clear();
+        }
     }
 
     public static void restoreGame(GameWorld game) {
