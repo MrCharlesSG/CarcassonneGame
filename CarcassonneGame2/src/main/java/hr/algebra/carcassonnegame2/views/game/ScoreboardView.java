@@ -7,11 +7,13 @@ import java.util.List;
 
 final class ScoreboardView extends GameView{
     private final List<ScoreboardUnit> playersScoreboards;
+    private final static String KEY_NAME="ScoreBoard";
+
 
     public ScoreboardView(List<ScoreboardUnit> playersScoreboards) {
         super();
         this.playersScoreboards=playersScoreboards;
-        initPlayersInfo();
+        initialize();
     }
 
     @Override
@@ -19,7 +21,8 @@ final class ScoreboardView extends GameView{
         updateScoreboard();
     }
 
-    private void initPlayersInfo() {
+    @Override
+    public void initialize() {
         List<Player> list=game.getPlayersInfo();
         for (int i = 0; i < playersScoreboards.size(); i++) {
             playersScoreboards.get(i).initializePlayerInfo(list.get(i));
@@ -27,11 +30,17 @@ final class ScoreboardView extends GameView{
     }
 
     private void updateScoreboard() {
-        List<Player> list = game.getPlayersInfo();
-        int i=0;
-        for(Player player: list){
-            playersScoreboards.get(i).updateScoreBoard(player.getPoints(), player.getNumberOfFollowers());
-            i++;
+        initialize();
+        /*
+        for(ScoreboardUnit scoreboardUnit: playersScoreboards){
+            scoreboardUnit.updateScoreBoard();
         }
+
+         */
     }
+
+    public static String getKeyName() {
+        return KEY_NAME;
+    }
+
 }

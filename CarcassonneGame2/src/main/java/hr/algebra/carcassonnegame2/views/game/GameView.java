@@ -13,6 +13,7 @@ abstract class GameView {
     protected final double MIN_WIDTH_COL = 10;
     protected static GameWorld game;
     protected static boolean viewEnable=true;
+    protected static String KEY_NAME="main";
     public GameView(){}
 
     public static void updateGame(GameWorld game){
@@ -55,4 +56,12 @@ abstract class GameView {
     public static void enableView(){
         viewEnable=true;
     }
+
+    public static String getKeyName() {
+        return KEY_NAME;
+    }
+
+    public void initialize(){}
+
 }
+

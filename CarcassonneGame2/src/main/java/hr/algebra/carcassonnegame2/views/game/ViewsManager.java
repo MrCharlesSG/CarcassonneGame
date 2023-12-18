@@ -1,10 +1,13 @@
 package hr.algebra.carcassonnegame2.views.game;
 
+import hr.algebra.carcassonnegame2.Main;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.chat.Message;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
+import hr.algebra.carcassonnegame2.model.player.PlayerType;
+import hr.algebra.carcassonnegame2.utils.ViewUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -17,15 +20,20 @@ public final class ViewsManager {
 
     private final HashMap<String, GameView> gameViews;
     private final ChatView chatView;
+
     public ViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
         GameView.updateGame(game);
         chatView = new ChatView(chat, taChat);
         gameViews = new HashMap<>() {{
-            put("ScoreBoard", new ScoreboardView(playersScoreboards));
-            put("NextTile", new NextTileView(gpNextTile));
-            put("GameBoard", new GameBoardView(gpGameBoard));
-            put("PlayerTurns", new PlayerTurnView(lbPlayerTurns));
+            put(NextTileView.getKeyName(), new NextTileView(gpNextTile));
+            put(ScoreboardView.getKeyName(), new ScoreboardView(playersScoreboards));
+            put(GameBoardView.getKeyName(), new GameBoardView(gpGameBoard));
+            put(PlayerTurnView.getKeyName(), new PlayerTurnView(lbPlayerTurns));
         }};
+    }
+
+    public static void sendAlert(String title, String message, Alert.AlertType alertType) {
+        ViewUtils.sendAlert(title, message, alertType);
     }
 
     public void updateGame(GameWorld game){
@@ -34,24 +42,16 @@ public final class ViewsManager {
     }
 
     public void updateNextTile(){
-        gameViews.get("NextTile").updateView();
-    }
-
-    public static void sendAlert(String title, String message, Alert.AlertType alertType){
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        gameViews.get(NextTileView.getKeyName()).updateView();
     }
     public Position getFollowerPosition(){
-        return ((NextTileView) gameViews.get("NextTile")).getFollowerPosition();
+        return ((NextTileView) gameViews.get(NextTileView.getKeyName())).getFollowerPosition();
     }
     public Position getSelectedPosition(){
-        return ((GameBoardView) gameViews.get("GameBoard")).getSelecetedPosition();
+        return ((GameBoardView) gameViews.get(GameBoardView.getKeyName())).getSelecetedPosition();
     }
     public void resetFollowerPosition() {
-        ((NextTileView) gameViews.get("NextTile")).resetFollowerPosition();
+        ((NextTileView) gameViews.get(NextTileView.getKeyName())).resetFollowerPosition();
     }
 
     public void updateChat(){
@@ -75,5 +75,13 @@ public final class ViewsManager {
 
     public void sendMessage(Message message) {
         chatView.sendMessage(message);
+    }
+
+    public void closeView() {
+        Main.getStage().close();
+    }
+
+    public void onPlayersChanged() {
+        gameViews.get(ScoreboardView.getKeyName()).initialize();
     }
 }

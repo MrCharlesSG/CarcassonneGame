@@ -2,6 +2,7 @@ package hr.algebra.carcassonnegame2.model.player;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 
+import javax.swing.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ public class PlayerImpl implements Player, Serializable {
     private final List<Position> followersTiles;
 
     private final String styleColor;
+    private final String name;
 
-    public PlayerImpl(String name, int numberOfFollowers, String styleColor){
+    public PlayerImpl(String name, int numberOfFollowers, String styleColor, PlayerType playerType){
         this.numberOfFollowers = numberOfFollowers;
         this.points = 0;
-        this.type = PlayerType.valueOf(name);
+        this.name=name;
+        this.type = playerType;
         this.followersTiles=new ArrayList<>();
         this.styleColor=styleColor;
     }
@@ -34,7 +37,7 @@ public class PlayerImpl implements Player, Serializable {
 
     @Override
     public String getName() {
-        return type.name();
+        return name;
     }
 
     @Override
@@ -73,6 +76,16 @@ public class PlayerImpl implements Player, Serializable {
     @Override
     public boolean isServer() {
         return type.isServer();
+    }
+
+    @Override
+    public PlayerType getType() {
+        return type;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return type.isDefault();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
+import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 
 import java.io.File;
@@ -19,14 +20,11 @@ public class GameFactory {
     private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
     private static final String jsonFileName = jsonFileNameAll;
 
-    public static GameWorld createGame(String[] playersNames, int numberOfFollowersPerPlayer) throws IllegalArgumentException{
+    public static GameWorld createGame() throws IllegalArgumentException{
         try{
 
             //Create players
             List<Player> playerList = new ArrayList<>();
-            for(String name: playersNames){
-                playerList.add(PlayerFactory.createPlayer(name, numberOfFollowersPerPlayer));
-            }
 
             //Create list of tiles from json
             ObjectMapper objectMapper = new ObjectMapper();
@@ -37,8 +35,8 @@ public class GameFactory {
             //Create game for tiles
             GameWorld game = new Game();
             Tile.initializeTiles(game);
-            List<Tile> listOfTiles = new ArrayList<Tile>();
-            List<Integer> listOfRemainType = new ArrayList<Integer>();
+            List<Tile> listOfTiles = new ArrayList<>();
+            List<Integer> listOfRemainType = new ArrayList<>();
             if(typesNode.isArray()){
                 for (JsonNode typeNode: typesNode){
                     listOfRemainType.add( typeNode.get("total").asInt());

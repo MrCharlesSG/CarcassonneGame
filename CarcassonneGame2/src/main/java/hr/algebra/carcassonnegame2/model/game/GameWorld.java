@@ -53,4 +53,10 @@ public interface GameWorld extends Serializable {
     Player getCurrentPlayer();
 
     Tile getNextTile();
+
+    List<Integer> isFinished();
+
+    void addPlayer(Player player);
+
+    void removeLastPlayer();
 }

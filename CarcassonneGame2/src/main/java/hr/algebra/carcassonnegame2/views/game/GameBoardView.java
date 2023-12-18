@@ -12,6 +12,8 @@ final class GameBoardView extends GameView {
     private Button selectedPositionButton;
     private Position selectedPosition;
     private final GridPane gpGameBoard;
+    private final static String KEY_NAME="GameBoard";
+
     public GameBoardView(GridPane gpGameBoard) {
         super();
         this.gpGameBoard=gpGameBoard;
@@ -82,4 +84,9 @@ final class GameBoardView extends GameView {
     public Position getSelecetedPosition() {
         return selectedPosition;
     }
+
+    public static String getKeyName() {
+        return KEY_NAME;
+    }
+
 }

@@ -22,4 +22,8 @@ public interface Player{
     String getTextColor();
 
     boolean isServer();
+
+    PlayerType getType();
+
+    boolean isDefault();
 }
