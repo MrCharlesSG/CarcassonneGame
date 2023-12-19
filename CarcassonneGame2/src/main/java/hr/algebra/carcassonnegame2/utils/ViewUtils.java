@@ -1,6 +1,5 @@
 package hr.algebra.carcassonnegame2.utils;
 
-import hr.algebra.carcassonnegame2.views.game.ViewsManager;
 import javafx.scene.control.Alert;
 
 public class ViewUtils {

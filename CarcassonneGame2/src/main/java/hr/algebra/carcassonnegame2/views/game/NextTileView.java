@@ -63,7 +63,7 @@ final class NextTileView extends GameView{
                     followerPosition = null;
                 }
             } else {
-                ViewsManager.sendAlert("Put Follower", "You can not put more followers", Alert.AlertType.WARNING);
+                GameViewsManager.sendAlert("Put Follower", "You can not put more followers", Alert.AlertType.WARNING);
             }
         }
     }

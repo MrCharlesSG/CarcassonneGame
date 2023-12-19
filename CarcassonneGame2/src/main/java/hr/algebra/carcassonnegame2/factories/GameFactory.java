@@ -12,13 +12,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameFactory {
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.TILES_FILE_NAME;
 
-    private static final String jsonFileNameCity = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-city-test.json";
-    private static final String jsonFileNameAll = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB.json";
-    private static final String jsonFileNameMonastery = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-monastery-test.json";
-    private static final String jsonFileNamePath = "src/main/resources/hr/algebra/carcassonnegame2/JSON/tilesDB-path-test.json";
-    private static final String jsonFileName = jsonFileNameAll;
+public class GameFactory {
 
     public static GameWorld createGame() throws IllegalArgumentException{
         try{
@@ -28,7 +24,7 @@ public class GameFactory {
 
             //Create list of tiles from json
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(new File(jsonFileName));
+            JsonNode rootNode = objectMapper.readTree(new File(TILES_FILE_NAME));
             int numberOfRemainingTiles = rootNode.get("total").asInt();
             JsonNode typesNode = rootNode.get("types");
 

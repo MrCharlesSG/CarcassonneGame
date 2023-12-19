@@ -1,7 +1,10 @@
 package hr.algebra.carcassonnegame2.views.game;
 
+import hr.algebra.carcassonnegame2.configuration.GameConfiguration;
 import hr.algebra.carcassonnegame2.control.controllers.GameController;
 import javafx.scene.control.Label;
+
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.IS_GAME_MODE_ONLINE;
 
 final class PlayerTurnView extends GameView{
     private final Label lbPlayerTurn;
@@ -23,7 +26,7 @@ final class PlayerTurnView extends GameView{
 
     @Override
     public void updateView() {
-        if(!GameController.isOnline()){
+        if(IS_GAME_MODE_ONLINE){
             setOfflineTurn();
         }
         else if(GameView.viewEnable){

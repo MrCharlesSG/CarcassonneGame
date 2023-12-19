@@ -14,9 +14,9 @@ final class GameOperations {
     private Tile tileWithFollowerInCount =null;
     private boolean hasPathOrCityAnEnd = true;
     private Boolean[][] visitedTilesGrid;
-    private GameStatus gameStatus;
+    private GameStatusImpl gameStatus;
     private Game game;
-    public GameOperations(GameStatus gameStatus, Game game) {
+    public GameOperations(GameStatusImpl gameStatus, Game game) {
         this.gameStatus=gameStatus;
         this.game = game;
     }

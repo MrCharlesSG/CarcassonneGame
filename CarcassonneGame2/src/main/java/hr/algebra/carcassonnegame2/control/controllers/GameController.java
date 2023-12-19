@@ -6,10 +6,9 @@ import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
-import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
-import hr.algebra.carcassonnegame2.views.game.ViewsManager;
+import hr.algebra.carcassonnegame2.views.game.GameViewsManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -32,12 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.IS_GAME_MODE_ONLINE;
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.SAVE_FILE_NAME;
+
 public class GameController implements Initializable {
-    private static final String saveFileName = "data.ser";
-    private static String[] playersNames;
     public GridPane gpNextTile;
     public GridPane gpGameBoard;
-    public MenuItem miNewGame;
     public MenuItem miLoadGame;
     public MenuItem miRotateTile;
     public MenuItem miPutTile;
@@ -55,18 +54,12 @@ public class GameController implements Initializable {
     public Label lbPlayerTurn;
     private static GameWorld game;
     private static RemoteChatService chat;
-    private static ViewsManager gameViewsManager;
+    private static GameViewsManager gameViewsManager;
     private static Player player;
-    private static boolean isOnline;
 
-    public static boolean isOnline() {
-        return isOnline;
-    }
-
-    public static void setGame(GameWorld game, boolean isOnline) {
+    public static void setGame(GameWorld game) {
         GameController.game = game;
-        GameController.isOnline = isOnline;
-        if(isOnline){
+        if(IS_GAME_MODE_ONLINE){
             NetworkManager.sendGame(player.getType(), game);
         }
     }
@@ -77,7 +70,7 @@ public class GameController implements Initializable {
     }
 
     private void initializeAux() {
-        if(isOnline){
+        if(IS_GAME_MODE_ONLINE){
             NetworkManager.startRmiClient();
             setupTimeline();
             setupListeners();
@@ -86,7 +79,7 @@ public class GameController implements Initializable {
     }
 
     private void initializeManager() {
-        gameViewsManager = new ViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbPlayerTurn);
+        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbPlayerTurn);
         if(chat==null){
             disableChat();
         }
@@ -153,10 +146,10 @@ public class GameController implements Initializable {
                     }
                 }
             }catch (IllegalArgumentException e){
-                ViewsManager.sendAlert("Something went wrong", e.getMessage(), Alert.AlertType.ERROR);
+                GameViewsManager.sendAlert("Something went wrong", e.getMessage(), Alert.AlertType.ERROR);
             }
         }else{
-            ViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
+            GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
         }
     }
 
@@ -166,11 +159,11 @@ public class GameController implements Initializable {
     }
 
     public void getPlayerTurnAction() {
-        ViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
+        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
     }
 
     public void remainingTilesAction() {
-        ViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types.", Alert.AlertType.INFORMATION);
+        GameViewsManager.sendAlert("Remaining Tiles", "Left: " + game.getRemainingTiles() + " tiles and " + game.getRemainingTypes() + " different types.", Alert.AlertType.INFORMATION);
     }
 
     public void removeFollowerAction() {
@@ -194,9 +187,9 @@ public class GameController implements Initializable {
 
     private static void endActions(List<Integer> winner) {
         if(winner.size()!=1){
-            ViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
+            GameViewsManager.sendAlert("Tie", "Bad TIE", Alert.AlertType.ERROR);
         }else{
-            ViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner.get(0)).getPoints() + " points...\n" + game.getPlayersInfo().get(winner.get(0)).getName(), Alert.AlertType.INFORMATION);
+            GameViewsManager.sendAlert("Winner", "The winner is....\n"+"With " + game.getPlayersInfo().get(winner.get(0)).getPoints() + " points...\n" + game.getPlayersInfo().get(winner.get(0)).getName(), Alert.AlertType.INFORMATION);
         }
         closeThisView();
     }
@@ -204,24 +197,24 @@ public class GameController implements Initializable {
     public void onLoadGame() {
         if(player.isServer()){
             try {
-                FileInputStream fileInputStream = new FileInputStream(saveFileName);
+                FileInputStream fileInputStream = new FileInputStream(SAVE_FILE_NAME);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 game = (Game) objectInputStream.readObject();
                 gameViewsManager.updateGame(game);
                 objectInputStream.close();
                 updateView();
                 sendGame(game);
-                ViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
+                GameViewsManager.sendAlert("Load", "Successfully Loaded Game Status", Alert.AlertType.INFORMATION);
             }catch (IOException | ClassNotFoundException e){
-                ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+                GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
             }
         }else{
-            ViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
+            GameViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
         }
     }
 
     private void sendGame(GameWorld game) {
-        if(isOnline){
+        if(IS_GAME_MODE_ONLINE){
             NetworkManager.sendGame(player.getType(), game);
         }
     }
@@ -229,25 +222,25 @@ public class GameController implements Initializable {
     public void onSaveGame() {
         if(player.isServer()){
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream(saveFileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(SAVE_FILE_NAME);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(game);
                 objectOutputStream.close();
-                ViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
+                GameViewsManager.sendAlert("Save", "Successfully Saved Game Status", Alert.AlertType.INFORMATION);
             }catch (IOException e){
-                ViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+                GameViewsManager.sendAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
             }
         }else{
-            ViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
+            GameViewsManager.sendAlert("Not Access", "As a CLIENT you have no access to this functionality", Alert.AlertType.WARNING);
         }
     }
 
     public void onGenerateDocumentation() {
         try {
             DocumentationUtils.generateDocumentation();
-            ViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
+            GameViewsManager.sendAlert("Success", "Successfully created the documentation", Alert.AlertType.INFORMATION);
         }catch (IllegalArgumentException e){
-            ViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
+            GameViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
         }
     }
 
@@ -256,12 +249,12 @@ public class GameController implements Initializable {
                 File htmlFile = new File("project-documentation/index.html"); // Reemplaza con la ruta de tu archivo HTML
                 Desktop.getDesktop().browse(htmlFile.toURI());
             } catch (IOException ex) {
-                ViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
+                GameViewsManager.sendAlert("Error", "Something went wrong", Alert.AlertType.ERROR);
             }
     }
 
     private static boolean isPlayerTurns(){
-        return !isOnline || player.getType() == game.getCurrentPlayer().getType();
+        return !IS_GAME_MODE_ONLINE || player.getType() == game.getCurrentPlayer().getType();
     }
 
     public void sendMessageAction() {

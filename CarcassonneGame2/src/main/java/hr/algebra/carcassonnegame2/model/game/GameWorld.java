@@ -57,6 +57,4 @@ public interface GameWorld extends Serializable {
     List<Integer> isFinished();
 
     void addPlayer(Player player);
-
-    void removeLastPlayer();
 }

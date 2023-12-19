@@ -1,6 +1,6 @@
 package hr.algebra.carcassonnegame2.model.game;
 
-import hr.algebra.carcassonnegame2.control.controllers.StartViewController;
+import hr.algebra.carcassonnegame2.configuration.GameConfiguration;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
@@ -14,7 +14,7 @@ import java.util.Random;
 
 import static hr.algebra.carcassonnegame2.utils.GridUtils.*;
 
-final class GameStatus implements Serializable {
+final class GameStatusImpl implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Tile[][] gameBoard;
@@ -30,7 +30,7 @@ final class GameStatus implements Serializable {
     private boolean hasRemovedNextTileFromRemaining;
 
 
-    public GameStatus(List<Player> players, int numberOfRemainingTiles) {
+    public GameStatusImpl(List<Player> players, int numberOfRemainingTiles) {
         random = new Random();
         this.numberOfRemainingTiles = numberOfRemainingTiles;
         this.playersInfo = players;
@@ -220,10 +220,13 @@ final class GameStatus implements Serializable {
     }
 
     public void addPlayer(Player player) {
+        removeDefaultPlayer();
         playersInfo.add(player);
     }
 
-    public void removeLastPlayer() {
-        playersInfo.removeIf(Player::isDefault);
+    public void removeDefaultPlayer() {
+        if(GameConfiguration.IS_GAME_MODE_ONLINE) {
+            playersInfo.removeIf(Player::isDefault);
+        }
     }
 }

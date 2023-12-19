@@ -1,12 +1,10 @@
 package hr.algebra.carcassonnegame2.network;
 
 import hr.algebra.carcassonnegame2.control.controllers.StartViewController;
-import hr.algebra.carcassonnegame2.factories.PlayerFactory;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatServiceImpl;
 import hr.algebra.carcassonnegame2.control.controllers.GameController;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
-import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import javafx.application.Platform;
 
@@ -75,7 +73,7 @@ public final class NetworkManager {
         try (ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
              ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())){
             GameWorld game = (GameWorld) ois.readObject();
-            if(StartViewController.isNotHover()){
+            if(StartViewController.isViewUpdated()){
                 Platform.runLater(() -> StartViewController.startGameView(game));
             }else {
                 Platform.runLater(() -> GameController.restoreGame(game));

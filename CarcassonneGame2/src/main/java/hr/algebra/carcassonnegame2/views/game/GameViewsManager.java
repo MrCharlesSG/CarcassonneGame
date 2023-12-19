@@ -6,7 +6,6 @@ import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.chat.Message;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
-import hr.algebra.carcassonnegame2.model.player.PlayerType;
 import hr.algebra.carcassonnegame2.utils.ViewUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -16,12 +15,12 @@ import javafx.scene.layout.GridPane;
 import java.util.HashMap;
 import java.util.List;
 
-public final class ViewsManager {
+public final class GameViewsManager {
 
     private final HashMap<String, GameView> gameViews;
     private final ChatView chatView;
 
-    public ViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
+    public GameViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
         GameView.updateGame(game);
         chatView = new ChatView(chat, taChat);
         gameViews = new HashMap<>() {{

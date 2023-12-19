@@ -2,6 +2,7 @@ package hr.algebra.carcassonnegame2.views.game;
 
 import hr.algebra.carcassonnegame2.model.chat.Message;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
+import hr.algebra.carcassonnegame2.views.start.StartViewsManager;
 import javafx.scene.control.TextArea;
 
 import java.rmi.RemoteException;
@@ -36,7 +37,6 @@ final class ChatView {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
     }
 
     private String getChatMessage(Message message) {

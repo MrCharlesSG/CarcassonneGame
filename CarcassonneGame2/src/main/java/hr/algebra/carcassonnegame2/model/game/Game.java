@@ -13,13 +13,13 @@ public class Game implements GameWorld, Externalizable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private GameStatus gameStatus;
+    private GameStatusImpl gameStatus;
     private GameOperations gameOperations;
 
     public Game(){}
     @Override
     public void initializeGame(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType) {
-        gameStatus= new GameStatus(players, numberOfRemainingTiles);
+        gameStatus= new GameStatusImpl(players, numberOfRemainingTiles);
         gameOperations = new GameOperations(gameStatus, this);
         gameStatus.initializeGameStatus(allTiles, listOfRemainType);
     }
@@ -173,18 +173,13 @@ public class Game implements GameWorld, Externalizable {
     }
 
     @Override
-    public void removeLastPlayer() {
-        gameStatus.removeLastPlayer();
-    }
-
-    @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(gameStatus);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        gameStatus = (GameStatus) in.readObject();
+        gameStatus = (GameStatusImpl) in.readObject();
         gameOperations = new GameOperations(gameStatus, this);
         Tile.initializeTiles(this);
     }
