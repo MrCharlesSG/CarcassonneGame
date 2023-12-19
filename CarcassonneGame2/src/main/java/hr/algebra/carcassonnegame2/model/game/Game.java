@@ -1,5 +1,6 @@
 package hr.algebra.carcassonnegame2.model.game;
 
+import hr.algebra.carcassonnegame2.configuration.GameConfiguration;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
@@ -13,15 +14,14 @@ public class Game implements GameWorld, Externalizable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private GameStatusImpl gameStatus;
+    private GameStatus gameStatus;
     private GameOperations gameOperations;
 
     public Game(){}
     @Override
     public void initializeGame(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType) {
-        gameStatus= new GameStatusImpl(players, numberOfRemainingTiles);
+        gameStatus= new GameStatusImpl(players, numberOfRemainingTiles, allTiles, listOfRemainType);
         gameOperations = new GameOperations(gameStatus, this);
-        gameStatus.initializeGameStatus(allTiles, listOfRemainType);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class Game implements GameWorld, Externalizable {
     
     @Override
     public List<Player> getPlayersInfo() {
-        return gameStatus.getPlayersInfo();
+        return gameStatus.getPlayers();
     }
 
     
@@ -53,7 +53,7 @@ public class Game implements GameWorld, Externalizable {
     }
 
     private void makeFinalCount() {
-        for (Player player: gameStatus.getPlayersInfo()){
+        for (Player player: gameStatus.getPlayers()){
             List<Position> tilesWithFollower = player.getPositionsOfFollowers();
             for (int i = 0; i < tilesWithFollower.size(); i++) {
                 closeTile(getValueOfPosition(gameStatus.getGameBoard(), tilesWithFollower.get(i)));
@@ -77,10 +77,10 @@ public class Game implements GameWorld, Externalizable {
     }
 
     private void checkIfPositionHasTile(Position position) throws IllegalArgumentException{
-        if(gameStatus.isPositionOccupied(position)) throw new IllegalArgumentException("Position all ready has a tile");
+        if(gameOperations.isPositionOccupied(position)) throw new IllegalArgumentException("Position all ready has a tile");
     }
     private void checkPositionIsCorrect(Position position) throws IllegalArgumentException{
-        if(!gameStatus.checkIfPositionIsSurrounded(position)) throw new IllegalArgumentException("Position is not close to any other tile");
+        if(!gameOperations.checkIfPositionIsSurrounded(position)) throw new IllegalArgumentException("Position is not close to any other tile");
     }
 
     private void closeTile(Tile newTile) {
@@ -109,13 +109,8 @@ public class Game implements GameWorld, Externalizable {
     }
 
     @Override
-    public String getNextPlayerInfo() {
-        return gameStatus.getNextPlayerInfo();
-    }
-
-    @Override
     public boolean canPlayerPutAFollower(){
-        return gameStatus.canPlayerPutAFollower();
+        return gameStatus.getCurrentPlayer().getNumberOfFollowers() <= GameConfiguration.NUM_FOLLOWERS_PER_PLAYER;
     }
 
     @Override
@@ -142,11 +137,6 @@ public class Game implements GameWorld, Externalizable {
     public List<Integer> finishGame() {
         gameStatus.finishGame();
         return update();
-    }
-
-    @Override
-    public String getFollowerInTileStyle(Tile tile) {
-        return gameStatus.getFollowerStyleInTile(tile);
     }
 
     @Override
@@ -179,7 +169,7 @@ public class Game implements GameWorld, Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        gameStatus = (GameStatusImpl) in.readObject();
+        gameStatus = (GameStatus) in.readObject();
         gameOperations = new GameOperations(gameStatus, this);
         Tile.initializeTiles(this);
     }

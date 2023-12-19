@@ -69,7 +69,7 @@ public class PlayerImpl implements Player, Serializable {
     }
 
     @Override
-    public String getTextColor() {
+    public String getStyle() {
         return this.styleColor;
     }
 

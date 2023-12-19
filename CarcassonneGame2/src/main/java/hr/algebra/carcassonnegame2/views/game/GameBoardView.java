@@ -54,7 +54,7 @@ final class GameBoardView extends GameView {
 
     private void selectTilePosition(Position point, Button btn) {
         if(viewEnable) {
-            btn.setStyle("-fx-background-color: " + game.getCurrentPlayer().getTextColor() + "; -fx-background-radius: 0;");
+            btn.setStyle("-fx-background-color: " + game.getCurrentPlayer().getStyle() + "; -fx-background-radius: 0;");
             if (selectedPositionButton != null && !selectedPosition.equals(point)) {
                 selectedPositionButton.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;");
             }
@@ -71,7 +71,7 @@ final class GameBoardView extends GameView {
 
                 if(tile.isFollowerInPosition(new Position(col, row))){
                     Circle circle = new Circle(2);
-                    circle.setStyle("-fx-fill: " + game.getFollowerInTileStyle(tile));
+                    circle.setStyle("-fx-fill: " + tile.getPlayerFollower().getStyle());
                     pane.getChildren().add(circle);
                     StackPane.setAlignment(circle, Pos.CENTER);
                 }

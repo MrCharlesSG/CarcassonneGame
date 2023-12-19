@@ -19,7 +19,7 @@ public interface Player{
 
     List<Position> getPositionsOfFollowers();
 
-    String getTextColor();
+    String getStyle();
 
     boolean isServer();
 

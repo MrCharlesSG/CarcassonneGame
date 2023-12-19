@@ -3,8 +3,8 @@ package hr.algebra.carcassonnegame2.model.tile;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
+import hr.algebra.carcassonnegame2.model.player.Player;
 
-import java.io.Externalizable;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -47,7 +47,7 @@ public abstract class Tile implements Serializable {
 
     public abstract Position getPositionInGameBoard();
 
-    public abstract void setFollower(int player, Position position);
+    public abstract void setFollower(Player player, Position position);
 
     public static Position getTopPosition() {
         return new Position(NUM_COLS_TILE / 2, 0);
@@ -75,7 +75,7 @@ public abstract class Tile implements Serializable {
 
     public abstract boolean hasMonasteryAndFollower();
 
-    public abstract int getPlayerFollower();
+    public abstract Player getPlayerFollower();
 
     public abstract int countPathsForClosingPath(Position position);
 

@@ -4,24 +4,13 @@ import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 
-import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.List;
 
 public interface GameWorld extends Serializable {
     int INIT_NUM_COLS_GAME_BOARD =11;
     int INIT_NUM_ROWS_GAME_BOARD =11;
-    int PENALIZATION_FOR_CHANGING_TILE =-5;
-    int POINTS_FOR_CITY = 2;
-    int POINTS_FOR_MONASTERY = 9;
-    int POINTS_FOR_PATH = 1;
-    void changeNextTile();
     void initializeGame(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType);
-
-    List<Player> getPlayersInfo();
-
-    Tile[][] getGameBoard();
-
     List<Integer> update();
 
     boolean putTile(Position position) throws IllegalArgumentException;
@@ -30,11 +19,7 @@ public interface GameWorld extends Serializable {
 
     int countPathForClosingPath(Position positionInGameBoard, Position positionInsideTile);
 
-    void rotateNextTile();
-
     boolean canPutFollowerInPosition(Position position);
-
-    String getNextPlayerInfo();
 
     boolean canPlayerPutAFollower();
 
@@ -48,8 +33,6 @@ public interface GameWorld extends Serializable {
 
     List<Integer> finishGame();
 
-    String getFollowerInTileStyle(Tile tile);
-
     Player getCurrentPlayer();
 
     Tile getNextTile();
@@ -57,4 +40,9 @@ public interface GameWorld extends Serializable {
     List<Integer> isFinished();
 
     void addPlayer(Player player);
+    void rotateNextTile();
+
+    void changeNextTile();
+    List<Player> getPlayersInfo();
+    public Tile[][] getGameBoard();
 }

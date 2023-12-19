@@ -130,10 +130,13 @@ public class GameController implements Initializable {
     }
 
     public void putTileAction() {
-        if(gameViewsManager.getSelectedPosition()!=null ){
+        if(isPlayerTurns()){
+            GameViewsManager.sendAlert("Not Your Turn", "User can not put a tile when is not his turn", Alert.AlertType.WARNING);
+        }
+        else if(gameViewsManager.getSelectedPosition()!=null){
             try {
                 if(gameViewsManager.getFollowerPosition()!=null){
-                    game.getNextTile().setFollower(-1, gameViewsManager.getFollowerPosition());
+                    game.getNextTile().setFollower(null, gameViewsManager.getFollowerPosition());
                     gameViewsManager.resetFollowerPosition();
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
@@ -159,7 +162,7 @@ public class GameController implements Initializable {
     }
 
     public void getPlayerTurnAction() {
-        GameViewsManager.sendAlert("Player Turn", game.getNextPlayerInfo(), Alert.AlertType.INFORMATION);
+        GameViewsManager.sendAlert("Player Turn", game.getCurrentPlayer().getName(), Alert.AlertType.INFORMATION);
     }
 
     public void remainingTilesAction() {
@@ -265,7 +268,7 @@ public class GameController implements Initializable {
     }
 
     public static void restoreGame(GameWorld game) {
-        System.out.println("Game board received from the client!" + game.getNextPlayerInfo());
+        System.out.println("Game board received from the client!" + game.getCurrentPlayer());
         GameController.game=game;
         enableDisableView();
         gameViewsManager.updateGame(GameController.game);

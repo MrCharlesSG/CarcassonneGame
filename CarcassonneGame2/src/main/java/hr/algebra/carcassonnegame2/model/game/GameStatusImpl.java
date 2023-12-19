@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.PENALIZATION_FOR_CHANGING_TILE;
 import static hr.algebra.carcassonnegame2.utils.GridUtils.*;
 
-final class GameStatusImpl implements Serializable {
+final class GameStatusImpl implements GameStatus {
     @Serial
     private static final long serialVersionUID = 1L;
     private Tile[][] gameBoard;
@@ -24,30 +25,27 @@ final class GameStatusImpl implements Serializable {
     private List<Integer> listOfRemainType;
     private int numColsGameBoard;
     private int numRowsGameBoard;
-    private final List<Player> playersInfo;
+    private final List<Player> players;
     private int currentPlayer;
     private final Random random;
     private boolean hasRemovedNextTileFromRemaining;
 
 
-    public GameStatusImpl(List<Player> players, int numberOfRemainingTiles) {
+    public GameStatusImpl(List<Player> players, int numberOfRemainingTiles, List<Tile> allTiles, List<Integer> listOfRemainType) {
         random = new Random();
         this.numberOfRemainingTiles = numberOfRemainingTiles;
-        this.playersInfo = players;
-    }
-
-    public void initializeGameStatus(List<Tile> allTiles, List<Integer> listOfRemainType) {
+        this.players = players;
         this.remainingTiles=allTiles;
         this.listOfRemainType=listOfRemainType;
         this.numColsGameBoard= GameWorld.INIT_NUM_COLS_GAME_BOARD;
         this.numRowsGameBoard= GameWorld.INIT_NUM_ROWS_GAME_BOARD;
         this.gameBoard = new Tile[this.numColsGameBoard][this.numRowsGameBoard];
-        this.currentPlayer = random.nextInt(!this.playersInfo.isEmpty() ? this.playersInfo.size() : 2);
+        this.currentPlayer = random.nextInt(!this.players.isEmpty() ? this.players.size() : 2);
         putFirstTile();
         setNextTile();
     }
 
-    public void setNextTile() {
+    private void setNextTile() {
         hasRemovedNextTileFromRemaining =false;
         int indexNextTile = random.nextInt(this.remainingTiles.size());
         this.nextTile = this.remainingTiles.get(indexNextTile).catchTile();
@@ -59,7 +57,7 @@ final class GameStatusImpl implements Serializable {
         }
     }
 
-    public void putFirstTile() {
+    private void putFirstTile() {
         setNextTile();
         this.numberOfRemainingTiles--;
         Tile newTile = new TileImpl(nextTile.getRepresentation());
@@ -68,6 +66,7 @@ final class GameStatusImpl implements Serializable {
 
     }
 
+    @Override
     public void changeNextTile() {
         if(hasRemovedNextTileFromRemaining){
             listOfRemainType.add(1);
@@ -80,26 +79,31 @@ final class GameStatusImpl implements Serializable {
     }
 
     private void penalizationForChangingTile() {
-        playersInfo.get(currentPlayer).addPunctuation(Game.PENALIZATION_FOR_CHANGING_TILE);
+        players.get(currentPlayer).addPunctuation(PENALIZATION_FOR_CHANGING_TILE);
         setNextPlayer();
     }
 
+    @Override
     public boolean isGameFinished() {
         return this.numberOfRemainingTiles<=0;
     }
 
-    public List<Player> getPlayersInfo() {
-        return new ArrayList<Player>(playersInfo);
+    @Override
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
     }
 
+    @Override
     public Tile[][] getGameBoard() {
         return this.gameBoard;
     }
 
+    @Override
     public Tile getNextTile() {
         return this.nextTile;
     }
 
+    @Override
     public void update() {
         if(needGameBoardToResize(nextTile.getPositionInGameBoard())){
             resizeBoard();
@@ -119,114 +123,79 @@ final class GameStatusImpl implements Serializable {
         gameBoard = resizeGrid(gameBoard, newGameBoard);
     }
 
+    @Override
     public List<Integer> getWinner() {
         List<Integer> winners = new ArrayList<>(1);
         winners.add(0);
-        int maxPoints = playersInfo.get(0).getPoints();
-        for (int i = 1; i < playersInfo.size(); i++) {
-            if(playersInfo.get(i).getPoints()> maxPoints){
+        int maxPoints = players.get(0).getPoints();
+        for (int i = 1; i < players.size(); i++) {
+            if(players.get(i).getPoints()> maxPoints){
                 winners.clear();
                 winners.add(i);
-            }else if(playersInfo.get(i).getPoints() == maxPoints){
+            }else if(players.get(i).getPoints() == maxPoints){
                 winners.add(i);
             }
         }
         return winners;
     }
 
+    @Override
     public void putTile(Position position, Tile newTile) {
         setValueInPosition(gameBoard, position, newTile);
         numberOfRemainingTiles--;
     }
 
-    public boolean isPositionOccupied(Position position) {
-        return getValueOfPosition(gameBoard, position)!=null;
-    }
-
+    @Override
     public void finishGame() {
         this.numberOfRemainingTiles=0;
     }
 
+    @Override
     public Player getCurrentPlayer() {
-        return playersInfo.get(currentPlayer);
+        return players.get(currentPlayer);
     }
 
+    @Override
     public int getRemainingTypes() {
         return this.remainingTiles.size();
     }
 
+    @Override
     public int getRemainingTiles() {
         return this.numberOfRemainingTiles;
     }
 
-    public boolean canPlayerPutAFollower() {
-        return playersInfo.get(currentPlayer).getNumberOfFollowers()>=1;
-    }
-
-    public String getFollowerStyleInTile(Tile tile) {
-        return playersInfo.get(tile.getPlayerFollower()).getTextColor();
-    }
-
-    public void setNextPlayer() {
-        if(this.currentPlayer==this.playersInfo.size()-1){
+    private void setNextPlayer() {
+        if(this.currentPlayer==this.players.size()-1){
             this.currentPlayer=0;
         }else{
             this.currentPlayer++;
         }
     }
 
-    public String getNextPlayerInfo() {
-        return playersInfo.get(currentPlayer).getName();
-    }
-
+    @Override
     public void rotateNextTile() {
         this.nextTile.rotateTile();
     }
 
-    public boolean checkIfPositionIsSurrounded(Position position){
-        int col = position.getCol(), row = position.getRow();
-        return gameBoard[col-1][row]!= null
-                || gameBoard[col+1][row] != null
-                || gameBoard[col][row-1] != null
-                || gameBoard[col][row+1] != null;
-    }
-
+    @Override
     public int getNumColsGameBoard() {
         return numColsGameBoard;
     }
+    @Override
     public int getNumRowsGameBoard() {
         return numRowsGameBoard;
     }
 
-    public int getCurrentPlayerIndex() {
-        return currentPlayer;
-    }
-
-    public void addPunctuationToPlayer(int points, int player) {
-        playersInfo.get(player).addPunctuation(points);
-    }
-
-    public void addPunctuationToPlayer(int points) {
-        playersInfo.get(currentPlayer).addPunctuation(points);
-    }
-
-    public void removeFollowerOfPlayer(Tile tile) {
-        this.playersInfo.get(tile.getPlayerFollower()).removeFollower(tile.getPositionInGameBoard());
-        tile.removeFollower();
-    }
-
-    public Tile getPositionInGameBoard(Position position) {
-        return getValueOfPosition(gameBoard, position);
-    }
-
+    @Override
     public void addPlayer(Player player) {
         removeDefaultPlayer();
-        playersInfo.add(player);
+        players.add(player);
     }
 
-    public void removeDefaultPlayer() {
+    private void removeDefaultPlayer() {
         if(GameConfiguration.IS_GAME_MODE_ONLINE) {
-            playersInfo.removeIf(Player::isDefault);
+            players.removeIf(Player::isDefault);
         }
     }
 }

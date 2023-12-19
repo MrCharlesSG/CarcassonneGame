@@ -2,12 +2,13 @@ package hr.algebra.carcassonnegame2.model.tile;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
+import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
 
 public final class TileImpl extends Tile {
     private Position followerPosition;
-    private int followerPlayer;
+    private Player followerPlayer;
     private Position positionInGameBoard;
     private boolean citiesAreConnected=false;
     private final TileManagement tilePathManager;
@@ -36,7 +37,7 @@ public final class TileImpl extends Tile {
 
     @Override
     public void removeFollower() {
-        this.followerPlayer = -1;
+        this.followerPlayer = null;
         this.followerPosition=null;
     }
 
@@ -119,7 +120,7 @@ public final class TileImpl extends Tile {
     }
 
     @Override
-    public void setFollower(int player, Position position) {
+    public void setFollower(Player player, Position position) {
         this.followerPlayer = player;
         this.followerPosition = position;
     }
@@ -138,7 +139,7 @@ public final class TileImpl extends Tile {
     }
 
     @Override
-    public int getPlayerFollower() {
+    public Player getPlayerFollower() {
         return followerPlayer;
     }
 

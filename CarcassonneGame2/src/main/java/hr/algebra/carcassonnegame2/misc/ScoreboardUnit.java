@@ -27,6 +27,6 @@ public final class ScoreboardUnit {
         this.lbFollowers.setText(Integer.toString(player.getNumberOfFollowers()));
         this.lbPoints.setText(Integer.toString(player.getPoints()));
         lbName.setText(player.getName());
-        sphere.setStyle("-fx-fill: "+player.getTextColor());
+        sphere.setStyle("-fx-fill: "+player.getStyle());
     }
 }

@@ -26,7 +26,7 @@ final class PlayerTurnView extends GameView{
 
     @Override
     public void updateView() {
-        if(IS_GAME_MODE_ONLINE){
+        if(!IS_GAME_MODE_ONLINE){
             setOfflineTurn();
         }
         else if(GameView.viewEnable){

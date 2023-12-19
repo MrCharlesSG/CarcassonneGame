@@ -4,8 +4,10 @@ import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import hr.algebra.carcassonnegame2.model.tile.TileImpl;
+import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
 
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.*;
 import static hr.algebra.carcassonnegame2.utils.GridUtils.getValueOfPosition;
 import static hr.algebra.carcassonnegame2.utils.GridUtils.setValueInPosition;
 
@@ -14,9 +16,9 @@ final class GameOperations {
     private Tile tileWithFollowerInCount =null;
     private boolean hasPathOrCityAnEnd = true;
     private Boolean[][] visitedTilesGrid;
-    private GameStatusImpl gameStatus;
+    private GameStatus gameStatus;
     private Game game;
-    public GameOperations(GameStatusImpl gameStatus, Game game) {
+    public GameOperations(GameStatus gameStatus, Game game) {
         this.gameStatus=gameStatus;
         this.game = game;
     }
@@ -32,7 +34,7 @@ final class GameOperations {
                 nextTile.removeFollower();
                 throw new IllegalArgumentException("The follower is not correctly collocated");
             }
-            newTile.setFollower(gameStatus.getCurrentPlayerIndex(), nextTile.getFollowerPosition());
+            newTile.setFollower(gameStatus.getCurrentPlayer(), nextTile.getFollowerPosition());
             gameStatus.getCurrentPlayer().putFollower(position);
             nextTile.removeFollower();
         }
@@ -52,7 +54,7 @@ final class GameOperations {
             prepareForClose(newTile);
             int count=0;
             if(newTile.areCitiesConnected()){
-                count = newTile.countCitiesForClosingCities(newTile.getNextCityValue(Tile.getLeftPosition())) + GameWorld.POINTS_FOR_CITY;
+                count = newTile.countCitiesForClosingCities(newTile.getNextCityValue(Tile.getLeftPosition())) + POINTS_FOR_CITY;
                 closeCityAux(count);
             }else{
                 Position firstValue = newTile.getNextCityValue(Tile.getLeftPosition());
@@ -83,7 +85,7 @@ final class GameOperations {
 
     private int countCloseCity(Tile newTile, Position pos) {
         newTile.setIfFollowerInCity(pos);
-        return countCitiesForTile(newTile.getNextPositionInGameBoard(pos), TileUtils.getOtherPosition(pos)) + GameWorld.POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
+        return countCitiesForTile(newTile.getNextPositionInGameBoard(pos), TileUtils.getOtherPosition(pos)) + POINTS_FOR_CITY + newTile.getAddingPointForThisCity(pos);
     }
 
     private void closePath(Tile newTile){
@@ -107,44 +109,53 @@ final class GameOperations {
         if(tile.getValuePosition(position).isPath()){
             prepareForClose(tile);
             tile.prepareForClosingPath(position);
-            Tile newTile = gameStatus.getPositionInGameBoard( tile.getNextPositionInGameBoard(position));
+            Tile newTile = getPositionInGameBoard( tile.getNextPositionInGameBoard(position));
             if(newTile != null){
-                if(tile.getPlayerFollower()>=0)
-                    gameStatus.addPunctuationToPlayer(GameWorld.POINTS_FOR_PATH, tile.getPlayerFollower());
+                if(tile.getPlayerFollower()!=null)
+                    tile.getPlayerFollower().addPunctuation(POINTS_FOR_PATH);
                 else
-                    gameStatus.addPunctuationToPlayer(GameWorld.POINTS_FOR_PATH);
+                    gameStatus.getCurrentPlayer().addPunctuation(POINTS_FOR_CITY);
                 closeCountPaths(TileUtils.getOtherPosition(position), newTile);
             }
             hasPathOrCityAnEnd= newTile!=null && hasPathOrCityAnEnd;
         }
     }
 
+    private Tile getPositionInGameBoard(Position position) {
+        return GridUtils.getValueOfPosition(gameStatus.getGameBoard(), position);
+    }
+
     private void closeCountPaths(Position positionInNewTile, Tile newTile) {
-        int count = newTile.countPathsForClosingPath(positionInNewTile) + GameWorld.POINTS_FOR_PATH;
+        int count = newTile.countPathsForClosingPath(positionInNewTile) + POINTS_FOR_PATH;
         if(tileWithFollowerInCount!=null && (gameStatus.isGameFinished() || hasPathOrCityAnEnd))
             hasBeenClosedTile(tileWithFollowerInCount, count);
     }
 
     public int countCitiesForTile(Position positionInGameBoardOfOtherTile, Position positionInsideOtherTile) {
-        Tile tile = gameStatus.getPositionInGameBoard(positionInGameBoardOfOtherTile);
+        Tile tile = getPositionInGameBoard(positionInGameBoardOfOtherTile);
         if(tile!= null && getValueOfPosition(visitedTilesGrid, positionInGameBoardOfOtherTile)==null){
             setValueInPosition(visitedTilesGrid, positionInGameBoardOfOtherTile, true);
-            return tile.countCitiesForClosingCities(positionInsideOtherTile) + GameWorld.POINTS_FOR_CITY;
+            return tile.countCitiesForClosingCities(positionInsideOtherTile) + POINTS_FOR_CITY;
         }
         hasPathOrCityAnEnd=tile!=null && hasPathOrCityAnEnd;
         return 0;
     }
 
     private void hasBeenClosedTile(Tile tile, int punctuation){
-        gameStatus.addPunctuationToPlayer(punctuation, tile.getPlayerFollower());
-        gameStatus.removeFollowerOfPlayer(tile);
+        tile.getPlayerFollower().addPunctuation(punctuation);
+        removeFollowerOfPlayer(tile);
+    }
+
+    public void removeFollowerOfPlayer(Tile tile) {
+        tile.getPlayerFollower().removeFollower(tile.getPositionInGameBoard());
+        tile.removeFollower();
     }
 
     public int countPathForClosingPath(Position positionInGameBoard, Position positionInsideTile) {
-        Tile tile = gameStatus.getPositionInGameBoard(positionInGameBoard);
+        Tile tile = getPositionInGameBoard(positionInGameBoard);
         if(tile!=null && getValueOfPosition(visitedTilesGrid, positionInGameBoard)==null){
             setValueInPosition(visitedTilesGrid, positionInGameBoard, true);
-            return tile.countPathsForClosingPath(positionInsideTile) + GameWorld.POINTS_FOR_PATH;
+            return tile.countPathsForClosingPath(positionInsideTile) + POINTS_FOR_PATH;
         }
         hasPathOrCityAnEnd = tile!=null && hasPathOrCityAnEnd;
         return 0;
@@ -154,7 +165,7 @@ final class GameOperations {
         if(newTile.hasMonasteryAndFollower()){
             int counter = closeMonasteryAux(newTile);
             if(counter==8){
-                hasBeenClosedTile(newTile, GameWorld.POINTS_FOR_MONASTERY);
+                hasBeenClosedTile(newTile, POINTS_FOR_MONASTERY);
             }else if(gameStatus.isGameFinished()){
                 hasBeenClosedTile(newTile, counter);
             }
@@ -165,7 +176,7 @@ final class GameOperations {
         int counter=0, colPosition = tile.getPositionInGameBoard().getCol(), rowPosition = tile.getPositionInGameBoard().getRow();
         for (int col = colPosition-1; col <= colPosition+1; col++) {
             for (int row = rowPosition-1; row <= rowPosition+1; row++) {
-                if((rowPosition!=row || colPosition!=col) &&  gameStatus.getPositionInGameBoard( new Position(col, row))!=null) {
+                if((rowPosition!=row || colPosition!=col) &&  getPositionInGameBoard( new Position(col, row))!=null) {
                     counter++;
                 }
             }
@@ -178,11 +189,11 @@ final class GameOperations {
         for (int col = colPosition-1; col <= colPosition+1; col++) {
             for (int row = rowPosition-1; row <= rowPosition+1; row++) {
                 if(rowPosition!=row || colPosition!=col ){
-                    Tile tileNextToTile = gameStatus.getPositionInGameBoard( new Position(col, row));
+                    Tile tileNextToTile = getPositionInGameBoard( new Position(col, row));
                     if(tileNextToTile!=null && tileNextToTile.hasMonasteryAndFollower()){
                         int counter = closeMonasteryAux(tileNextToTile);
                         if(counter==8){
-                            hasBeenClosedTile(tileNextToTile, GameWorld.POINTS_FOR_MONASTERY);
+                            hasBeenClosedTile(tileNextToTile, POINTS_FOR_MONASTERY);
                         }else if(gameStatus.isGameFinished()){
                             hasBeenClosedTile(tileNextToTile, counter);
                         }
@@ -208,15 +219,29 @@ final class GameOperations {
     }
 
     public boolean canPutTileInPosition(Position position) {
-        if(gameStatus.getPositionInGameBoard(position.getPositionInTop())!=null)
-             return gameStatus.getNextTile().canPutTile(gameStatus.getPositionInGameBoard(position.getPositionInTop()), RelativePositionGrid.BOTTOM);
-        if(gameStatus.getPositionInGameBoard(position.getPositionInBottom())!=null)
-            return gameStatus.getNextTile().canPutTile(gameStatus.getPositionInGameBoard(position.getPositionInBottom()),RelativePositionGrid.TOP);
-        if(gameStatus.getPositionInGameBoard(position.getPositionInLeft())!=null)
-            return gameStatus.getNextTile().canPutTile(gameStatus.getPositionInGameBoard(position.getPositionInLeft()),RelativePositionGrid.RIGHT);
-        return gameStatus.getPositionInGameBoard(position.getPositionInRight())!=null
+        if(getPositionInGameBoard(position.getPositionInTop())!=null)
+             return gameStatus.getNextTile().canPutTile(getPositionInGameBoard(position.getPositionInTop()), RelativePositionGrid.BOTTOM);
+        if(getPositionInGameBoard(position.getPositionInBottom())!=null)
+            return gameStatus.getNextTile().canPutTile(getPositionInGameBoard(position.getPositionInBottom()),RelativePositionGrid.TOP);
+        if(getPositionInGameBoard(position.getPositionInLeft())!=null)
+            return gameStatus.getNextTile().canPutTile(getPositionInGameBoard(position.getPositionInLeft()),RelativePositionGrid.RIGHT);
+        return getPositionInGameBoard(position.getPositionInRight())!=null
                 && this.gameStatus.getNextTile().canPutTile(
-                        gameStatus.getPositionInGameBoard(position.getPositionInRight())
+                        getPositionInGameBoard(position.getPositionInRight())
                         , RelativePositionGrid.LEFT);
     }
+
+    public boolean checkIfPositionIsSurrounded(Position position){
+        int col = position.getCol(), row = position.getRow();
+        Tile[][] gameBoard = gameStatus.getGameBoard();
+        return gameBoard[col-1][row] != null
+                || gameBoard[col+1][row] != null
+                || gameBoard[col][row-1] != null
+                || gameBoard[col][row+1] != null;
+    }
+
+    public boolean isPositionOccupied(Position position) {
+        return getPositionInGameBoard(position)!=null;
+    }
+
 }
