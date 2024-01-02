@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="800.0" style="-fx-background-color: E2E8F0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
    <top>
@@ -105,13 +106,17 @@
    <right>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="taChat" editable="false" layoutX="6.0" layoutY="1.0" prefHeight="292.0" prefWidth="188.0" />
-            <TextField fx:id="tfMessage" layoutX="6.0" layoutY="302.0" prefHeight="25.0" prefWidth="188.0" />
-            <Button fx:id="btnSendMessage" layoutX="7.0" layoutY="335.0" mnemonicParsing="false" onAction="#sendMessageAction" prefHeight="25.0" prefWidth="188.0" style="-fx-background-color: #10B981 #10B981;" text="SEND" textFill="WHITE" />
+            <TextArea fx:id="taChat" editable="false" layoutX="6.0" prefHeight="314.0" prefWidth="188.0" />
+            <TextField fx:id="tfMessage" layoutX="6.0" layoutY="326.0" prefHeight="25.0" prefWidth="188.0" />
+            <Button fx:id="btnSendMessage" layoutX="6.0" layoutY="360.0" mnemonicParsing="false" onAction="#sendMessageAction" prefHeight="25.0" prefWidth="188.0" style="-fx-background-color: #10B981 #10B981;" text="SEND" textFill="WHITE" />
          </children>
       </AnchorPane>
    </right>
    <bottom>
-      <Label fx:id="lbLastMove" prefHeight="17.0" prefWidth="724.0" text="Label" BorderPane.alignment="CENTER" />
+      <Label fx:id="lbLastMove" prefHeight="17.0" prefWidth="724.0" text="Label" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
    </bottom>
 </BorderPane>
