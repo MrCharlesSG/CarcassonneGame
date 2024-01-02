@@ -45,7 +45,7 @@ public class StartViewsManager {
     private static final double OFFLINE_SCREEN_WIDTH = 620;
     private static final double OFFLINE_SCREEN_HEIGHT = 530;
     private static final double ONLINE_SCREEN_WIDTH = 820;
-    private static final double ONLINE_SCREEN_HEIGHT= 450;
+    private static final double ONLINE_SCREEN_HEIGHT= 460;
     private static List<Player> players;
 
     private enum Situation {
