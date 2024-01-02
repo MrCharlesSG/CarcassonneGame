@@ -67,4 +67,11 @@ public final class Position implements Comparable<Position>, Serializable {
         }
         return -1;
     }
+
+    @Override
+    public String toString() {
+        return "[" + col +
+                ", " + row +
+                ']';
+    }
 }

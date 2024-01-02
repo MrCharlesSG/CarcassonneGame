@@ -20,7 +20,14 @@ public final class GameViewsManager {
     private final HashMap<String, GameView> gameViews;
     private final ChatView chatView;
 
-    public GameViewsManager(GameWorld game, List<ScoreboardUnit> playersScoreboards, RemoteChatService chat, GridPane gpNextTile, GridPane gpGameBoard, TextArea taChat, Label lbPlayerTurns){
+    public GameViewsManager(GameWorld game,
+                            List<ScoreboardUnit> playersScoreboards,
+                            RemoteChatService chat,
+                            GridPane gpNextTile,
+                            GridPane gpGameBoard,
+                            TextArea taChat,
+                            Label lbLastMove,
+                            Label lbPlayerTurns){
         GameView.updateGame(game);
         chatView = new ChatView(chat, taChat);
         gameViews = new HashMap<>() {{

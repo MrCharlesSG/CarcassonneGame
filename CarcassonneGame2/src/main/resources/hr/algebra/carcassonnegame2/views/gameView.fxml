@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="800.0" style="-fx-background-color: E2E8F0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.carcassonnegame2.control.controllers.GameController">
    <top>
       <MenuBar style="-fx-background-color: E2E8F0;" BorderPane.alignment="CENTER">
         <menus>
@@ -111,4 +111,7 @@
          </children>
       </AnchorPane>
    </right>
+   <bottom>
+      <Label fx:id="lbLastMove" prefHeight="17.0" prefWidth="724.0" text="Label" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>

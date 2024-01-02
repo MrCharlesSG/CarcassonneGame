@@ -1,5 +1,6 @@
 package hr.algebra.carcassonnegame2.model.game;
 
+import hr.algebra.carcassonnegame2.configuration.GameConfiguration;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;

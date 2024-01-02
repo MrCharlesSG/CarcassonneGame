@@ -1,17 +1,22 @@
 package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
+import hr.algebra.carcassonnegame2.model.GameMove;
 import hr.algebra.carcassonnegame2.model.chat.Message;
 import hr.algebra.carcassonnegame2.model.chat.RemoteChatService;
 import hr.algebra.carcassonnegame2.model.game.Game;
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.network.NetworkManager;
+import hr.algebra.carcassonnegame2.thread.LatestMoveThread;
+import hr.algebra.carcassonnegame2.thread.SaveMoveThread;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
+import hr.algebra.carcassonnegame2.utils.GameMoveUtils;
 import hr.algebra.carcassonnegame2.views.game.GameViewsManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,12 +29,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
+import javax.swing.plaf.TableHeaderUI;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.IS_GAME_MODE_ONLINE;
 import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.SAVE_FILE_NAME;
@@ -56,6 +64,7 @@ public class GameController implements Initializable {
     private static RemoteChatService chat;
     private static GameViewsManager gameViewsManager;
     private static Player player;
+    public Label lbLastMove;
 
     public static void setGame(GameWorld game) {
         GameController.game = game;
@@ -75,15 +84,30 @@ public class GameController implements Initializable {
             setupTimeline();
             setupListeners();
         }
+        else{
+            startLastMoveThread();
+        }
         initializeManager();
     }
 
+    private void startLastMoveThread() {
+        LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
+        Thread runnerThread = new Thread(latestMoveThread);
+        runnerThread.start();
+    }
+
     private void initializeManager() {
-        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbPlayerTurn);
+        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbLastMove,  lbPlayerTurn);
         if(chat==null){
             disableChat();
+        }else{
+            disableLastMove();
         }
         updateView();
+    }
+
+    private void disableLastMove() {
+        lbLastMove.setVisible(false);
     }
 
     private void disableChat() {
@@ -130,7 +154,7 @@ public class GameController implements Initializable {
     }
 
     public void putTileAction() {
-        if(isPlayerTurns()){
+        if(!isPlayerTurns()){
             GameViewsManager.sendAlert("Not Your Turn", "User can not put a tile when is not his turn", Alert.AlertType.WARNING);
         }
         else if(gameViewsManager.getSelectedPosition()!=null){
@@ -140,6 +164,7 @@ public class GameController implements Initializable {
                     gameViewsManager.resetFollowerPosition();
                 }
                 if(game.putTile(gameViewsManager.getSelectedPosition())){
+                    saveLastMove();
                     List<Integer> winner = game.update();
                     sendGame(game);
                     if(winner!=null){
@@ -153,6 +178,15 @@ public class GameController implements Initializable {
             }
         }else{
             GameViewsManager.sendAlert("Non Position Selected", "Select a position in grid is required", Alert.AlertType.WARNING);
+        }
+    }
+
+    private void saveLastMove() {
+        if(!IS_GAME_MODE_ONLINE) {
+            GameMove gameMove = new GameMove(game.getCurrentPlayer(), game.getNextTile(), gameViewsManager.getSelectedPosition());
+            SaveMoveThread saveMoveThread = new SaveMoveThread(gameMove);
+            Thread newStartThread = new Thread(saveMoveThread);
+            newStartThread.start();
         }
     }
 
@@ -198,7 +232,7 @@ public class GameController implements Initializable {
     }
 
     public void onLoadGame() {
-        if(player.isServer()){
+        if(player==null){
             try {
                 FileInputStream fileInputStream = new FileInputStream(SAVE_FILE_NAME);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -223,7 +257,7 @@ public class GameController implements Initializable {
     }
 
     public void onSaveGame() {
-        if(player.isServer()){
+        if(player==null){
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(SAVE_FILE_NAME);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);

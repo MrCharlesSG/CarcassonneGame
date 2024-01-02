@@ -42,8 +42,10 @@ public class StartViewsManager {
     private static final String GREEN_BUTTON_QUESTION = "Online";
     private static final String GREEN_BUTTON_OTHER = "Accept";
     private static final String WAITING_TEXT = "Waiting for other player....";
-    private static final double OFFLINE_SCREEN_SIZE = 620;
-    private static final double ONLINE_SCREEN_SIZE = 800;
+    private static final double OFFLINE_SCREEN_WIDTH = 620;
+    private static final double OFFLINE_SCREEN_HEIGHT = 530;
+    private static final double ONLINE_SCREEN_WIDTH = 820;
+    private static final double ONLINE_SCREEN_HEIGHT= 450;
     private static List<Player> players;
 
     private enum Situation {
@@ -129,16 +131,17 @@ public class StartViewsManager {
 
     private void initializeOfflineMode() {
         initializeGame(null);
-        startGameView(OFFLINE_SCREEN_SIZE);
+        startGameView(OFFLINE_SCREEN_WIDTH, OFFLINE_SCREEN_HEIGHT);
     }
 
-    private void startGameView(double size){
+    private void startGameView(double width, double height){
         StartViewController.closeView();
         try {
             Stage gameStage = new Stage();
             Main.setStage(gameStage);
             gameStage.setTitle("Carcassonne "+ (players.isEmpty()?"":players.get(0).getName()));
-            gameStage.setWidth(size);
+            gameStage.setWidth(width);
+            gameStage.setHeight(height);
             Image icon = new Image(Objects.requireNonNull(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon.png")).toExternalForm());
             gameStage.getIcons().add(icon);
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/hr/algebra/carcassonnegame2/views/gameView.fxml"));
@@ -157,7 +160,7 @@ public class StartViewsManager {
             players.add(PlayerFactory.createDefaultPlayer());
         }
         initializeGame(game);
-        startGameView(ONLINE_SCREEN_SIZE);
+        startGameView(ONLINE_SCREEN_WIDTH, ONLINE_SCREEN_HEIGHT);
     }
 
     public void setQuestionView() {
