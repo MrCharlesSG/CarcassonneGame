@@ -26,7 +26,6 @@ public final class GameViewsManager {
                             GridPane gpNextTile,
                             GridPane gpGameBoard,
                             TextArea taChat,
-                            Label lbLastMove,
                             Label lbPlayerTurns){
         GameView.updateGame(game);
         chatView = new ChatView(chat, taChat);

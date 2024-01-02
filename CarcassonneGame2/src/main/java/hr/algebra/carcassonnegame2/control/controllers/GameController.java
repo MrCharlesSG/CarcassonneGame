@@ -85,19 +85,15 @@ public class GameController implements Initializable {
             setupListeners();
         }
         else{
-            startLastMoveThread();
+            LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
+            Thread runnerThread = new Thread(latestMoveThread);
+            runnerThread.start();
         }
         initializeManager();
     }
 
-    private void startLastMoveThread() {
-        LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
-        Thread runnerThread = new Thread(latestMoveThread);
-        runnerThread.start();
-    }
-
     private void initializeManager() {
-        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat, lbLastMove,  lbPlayerTurn);
+        gameViewsManager = new GameViewsManager(game, getPlayersScoreboards(), chat, gpNextTile, gpGameBoard, taChat,  lbPlayerTurn);
         if(chat==null){
             disableChat();
         }else{
