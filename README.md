@@ -17,8 +17,12 @@
          - [Controller](#controller)
          - [Game](#game-2)
          - [Utils](#utils)
+   * [Version 4 (Threads)](#version-4-threads)
+      + [Preparation](#preparation)
+      + [Threads](#threads)
 
 <!-- TOC end -->
+
 <!-- TOC --><a name="carcassonnegame"></a>
 # CarcassonneGame
 
@@ -175,4 +179,30 @@ The utils that have been created for adding the previous `DocumentationUtils` an
   - `ViewUtils`
 
 
-This is everything I have done in this new version.
+<!-- TOC --><a name="version-4-threads"></a>
+## Version 4 (Threads)
+For this version we had to create two threads, one was supose to read a file and the other will write. What the file will contain will be all the moves the game has had. 
+
+<!-- TOC --><a name="preparation"></a>
+### Preparation
+For this version the offline mode was compulsory becouse the threads functionality will only work for that mode. For implementing the offline mode I create I pre-menu where the user was able choose what mode he want to play. Now the user, not matter what mode he play, is able to write his name. 
+So now the offline mode looks like this
+
+<img width="298" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/80d70f1e-82b2-4760-9350-2e9902e52e1d">
+<img width="295" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/3244ff75-0a0a-45d6-a0bd-4e695adfc600">
+<img width="297" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d988b13a-c874-46c2-aef6-f88458f8a97e">
+<img width="449" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/789a3a5b-7fb2-417f-8861-607cce401be3">
+
+The online Mode looks like this
+
+<img width="295" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/c5246acb-024e-44aa-9ae9-4d8f47980d55">
+<img width="294" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/5bbaecd1-7216-4008-9b56-87a50e405b49">
+<img width="601" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/872cbeb5-d0b0-46bb-93e2-cb1b950e8b84">
+
+<!-- TOC --><a name="threads"></a>
+### Threads
+For the creation of the threads I have created an abstract class `GameMoveThread` that is extended by the other two threads `LatestMoveThread` and `SaveMoveThread`. The main function of this abstract class is to sincronize each of the the funtions that the two threads will execute. This functions are `public synchronized void saveMove(GameMove gameMove)` and `public synchronized GameMove getTheLastMove()`. The sincronization is basically a flag. When a thread put the flag on, none of the other threads can access to the file. 
+For the display of the move I have created, oviously, a `GameMove` class, that store the necessary data of a move. For more separations of concerns I have created a class call `TileDescription`.
+
+<img width="451" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d6ea500b-da86-47a1-b9d7-d8b16acf6357">
+
