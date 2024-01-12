@@ -2,11 +2,14 @@ package hr.algebra.carcassonnegame2.views.game;
 
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
+import hr.algebra.carcassonnegame2.utils.ViewUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+
+import static hr.algebra.carcassonnegame2.utils.ViewUtils.resizeGridPane;
 
 final class GameBoardView extends GameView {
     private Button selectedPositionButton;
@@ -27,17 +30,17 @@ final class GameBoardView extends GameView {
     private void paintGameBoard() {
         gpGameBoard.setGridLinesVisible(true);
         Tile[][] gameBoard = game.getGameBoard();
-        resizeGridPane(gpGameBoard, gameBoard.length, false);
+        resizeGridPane(gpGameBoard, gameBoard.length, false, MIN_HEIGHT_COL, MIN_WIDTH_COL);
         completeBoard(gameBoard,gpGameBoard);
     }
 
-    public void completeBoard(Tile[][] gameBoard, GridPane gpGameBoard) {
+    private void completeBoard(Tile[][] gameBoard, GridPane gpGameBoard) {
         for (int colPos = 0; colPos < gameBoard.length; colPos++) {
             for (int rowPos = 0; rowPos < gameBoard[colPos].length; rowPos++) {
                 if(gameBoard[colPos][rowPos] != null){
                     Tile tile = gameBoard[colPos][rowPos];
                     GridPane gpTile = new GridPane();
-                    resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, true);
+                    resizeGridPane(gpTile, Tile.NUM_ROWS_TILE, true, MIN_HEIGHT_COL, MIN_WIDTH_COL);
                     representTileInGridPane(tile, gpTile);
                     gpGameBoard.add(gpTile, colPos, rowPos);
                 }else{
@@ -45,14 +48,14 @@ final class GameBoardView extends GameView {
                     int finalCol = colPos;
                     int finalRow = rowPos;
                     btnTile.setStyle("-fx-background-color:  #F8FAFC" + "; -fx-background-radius: 0;" );
-                    btnTile.setOnAction(actionEvent -> selectTilePosition(new Position(finalCol, finalRow), btnTile));
+                    btnTile.setOnAction(actionEvent -> selectBoardPosition(new Position(finalCol, finalRow), btnTile));
                     gpGameBoard.add(btnTile, colPos, rowPos);
                 }
             }
         }
     }
 
-    private void selectTilePosition(Position point, Button btn) {
+    private void selectBoardPosition(Position point, Button btn) {
         if(viewEnable) {
             btn.setStyle("-fx-background-color: " + game.getCurrentPlayer().getStyle() + "; -fx-background-radius: 0;");
             if (selectedPositionButton != null && !selectedPosition.equals(point)) {
@@ -64,21 +67,7 @@ final class GameBoardView extends GameView {
     }
 
     private void representTileInGridPane(Tile tile, GridPane gridPane) {
-        gridPane.setGridLinesVisible(true);
-        for (int col = 0; col < 5; col++) {
-            for (int row = 0; row < 5; row++) {
-                StackPane pane = new StackPane();
-
-                if(tile.isFollowerInPosition(new Position(col, row))){
-                    Circle circle = new Circle(2);
-                    circle.setStyle("-fx-fill: " + tile.getPlayerFollower().getStyle());
-                    pane.getChildren().add(circle);
-                    StackPane.setAlignment(circle, Pos.CENTER);
-                }
-                pane.setStyle(tile.getValuePosition(new Position(col, row)).getStyle());
-                gridPane.add(pane, col, row);
-            }
-        }
+        ViewUtils.representTileInGridPane(tile, gridPane);
     }
 
     public Position getSelecetedPosition() {

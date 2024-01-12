@@ -1,5 +1,7 @@
 package hr.algebra.carcassonnegame2.control.controllers;
 
+import hr.algebra.carcassonnegame2.factories.PlayerFactory;
+import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.misc.ScoreboardUnit;
 import hr.algebra.carcassonnegame2.model.GameMove;
 import hr.algebra.carcassonnegame2.model.chat.Message;
@@ -11,13 +13,14 @@ import hr.algebra.carcassonnegame2.network.NetworkManager;
 import hr.algebra.carcassonnegame2.thread.LatestMoveThread;
 import hr.algebra.carcassonnegame2.thread.SaveMoveThread;
 import hr.algebra.carcassonnegame2.utils.DocumentationUtils;
-import hr.algebra.carcassonnegame2.utils.GameMoveUtils;
+import hr.algebra.carcassonnegame2.utils.GridUtils;
+import hr.algebra.carcassonnegame2.utils.XmlUtils;
 import hr.algebra.carcassonnegame2.views.game.GameViewsManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -29,18 +32,16 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
-import javax.swing.plaf.TableHeaderUI;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.IS_GAME_MODE_ONLINE;
 import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.SAVE_FILE_NAME;
+import static hr.algebra.carcassonnegame2.utils.XmlUtils.createNewReplayFile;
 
 public class GameController implements Initializable {
     public GridPane gpNextTile;
@@ -66,13 +67,6 @@ public class GameController implements Initializable {
     private static Player player;
     public Label lbLastMove;
 
-    public static void setGame(GameWorld game) {
-        GameController.game = game;
-        if(IS_GAME_MODE_ONLINE){
-            NetworkManager.sendGame(player.getType(), game);
-        }
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeAux();
@@ -85,6 +79,12 @@ public class GameController implements Initializable {
             setupListeners();
         }
         else{
+            XmlUtils.createNewReplayFile();
+            Position position = GridUtils.getCenterPosition(game.getGameBoard());
+            XmlUtils.saveGameMove(
+                    new GameMove(PlayerFactory.createDefaultPlayer(),
+                            GridUtils.getValueOfPosition(game.getGameBoard(), position) ,
+                            position));
             LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
             Thread runnerThread = new Thread(latestMoveThread);
             runnerThread.start();
@@ -179,7 +179,8 @@ public class GameController implements Initializable {
 
     private void saveLastMove() {
         if(!IS_GAME_MODE_ONLINE) {
-            GameMove gameMove = new GameMove(game.getCurrentPlayer(), game.getNextTile(), gameViewsManager.getSelectedPosition());
+            GameMove gameMove = new GameMove(game.getCurrentPlayer(), game.getLastTile(), gameViewsManager.getSelectedPosition());
+            XmlUtils.saveGameMove(gameMove);
             SaveMoveThread saveMoveThread = new SaveMoveThread(gameMove);
             Thread newStartThread = new Thread(saveMoveThread);
             newStartThread.start();
@@ -323,5 +324,12 @@ public class GameController implements Initializable {
 
     public static void setChat(RemoteChatService chat) {
         GameController.chat=chat;
+    }
+
+    public static void setGame(GameWorld game) {
+        GameController.game = game;
+        if(IS_GAME_MODE_ONLINE){
+            NetworkManager.sendGame(player.getType(), game);
+        }
     }
 }

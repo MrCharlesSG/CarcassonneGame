@@ -24,7 +24,7 @@ public class LatestMoveThread extends GameMoveThread implements Runnable{
                 lbLastMove.setText(getTheLastMove().toString());
             });
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -6,6 +6,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
+import static hr.algebra.carcassonnegame2.utils.ViewUtils.resizeGridPane;
+
 final class NextTileView extends GameView{
 
     private Position followerPosition;
@@ -23,7 +25,7 @@ final class NextTileView extends GameView{
         paintNextTile();
     }
     private void paintNextTile() {
-        resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true);
+        resizeGridPane(gpNextTile, Tile.NUM_COLS_TILE, true, MIN_HEIGHT_COL, MIN_WIDTH_COL);
         Tile tile = game.getNextTile();
         int numberColRow = Tile.NUM_COLS_TILE;
         for (int row = 0; row < numberColRow; row++) {

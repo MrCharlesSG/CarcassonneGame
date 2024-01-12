@@ -3,6 +3,9 @@ package hr.algebra.carcassonnegame2.thread;
 import hr.algebra.carcassonnegame2.model.GameMove;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +30,29 @@ public abstract class GameMoveThread {
 
     private List<GameMove> getAllMoves() {
         List<GameMove> gameMoveList = new ArrayList<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MOVES_FILE_NAME))) {
-            gameMoveList.addAll((List) ois.readObject());
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        if(!isFileEmpty(MOVES_FILE_NAME)){
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MOVES_FILE_NAME))) {
+                Object obj = ois.readObject();
+                if (obj instanceof List) {
+                    gameMoveList.addAll((List<GameMove>) obj);
+                }
+            }catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         return gameMoveList;
+    }
+
+    public static boolean isFileEmpty(String fileName) {
+        Path filePath = Paths.get(fileName);
+
+        try {
+            long size = Files.size(filePath);
+            return size == 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false; // Tratamiento de error: devuelve false si hay algún problema al obtener el tamaño del archivo
+        }
     }
 
     private synchronized void startSynchronization() {
@@ -56,6 +76,8 @@ public abstract class GameMoveThread {
         startSynchronization();
         List<GameMove> allMoves = getAllMoves();
         endSynchronization();
+        if(allMoves.isEmpty())
+            return new GameMove();
         return allMoves.getLast();
     }
 }

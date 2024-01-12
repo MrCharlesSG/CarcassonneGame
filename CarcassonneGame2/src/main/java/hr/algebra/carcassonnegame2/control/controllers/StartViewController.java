@@ -2,6 +2,7 @@ package hr.algebra.carcassonnegame2.control.controllers;
 
 import hr.algebra.carcassonnegame2.model.game.GameWorld;
 import hr.algebra.carcassonnegame2.views.start.StartViewsManager;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,9 +24,11 @@ public class StartViewController implements Initializable {
     public Label lbError;
     private static Stage stage;
     private static StartViewsManager startViewsManager;
+    public Button btnReplay;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        btnReplay.setVisible(false);
         taOneNameStatic = taOneName;
         startViewsManager = new StartViewsManager(
                 lbMode,
@@ -34,7 +37,8 @@ public class StartViewController implements Initializable {
                 lbFirstQuestion,
                 taOneName,
                 btnGreenButton,
-                btnRedButton
+                btnRedButton,
+                btnReplay
         );
         startViewsManager.setQuestionView();
     }
@@ -61,5 +65,9 @@ public class StartViewController implements Initializable {
 
     public static boolean isViewUpdated() {
         return startViewsManager.isViewUpdated();
+    }
+
+    public void onReplayAction(ActionEvent actionEvent) {
+        startViewsManager.startReplayView();
     }
 }

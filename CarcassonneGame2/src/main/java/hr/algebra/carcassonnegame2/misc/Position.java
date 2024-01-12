@@ -74,4 +74,24 @@ public final class Position implements Comparable<Position>, Serializable {
                 ", " + row +
                 ']';
     }
+
+    public static Position parsePosition(String string) {
+        if (string.startsWith("[") && string.endsWith("]")) {
+            try {
+                String[] values = string.substring(1, string.length() - 1).split(", ");
+
+                int col = Integer.parseInt(values[0]);
+                int row = Integer.parseInt(values[1]);
+
+                return new Position(col, row);
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                System.err.println("Error parsing position: " + e.getMessage());
+            }
+        } else {
+            System.err.println("Invalid position format: " + string);
+        }
+
+        // Return null if parsing fails
+        return null;
+    }
 }

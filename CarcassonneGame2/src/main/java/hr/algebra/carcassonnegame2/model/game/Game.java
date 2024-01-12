@@ -16,6 +16,7 @@ public class Game implements GameWorld, Externalizable {
     private static final long serialVersionUID = 1L;
     private GameStatus gameStatus;
     private GameOperations gameOperations;
+    private Tile lastTile;
 
     public Game(){}
     @Override
@@ -40,7 +41,12 @@ public class Game implements GameWorld, Externalizable {
         return gameStatus.getGameBoard();
     }
 
-    
+    @Override
+    public Tile getLastTile() {
+        return lastTile;
+    }
+
+
     @Override
     public List<Integer> update() {
         //resizeBoard();
@@ -67,6 +73,7 @@ public class Game implements GameWorld, Externalizable {
         checkIfPositionHasTile(position);
         checkIfTileMatchWithOtherTiles(position);
         Tile newTile = gameOperations.putFollowerAndCreateNewTile(position);
+        lastTile = newTile;
         gameStatus.putTile(position, newTile);
         closeTile(newTile);
         return true;

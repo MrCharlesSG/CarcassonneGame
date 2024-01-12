@@ -44,5 +44,7 @@ public interface GameWorld extends Serializable {
 
     void changeNextTile();
     List<Player> getPlayersInfo();
-    public Tile[][] getGameBoard();
+    Tile[][] getGameBoard();
+
+    Tile getLastTile();
 }

@@ -26,8 +26,19 @@ public class TileFactory {
                     GridUtils.setValueInPosition(tileGrid, new Position(col, row), el);
                 }
             }
-            return new TileImpl(tileGrid);
+            return new TileImpl(tileGrid, true);
         }
         return null;
+    }
+
+    public static Tile createDefaultTile(){
+        int numColsAndRows=5;
+        TileElementValue[][] tileGrid = new TileElementValue[numColsAndRows][numColsAndRows];
+        for (int i = 0; i < numColsAndRows; i++) {
+            for (int j = 0; j < numColsAndRows; j++) {
+                GridUtils.setValueInPosition(tileGrid, new Position(i, j), TileElementValue.EMPTY);
+            }
+        }
+        return new TileImpl(tileGrid, false);
     }
 }

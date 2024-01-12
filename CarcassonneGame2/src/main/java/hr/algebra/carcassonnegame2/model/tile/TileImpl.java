@@ -5,6 +5,7 @@ import hr.algebra.carcassonnegame2.model.RelativePositionGrid;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.utils.GridUtils;
 import hr.algebra.carcassonnegame2.utils.TileUtils;
+import javafx.geometry.Pos;
 
 public final class TileImpl extends Tile {
     private Position followerPosition;
@@ -14,20 +15,34 @@ public final class TileImpl extends Tile {
     private final TileManagement tilePathManager;
     private final TileManagement tileCityManager;
 
-    public TileImpl(TileElementValue[][] tileGrid) {
+    public TileImpl(TileElementValue[][] tileGrid, boolean needsToManageGame) {
         this.tileGrid = tileGrid;
         this.removeFollower();
-        tilePathManager = TileManagement.getInstance(TileElementValue.PATH, this);
-        tileCityManager = TileManagement.getInstance(TileElementValue.CITY, this);
+        if(needsToManageGame) {
+            tilePathManager = TileManagement.getInstance(TileElementValue.PATH, this);
+            tileCityManager = TileManagement.getInstance(TileElementValue.CITY, this);
+        }else{
+            tilePathManager=null;
+            tileCityManager=null;
+        }
     }
 
     public TileImpl(TileElementValue[][] representation, Position positionInGameBoard) {
-        this(representation);
+        this(representation, true);
         this.positionInGameBoard=positionInGameBoard;
     }
 
     public TileImpl(Tile tile){
         this(tile.getRepresentation(), tile.getPositionInGameBoard());
+    }
+
+    public TileImpl(TileElementValue[][] tileGrid, Position positionInGameBoard, Player player, Position followerPosition) {
+        this.tileGrid = tileGrid;
+        this.positionInGameBoard=positionInGameBoard;
+        this.tileCityManager=null;
+        this.tilePathManager=null;
+        this.followerPlayer=player;
+        this.followerPosition = followerPosition;
     }
 
     @Override

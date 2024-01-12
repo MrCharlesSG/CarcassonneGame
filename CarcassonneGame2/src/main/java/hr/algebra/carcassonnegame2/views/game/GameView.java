@@ -42,25 +42,5 @@ abstract class GameView {
     }
 
     public void initialize(){}
-
-    protected void resizeGridPane(GridPane gridPane, int numberColRow, boolean isNextTile){
-        gridPane.getRowConstraints().clear();
-        gridPane.getColumnConstraints().clear();
-        RowConstraints rowConstraints = new RowConstraints();
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        if(isNextTile){
-            rowConstraints.setVgrow(Priority.ALWAYS);
-            columnConstraints.setHgrow(Priority.ALWAYS);
-        }else{
-            rowConstraints.setMaxHeight(MIN_HEIGHT_COL* 5);
-            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
-            rowConstraints.setMinHeight(MIN_HEIGHT_COL* 5);
-            columnConstraints.setMinWidth(MIN_WIDTH_COL* 5);
-        }
-        for (int i = 0; i < numberColRow; i++) {
-            gridPane.getColumnConstraints().add(columnConstraints);
-            gridPane.getRowConstraints().add(rowConstraints);
-        }
-    }
 }
 

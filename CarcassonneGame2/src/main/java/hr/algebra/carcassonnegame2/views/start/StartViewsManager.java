@@ -34,6 +34,7 @@ public class StartViewsManager {
     private final TextField taOneName;
     private final Button btnGreenButton;
     private final Button btnRedButton;
+    private final Button btnReplay;
     private final Label lbError;
     private static final String ONE_NAME_QUESTION_ONLINE = "Your Name";
     private static final String ONE_NAME_QUESTION_OFFLINE = "Player %d Name";
@@ -46,14 +47,34 @@ public class StartViewsManager {
     private static final double OFFLINE_SCREEN_HEIGHT = 530;
     private static final double ONLINE_SCREEN_WIDTH = 820;
     private static final double ONLINE_SCREEN_HEIGHT= 460;
+    private static final double NOT_REPLAY_BUTTON_WIDTH = 190;
     private static List<Player> players;
+
+    public void startReplayView() {
+        StartViewController.closeView();
+        try {
+            Stage gameStage = new Stage();
+            Main.setStage(gameStage);
+            gameStage.setTitle("Carcassonne Replay");
+            gameStage.setWidth(620);
+            gameStage.setHeight(400);
+            Image icon = new Image(Objects.requireNonNull(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon2Carccassonne.png")).toExternalForm());
+            gameStage.getIcons().add(icon);
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/hr/algebra/carcassonnegame2/views/replayView.fxml"));
+            Parent root = loader.load();
+            gameStage.setScene(new Scene(root));
+            gameStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private enum Situation {
         ONLINE, OFFLINE, QUESTION, UPDATED
     }
     private static Situation situation;
     private static int currentNumberOfPlayers;
-    public StartViewsManager(Label lbMode,Label lbOneName, Label lbError, Label lbFirstQuestion, TextField taOneName, Button btnGreenButton, Button btnRedButton) {
+    public StartViewsManager(Label lbMode, Label lbOneName, Label lbError, Label lbFirstQuestion, TextField taOneName, Button btnGreenButton, Button btnRedButton, Button btnReplay) {
         this.lbMode=lbMode;
         this.lbError=lbError;
         this.lbOneName=lbOneName;
@@ -62,6 +83,7 @@ public class StartViewsManager {
         this.btnGreenButton=btnGreenButton;
         this.btnRedButton=btnRedButton;
         setupListeners();
+        this.btnReplay=btnReplay;
         players = new ArrayList<>();
     }
 
@@ -139,7 +161,7 @@ public class StartViewsManager {
         try {
             Stage gameStage = new Stage();
             Main.setStage(gameStage);
-            gameStage.setTitle("Carcassonne "+ (players.isEmpty()?"":players.get(0).getName()));
+            gameStage.setTitle("Carcassonne "+ (situation == Situation.OFFLINE?"":players.get(0).getName()));
             gameStage.setWidth(width);
             gameStage.setHeight(height);
             Image icon = new Image(Objects.requireNonNull(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon.png")).toExternalForm());
@@ -173,6 +195,7 @@ public class StartViewsManager {
         btnGreenButton.setText(GREEN_BUTTON_QUESTION);
         situation = Situation.QUESTION;
         lbError.setVisible(false);
+        btnReplay.setVisible(true);
     }
 
     private void setOnlineView() {
@@ -187,6 +210,7 @@ public class StartViewsManager {
         situation = Situation.ONLINE;
         lbError.setVisible(false);
         IS_GAME_MODE_ONLINE=true;
+        btnReplay.setVisible(false);
     }
 
     private void setOfflineView() {
@@ -202,6 +226,7 @@ public class StartViewsManager {
         situation = Situation.OFFLINE;
         lbError.setVisible(false);
         IS_GAME_MODE_ONLINE=false;
+        btnReplay.setVisible(false);
     }
 
     private void setWaitingMode() {

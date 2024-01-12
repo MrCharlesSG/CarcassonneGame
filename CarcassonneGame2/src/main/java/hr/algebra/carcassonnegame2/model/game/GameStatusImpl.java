@@ -1,10 +1,13 @@
 package hr.algebra.carcassonnegame2.model.game;
 
 import hr.algebra.carcassonnegame2.configuration.GameConfiguration;
+import hr.algebra.carcassonnegame2.factories.PlayerFactory;
 import hr.algebra.carcassonnegame2.misc.Position;
+import hr.algebra.carcassonnegame2.model.GameMove;
 import hr.algebra.carcassonnegame2.model.player.Player;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import hr.algebra.carcassonnegame2.model.tile.TileImpl;
+import hr.algebra.carcassonnegame2.utils.XmlUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -60,7 +63,7 @@ final class GameStatusImpl implements GameStatus {
     private void putFirstTile() {
         setNextTile();
         this.numberOfRemainingTiles--;
-        Tile newTile = new TileImpl(nextTile.getRepresentation());
+        Tile newTile = new TileImpl(nextTile.getRepresentation(), true);
         newTile.setPositionInGameBoard(new Position(numColsGameBoard /2, numRowsGameBoard /2 ));
         this.gameBoard[numColsGameBoard /2][ numRowsGameBoard /2 ] = newTile;
 
@@ -105,15 +108,11 @@ final class GameStatusImpl implements GameStatus {
 
     @Override
     public void update() {
-        if(needGameBoardToResize(nextTile.getPositionInGameBoard())){
+        if (needGridToResize(nextTile.getPositionInGameBoard(), numColsGameBoard)) {
             resizeBoard();
         }
         setNextPlayer();
         setNextTile();
-    }
-    private boolean needGameBoardToResize(Position lastPositionTile) {
-        int col = lastPositionTile.getCol(), row = lastPositionTile.getRow();
-        return col == 1 || col == numColsGameBoard-2 || row==1 || row==numRowsGameBoard-2;
     }
 
     private void resizeBoard() {
