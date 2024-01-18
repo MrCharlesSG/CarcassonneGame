@@ -20,13 +20,15 @@
    * [Version 4 (Threads)](#version-4-threads)
       + [Preparation](#preparation)
       + [Threads](#threads)
+   * [Version 5 (XML)](#version-5-xml)
+      + [How it Works](#how-it-works)
 
 <!-- TOC end -->
 
 <!-- TOC --><a name="carcassonnegame"></a>
 # CarcassonneGame
 
-Project of the subject of Java Programming 2 of the Software Engineering degree at Algebra University College (Zagreb). The project consist in a  replica of the popular Carcassonne game. It is written in javafx
+Project of the subject of Java Programming 2 of the Software Engineering degree at Algebra University College (Zagreb). The project consist in a  replica of the popular Carcassonne game. It is programmed in javafx.
 This is the explanation of the game: https://wikicarpedia.com/car/Base_game
 
 <!-- TOC --><a name="version-1-game-logic"></a>
@@ -206,3 +208,24 @@ For the display of the move I have created, oviously, a `GameMove` class, that s
 
 <img width="451" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d6ea500b-da86-47a1-b9d7-d8b16acf6357">
 
+<!-- TOC --><a name="version-5-xml"></a>
+## Version 5 (XML)
+This is for now (January 2024) the last version of the project. So this is the END.
+In this version the user is able to replay the last offline version. In the replay mode the user is able to pause the replay, to play it automatically (every 3 seconds a tile will appear in the screen) and manually (can do next or previous tile). When the last tile is put, the replay will be restarted.
+This is how the replay mode looks like.
+
+<img width="300" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/5ef3ba5a-8912-456a-9a71-71df445caecc">
+<img width="448" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/53f2b969-1c59-4a5d-ba8e-b7bc495ff7ff">
+<img width="448" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/b81065e1-b122-49b0-adbe-547dccff3ecf">
+<img width="450" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/444b1aad-1098-4431-8c9e-f5abcadd3bee">
+
+<!-- TOC --><a name="how-it-works"></a>
+### How it Works
+The game move has four properties:
+  - `Player`. Contains the name and the colour of the player that has put the tile.
+  - `Position`. The position of the tile in the gameBoard
+  - `LocalDateTime`. Only used for the functionality of the previous version.
+  - `TileDescription`. Has the "description" of the tile and the position of the follower (if have it)
+When parsing to XML the `GameMove` class is encharge of parsing the player (only the name) and the position, and is `TileDescriptions` the one who parses itself. The same will happen when parsing from XML. The `fromXml()` functions are static functions of each clases that return the especific class, and the `toXml()` are non static. Each of the functions receive the XMLElement where they need to be storage or extracted and the document.
+For writing in the XML there is a `XMLUtils` that has all the necessary functions.
+Every time the user put a tile the function `saveLastMove()` is being call. This function only writes in the XML and call the threads (of the previous version) when is an offline game.
