@@ -206,3 +206,6 @@ For the display of the move I have created, oviously, a `GameMove` class, that s
 
 <img width="451" alt="image" src="https://github.com/MrCharlesSG/CarcassonneGame/assets/94635721/d6ea500b-da86-47a1-b9d7-d8b16acf6357">
 
+## Version 5 (XML)
+This is for now (January 2024) the last version of the project. So this is the END.
+In this version the user is able to replay the last offline version. In the replay mode the user is able to pause the replay, to play it automatically (every 3 seconds a tile will appear in the screen) and manually (can do next or previous tile). 
