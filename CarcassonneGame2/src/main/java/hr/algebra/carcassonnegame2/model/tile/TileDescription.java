@@ -56,14 +56,9 @@ public class TileDescription implements Serializable {
         }
         for (int i = 0; i < description.length; i++) {
             for (int j = 0; j < description[i].length; j++) {
-
                 gameMoveElement.appendChild(createElement(document, getTag(i, j), description[i][j].name()));
             }
         }
-    }
-
-    private static String getTag(int i, int j) {
-        return "tileDes" + (char) ('A' + i)+ (char) ('A' + j);
     }
 
     public static TileDescription fromXml(Element childElement) {
@@ -74,12 +69,15 @@ public class TileDescription implements Serializable {
         for (int i = 0; i < Tile.NUM_COLS_TILE; i++) {
             for (int j = 0; j < Tile.NUM_COLS_TILE; j++) {
                 String tileElementValueString = getChildElementText(childElement, getTag(i, j));
-                description[i][j] = TileElementValue.valueOf(tileElementValueString); // Assuming TileElementValue is an enum
+                description[i][j] = TileElementValue.valueOf(tileElementValueString);
             }
         }
         return new TileDescription(description, followerPosition);
     }
 
+    private static String getTag(int i, int j) {
+        return "tileDes" + (char) ('A' + i)+ (char) ('A' + j);
+    }
 
     public Tile createTile(Position position, Player player) {
 

@@ -72,17 +72,14 @@ public class GameMove implements Serializable {
     }
 
     public static GameMove fromXml(Element childElement, DateTimeFormatter formatter) {
-        // Extracting data from the XML element
         String playerName = getChildElementText(childElement, "player");
         String positionString = getChildElementText(childElement, "position");
         String dateTimeString = getChildElementText(childElement, "dateTime");
 
-        // Parsing the extracted data
-        Player player = PlayerFactory.createPlayer(playerName, 0);  // Assuming you have a Player class
-        Position position = Position.parsePosition(positionString);  // Assuming you have a parsePosition method
+        Player player = PlayerFactory.createPlayer(playerName, 0);
+        Position position = Position.parsePosition(positionString);
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
 
-        // Creating and returning a new GameMove object
         return new GameMove(player, position, dateTime, TileDescription.fromXml(childElement));
     }
 

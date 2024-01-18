@@ -2,6 +2,7 @@ package hr.algebra.carcassonnegame2.views.start;
 
 import hr.algebra.carcassonnegame2.Main;
 import hr.algebra.carcassonnegame2.control.controllers.GameController;
+import hr.algebra.carcassonnegame2.control.controllers.ReplayController;
 import hr.algebra.carcassonnegame2.control.controllers.StartViewController;
 import hr.algebra.carcassonnegame2.factories.GameFactory;
 import hr.algebra.carcassonnegame2.factories.PlayerFactory;
@@ -51,21 +52,26 @@ public class StartViewsManager {
     private static List<Player> players;
 
     public void startReplayView() {
-        StartViewController.closeView();
-        try {
-            Stage gameStage = new Stage();
-            Main.setStage(gameStage);
-            gameStage.setTitle("Carcassonne Replay");
-            gameStage.setWidth(620);
-            gameStage.setHeight(400);
-            Image icon = new Image(Objects.requireNonNull(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon2Carccassonne.png")).toExternalForm());
-            gameStage.getIcons().add(icon);
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/hr/algebra/carcassonnegame2/views/replayView.fxml"));
-            Parent root = loader.load();
-            gameStage.setScene(new Scene(root));
-            gameStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!ReplayController.canStart()){
+            ViewUtils.sendAlert("No Game Moves", "There is no game to replay", Alert.AlertType.ERROR);
+        }else {
+            StartViewController.closeView();
+            try {
+                Stage gameStage = new Stage();
+                Main.setStage(gameStage);
+                ReplayController.setStage(gameStage);
+                gameStage.setTitle("Carcassonne Replay");
+                gameStage.setWidth(620);
+                gameStage.setHeight(400);
+                Image icon = new Image(Objects.requireNonNull(Main.class.getResource("/hr/algebra/carcassonnegame2/images/icon2Carccassonne.png")).toExternalForm());
+                gameStage.getIcons().add(icon);
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("/hr/algebra/carcassonnegame2/views/replayView.fxml"));
+                Parent root = loader.load();
+                gameStage.setScene(new Scene(root));
+                gameStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

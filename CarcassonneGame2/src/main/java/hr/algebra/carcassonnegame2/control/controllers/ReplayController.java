@@ -44,32 +44,38 @@ public class ReplayController implements Initializable {
     public Button btnPlay;
     public Button btnNext;
     private Timeline timeline;
-    private List<GameMove> gameMoves;
+    private static List<GameMove> gameMoves;
     private int currentMove =0;
     private Tile[][] gameBoard;
     private Status status;
+    private static Stage stage;
 
     private int numColsRowsGameBoard;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameMoves = XmlUtils.readGameMoves();
-        if(gameMoves.isEmpty()){
-            ViewUtils.sendAlert("No Game Moves", "There is no game to replay", Alert.AlertType.ERROR);
-            startStartView();
-        }else {
+        if(!gameMoves.isEmpty()) {
             this.gameBoard = new Tile[NUM_COLS_ROW_GAME_BOARD_INI][NUM_COLS_ROW_GAME_BOARD_INI];
             setNumColsRowsGameBoard(NUM_COLS_ROW_GAME_BOARD_INI);
-
             playNextGameMove();
             onPlayAction();
         }
     }
 
+    public static boolean canStart() {
+        gameMoves = XmlUtils.readGameMoves();
+        return !gameMoves.isEmpty();
+    }
+
+    public static void setStage(Stage stage){
+        ReplayController.stage=stage;
+    }
+
     private void startStartView() {
-        Main.getStage().close();
         try {
             Stage stage = new Stage();
             Main.setStage(stage);
+            StartViewController.setStage(stage);
             stage.setTitle("Initialize Carcassonne Game");
             stage.setWidth(420);
             stage.setHeight(300);
@@ -92,6 +98,7 @@ public class ReplayController implements Initializable {
     }
 
     public void onFinishAction() {
+        stage.close();
         startStartView();
     }
 
