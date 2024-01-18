@@ -79,17 +79,25 @@ public class GameController implements Initializable {
             setupListeners();
         }
         else{
-            XmlUtils.createNewReplayFile();
-            Position position = GridUtils.getCenterPosition(game.getGameBoard());
-            XmlUtils.saveGameMove(
-                    new GameMove(PlayerFactory.createDefaultPlayer(),
-                            GridUtils.getValueOfPosition(game.getGameBoard(), position) ,
-                            position));
-            LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
-            Thread runnerThread = new Thread(latestMoveThread);
-            runnerThread.start();
+            startXml();
+            startThreads();
         }
         initializeManager();
+    }
+
+    private void startXml() {
+        XmlUtils.createNewReplayFile();
+        Position position = GridUtils.getCenterPosition(game.getGameBoard());
+        XmlUtils.saveGameMove(
+                new GameMove(PlayerFactory.createDefaultPlayer(),
+                        GridUtils.getValueOfPosition(game.getGameBoard(), position) ,
+                        position));
+    }
+
+    private void startThreads() {
+        LatestMoveThread latestMoveThread = new LatestMoveThread(lbLastMove);
+        Thread runnerThread = new Thread(latestMoveThread);
+        runnerThread.start();
     }
 
     private void initializeManager() {

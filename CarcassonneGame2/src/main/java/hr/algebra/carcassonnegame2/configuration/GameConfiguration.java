@@ -7,7 +7,7 @@ public class GameConfiguration {
     private static final String FILES_DIRECTORY = "files/";
     public static final String SAVE_FILE_NAME = FILES_DIRECTORY + "data.ser";
     public static final String MOVES_FILE_NAME = FILES_DIRECTORY + "moves.dat";
-
+    public static final String MOVES_XML_FILE_NAME = FILES_DIRECTORY + "game_moves.xml";
     public static final int PENALIZATION_FOR_CHANGING_TILE = -5;
     public static final int POINTS_FOR_CITY = 2;
     public static final int POINTS_FOR_MONASTERY = 9;

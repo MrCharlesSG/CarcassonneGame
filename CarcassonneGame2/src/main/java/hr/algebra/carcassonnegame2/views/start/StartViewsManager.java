@@ -137,7 +137,7 @@ public class StartViewsManager {
     private void addPlayerName() throws IllegalArgumentException {
         String playerName = taOneName.getText();
         if (!playerName.isBlank()) {
-            players.add(PlayerFactory.createPlayer(playerName, NUM_FOLLOWERS_PER_PLAYER));
+            players.add(PlayerFactory.createPlayer(playerName));
             currentNumberOfPlayers++;
         } else {
             throw new IllegalArgumentException("Name is Blank");

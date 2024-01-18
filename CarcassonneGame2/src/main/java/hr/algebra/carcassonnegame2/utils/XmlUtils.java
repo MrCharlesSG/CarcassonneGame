@@ -15,14 +15,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hr.algebra.carcassonnegame2.configuration.GameConfiguration.MOVES_XML_FILE_NAME;
+
 public class XmlUtils {
 
-    private static final String FILENAME = "files/game_moves.xml";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static void saveGameMove(GameMove gameMove) {
@@ -33,14 +33,14 @@ public class XmlUtils {
         try {
             Document document = createDocument("gameMoves");
 
-            for(GameMove gameMoveXmlElement : gameMoveList) {
+            for (GameMove gameMoveXmlElement : gameMoveList) {
 
                 Element gameMoveElement = document.createElement("gameMove");
                 document.getDocumentElement().appendChild(gameMoveElement);
 
                 gameMoveXmlElement.toXml(gameMoveElement, document, formatter);
             }
-            saveDocument(document, FILENAME);
+            saveDocument(document, MOVES_XML_FILE_NAME);
         } catch (ParserConfigurationException | TransformerException ex) {
             ex.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class XmlUtils {
 
         List<GameMove> gameMoveList = new ArrayList<>();
 
-        File xmlFile = new File(FILENAME);
+        File xmlFile = new File(MOVES_XML_FILE_NAME);
 
         if (xmlFile.exists()) {
 
@@ -79,7 +79,7 @@ public class XmlUtils {
 
             try {
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document document = builder.parse(new File(FILENAME));
+                Document document = builder.parse(new File(MOVES_XML_FILE_NAME));
                 gameMoveList.addAll(
                         processGameMoveNodes(document.getDocumentElement(), ""));
             } catch (ParserConfigurationException | SAXException | IOException ex) {
@@ -114,7 +114,7 @@ public class XmlUtils {
 
     public static String getChildElementText(Element parentElement, String childTagName) {
         Element childElement = (Element) parentElement.getElementsByTagName(childTagName).item(0);
-        if(childElement==null)
+        if (childElement == null)
             return null;
         return childElement.getTextContent();
     }
@@ -122,12 +122,11 @@ public class XmlUtils {
     public static void createNewReplayFile() {
         try {
             Document document = createDocument("gameMoves");
-            saveDocument(document, FILENAME);
+            saveDocument(document, MOVES_XML_FILE_NAME);
         } catch (ParserConfigurationException | TransformerException ex) {
             ex.printStackTrace();
         }
     }
-
 
 
 }

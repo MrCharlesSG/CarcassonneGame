@@ -18,21 +18,21 @@ public class TileDescription implements Serializable {
     private final TileElementValue[][] description;
     private final Position followerPosition;
 
-    public TileDescription(Tile tile){
+    public TileDescription(Tile tile) {
         this(tile.getRepresentation(), tile.getFollowerPosition());
     }
 
     private TileDescription(TileElementValue[][] description, Position followerPosition) {
-        this.description= new TileElementValue[description.length][description.length];
+        this.description = new TileElementValue[description.length][description.length];
         copyGrid(this.description, description);
         this.followerPosition = followerPosition;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return getTileLayoutDescription() + getAdditionalDescription();
     }
 
-    private String getTileLayoutDescription(){
+    private String getTileLayoutDescription() {
         return
                 "Top:" + getTop(description) + ", " +
                         "Right:" + getRight(description) + ", " +
@@ -41,9 +41,9 @@ public class TileDescription implements Serializable {
                         "Center:" + getCenter(description);
     }
 
-    public String getAdditionalDescription(){
+    public String getAdditionalDescription() {
         String additional = "";
-        if(followerPosition !=null){
+        if (followerPosition != null) {
             additional = "; Follower-> " + followerPosition + "; ";
         }
         return additional;
@@ -76,11 +76,10 @@ public class TileDescription implements Serializable {
     }
 
     private static String getTag(int i, int j) {
-        return "tileDes" + (char) ('A' + i)+ (char) ('A' + j);
+        return "tileDes" + (char) ('A' + i) + (char) ('A' + j);
     }
 
     public Tile createTile(Position position, Player player) {
-
         return new TileImpl(description, position, player, followerPosition);
     }
 }

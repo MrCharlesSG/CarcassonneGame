@@ -3,11 +3,8 @@ package hr.algebra.carcassonnegame2.model;
 import hr.algebra.carcassonnegame2.factories.PlayerFactory;
 import hr.algebra.carcassonnegame2.misc.Position;
 import hr.algebra.carcassonnegame2.model.player.Player;
-import hr.algebra.carcassonnegame2.model.player.PlayerImpl;
 import hr.algebra.carcassonnegame2.model.tile.Tile;
 import hr.algebra.carcassonnegame2.model.tile.TileDescription;
-import hr.algebra.carcassonnegame2.model.tile.TileImpl;
-import javafx.geometry.Pos;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,31 +35,31 @@ public class GameMove implements Serializable {
     public GameMove(Player player, Position position, LocalDateTime dateTime, TileDescription tileDescription) {
         this.player = player;
         this.position = position;
-        this.time= dateTime;
-        this.tileDescription=tileDescription;
+        this.time = dateTime;
+        this.tileDescription = tileDescription;
     }
 
     public GameMove() {
-        player=null;
-        position=null;
-        tileDescription=null;
-        time=null;
+        player = null;
+        position = null;
+        tileDescription = null;
+        time = null;
     }
 
     @Override
     public String toString() {
-        if(player==null){
+        if (player == null) {
             return "";
         }
         return player.getName()
-                + " ["+time.getHour()+":"+time.getMinute() + "]: "
-                + tileDescription.getDescription() +" in "
+                + " [" + time.getHour() + ":" + time.getMinute() + "]: "
+                + tileDescription.getDescription() + " in "
                 + position.toString();
     }
 
     public void toXml(Element gameMoveElement, Document document, DateTimeFormatter formatter) {
 
-        gameMoveElement.appendChild(createElement(document, "player" ,
+        gameMoveElement.appendChild(createElement(document, "player",
                 player.getName()));
         gameMoveElement.appendChild(createElement(document, "position",
                 position.toString()));
@@ -76,7 +73,7 @@ public class GameMove implements Serializable {
         String positionString = getChildElementText(childElement, "position");
         String dateTimeString = getChildElementText(childElement, "dateTime");
 
-        Player player = PlayerFactory.createPlayer(playerName, 0);
+        Player player = PlayerFactory.createPlayer(playerName);
         Position position = Position.parsePosition(positionString);
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
 
